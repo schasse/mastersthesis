@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e # fail when a command exits non zero
+
+folder=$(dirname "$0")/..
+
+pdflatex $folder/thesis.tex
+bibtex8 -W $folder/thesis
+pdflatex $folder/thesis.tex
