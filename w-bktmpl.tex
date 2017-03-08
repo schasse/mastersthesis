@@ -95,12 +95,10 @@
 %% your own titlepages if you'd like anyway
 
 %% Setting up title pages, type in the appropriate names here:
-\booktitle{}
+\booktitle{Post Release Testing}
 \subtitle{}
 
-\author{}
-%or
-\authors{}
+\author{Sebastian Schasse}
 
 %% \\ will start a new line.
 %% You may add \affil{} for affiliation, ie,
@@ -119,7 +117,7 @@
 %% Off Print Info
 
 %% Add your info here:
-\offprintinfo{title, edition}{author}
+% \offprintinfo{title, edition}{author}
 
 %% Can use \\ if title, and edition are too wide, ie,
 %% \offprintinfo{Survey Methodology,\\ Second Edition}{Robert M. Groves}
@@ -128,9 +126,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Copyright Page
 
-\begin{copyrightpage}{year}
-Title, etc
-\end{copyrightpage}
+% \begin{copyrightpage}{year}
+% Title, etc
+% \end{copyrightpage}
 
 % Note, you must use \ to start indented lines, ie,
 % 
@@ -257,11 +255,11 @@ Title, etc
 %% Short version of title without \\ may be written in sq. brackets:
 
 %% Optional Part :
-\part[Submicron Semiconductor Manufacture]
-{Submicron Semiconductor\\ Manufacture}
+% \part[Submicron Semiconductor Manufacture]
+% {Submicron Semiconductor\\ Manufacture}
 
-\chapter[The Submicrometer Silicon MOSFET]
-{The Submicrometer\\ Silicon MOSFET}
+% \chapter[The Submicrometer Silicon MOSFET]
+% {The Submicrometer\\ Silicon MOSFET}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% optional prologue or prologues
@@ -271,6 +269,60 @@ Title, etc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Edited Book: Author and Affiliation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Introduction: complete overview}
+
+\chapter{Foundations}
+\section{The apathetic agile devops team}
+
+\subsection{Devops: a culture that drives team efficiency and software quality (historical evolution of the devops, loads of refs, how do i define devops)}
+subsubsection{Operation uses typical developer methods}
+subsubsection{Toolchains of operation and developers}
+subsubsection{Integration of developer and operation teams}
+subsubsection{Cluster management systems automate developer operations}
+
+\subsection{Agile}
+subsubsection{Continuous Delivery Pipeline}
+\paragraph{overview: commitment, continuous integration/testing, deployment}
+\paragraph{The evolution of deployments/continuous deployment}
+\section{Velocity and cycletime as efficiency metrics of an agile team}
+\section{MTTR and ErrorRate measures the quality of a software}
+
+\subsection{maintenance: (software lifecycle management)}
+\subsubsection{bugs + debugging}
+\subsubsection{ilities}
+\subsubsection{security}
+\subsubsection{monitoring}
+
+\subsection{the apathic agile devops team}
+
+\chapter{Solutions}
+\section{reducing maintenance with continuous production testing}
+\section{Automated post deployment testing}
+\section{the deployer}
+\subsection{architecture and how it integrates in the pipeline}
+subsection{importance for maintenance and feature deploys}
+subsection{cycle time vs. notifications}
+
+\chapter{Evaluation}
+\section{GapFish a startup company}
+\section{GapFish's traditional toolchain and teams}
+\section{team agility metrics}
+subsection{cycle time measures quality of delivery engine}
+subsection{locs/deploy measures risk}
+subsection{deploys per day measures agility}
+\section{software quality metrics}
+subsection{ErrorRate as monitoring measure for automation}
+subsection{problems in error rate measure defect and failure}
+subsection{solution a secific heuristic}
+\section{Results}
+subsection{traditional vs. new}
+\section{Lessons learned and future}
+
+\chapter{Conclusion}
+\section{theoretical/practical conclusion}
+\section{for Gapfish}
+
 
 % After \chapter{Chapter Title}, you can
 % enter the author name and embed the affiliation with
