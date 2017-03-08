@@ -1,25 +1,3 @@
-#The output should not be versioned
-paper.pdf
-
-#temporary files by gradle
-.gradle
-
-#temporary file produced by lncs_as branch
-latex.zip
-
-#Files versioned by springer
-llncs.cls
-splncs03.bst
-
-
-
-
-
-
-
-
-# Created by https://www.gitignore.io/api/tex,windows,linux,macos,jabref,microsoftoffice
-
 ### TeX ###
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -313,5 +291,3 @@ Temporary Items
 
 # Visio autosave temporary files
 *.~vsdx
-
-# End of https://www.gitignore.io/api/tex,windows,linux,macos,jabref,microsoftoffice
