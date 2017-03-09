@@ -495,7 +495,7 @@ This version is dated \currversion^^J^^J}
 {\frenchspacing\baselineskip=12pt
 \authorfont \theauthor\vskip1sp}
 \vfill
-\noindent{\includegraphics[width=1.7in]{wileylogo}}
+\noindent{\includegraphics[width=1.7in]{logo_tu}}
 \vskip-8pt
 {\wileyfont A JOHN WILEY \& SONS, INC., PUBLICATION}
 \vskip24pt}\newpage}
@@ -1930,14 +1930,15 @@ Sons, Inc.}}}
 \vrule height 9pt width0pt \relax
 #1}
 
-\def\offprintinfoerror{\typeout{^^J^^J 
-!! Please enter {\string\offprintinfo\string{(Title,
-Edition)\string}\string{(Author)\string}^^J at the beginning of your 
-document.!!^^J^^J}}
-\bgroup
-\x@makefntext{Please enter {\tt \string\offprintinfo\string{(Title,
-Edition)\string}\string{(Author)\string}\newline at the beginning of your 
-document.\vrule depth8pt width0pt}\egroup}}
+\def\offprintinfoerror{% \typeout{^^J^^J 
+% !! Please enter {\string\offprintinfo\string{(Title,
+% Edition)\string}\string{(Author)\string}^^J at the beginning of your 
+% document.!!^^J^^J}}
+% \bgroup
+% \x@makefntext{Please enter {\tt \string\offprintinfo\string{(Title,
+% Edition)\string}\string{(Author)\string}\newline at the beginning of your 
+% document.\vrule depth8pt width0pt}\egroup}
+}
 
 
 \def\printoffprintinfo{\vtop to0pt{%
