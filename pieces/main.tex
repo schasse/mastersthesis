@@ -1,51 +1,75 @@
+\part{Foundations}
+\chapter{Introduction: Developer and operation teams converge and both use software engineering practices}
 
-\chapter{Introduction: complete overview}
-\chapter{Foundations}
-\section{Developer and operation teams converge and both use software engineering practices}
-\subsection{Devops: a culture that drives team efficiency and software quality (historical evolution of the devops, loads of refs, how do i define devops)}
-subsubsection{Operation uses typical developer methods}
-subsubsection{Toolchains of operation and developers}
-subsubsection{Integration of developer and operation teams}
-subsubsection{Cluster management systems automate developer operations}
+\chapter{Developers use the Continuous Delivery Pipeline}
+\section{The Continuous Delivery Pipeline consists of commitment, continuous integration and deployment}
+\section{Software Deployment approaches evolved from manual to automated}
+\subsection{Blue-Green Deployment allows Zero Downtime releases}
+\subsection{Automation leads to resource saving Phoenix Deployment and Rolling Deployments}
+\subsection{Canaries test releases with a small amount of traffic}
+\subsection{continuous deployment is not continuous delivery}
 
-\subsection{Agile}
-subsubsection{Continuous Delivery Pipeline}
-\paragraph{overview: commitment, continuous integration/testing, deployment}
-\paragraph{The evolution of deployments/continuous deployment}
-\section{Velocity and cycletime as efficiency metrics of an agile team}
-\section{MTTR and ErrorRate measures the quality of a software}
+\chapter{Operators evolved to Site Reliability Engineers}
+\section{Site Reliability Engineers maintain applications like software engineers}
+sw installation, hw installation, logging, scaling, monitoring (detecting problems), security, incident management, support
+\section{Monitoring to identify Problems}
+\subsection{Health checks measure availability}
+\subsection{Measuring Latency, Traffic, Errors and Saturation identifies failures and performance problems}
+\subsection{Incident Management (/Notifications) for appropriate and fast actions in case of Problems}
 
-\subsection{maintenance: (software lifecycle management)}
-\subsubsection{bugs + debugging}
-\subsubsection{ilities}
-\subsubsection{security}
-\subsubsection{monitoring}
+\part{New Practices}
+\chapter{Post Release Testing extends the Continuous Delivery Pipeline to support maintaining a system}
+\section{Post Release Testing leads to lower time to market}
+\section{It makes Releases consistent, measurable, fast and scalable}
+mttr
+\section{It is a new opportunity for risk management}
+identify test before release is a mttr of zero, after release still fast. easier to test in production (complexity of system)
 
-\subsection{the apathic agile devops team}
+\section{Companies are already post release testing their software systems}
+\subsection{Netflix uses Simian Army to live test their systems}
+\subsection{Synthetic Monitoring tests a complex distributed system}
 
-\chapter{Solutions}
-\section{reducing maintenance with continuous production testing}
-\section{Automated post deployment testing}
+\section{Non Change Post Release Testing with Canaries}
+\subsection{black box monitoring is only one part and monitoring change is difficult}
+\subsection{Continuous Delivery is a requirement}
+\subsection{Notifications in case a canary behaves different}
+\subsection{Automated Rollbacks for a automatic self healing system}
+
+\chapter{Implementing Canary Post Release Testing}
+\section{New technologies drive new techniques}
+\subsection{Kubernetes is a Cluster OS}
+\subsubsection{overview: cluster os - resource management}
+\subsubsection{immutability}
+\subsection{datadog}
+\subsection{ruby - sinatra}
+
 \section{the deployer}
 \subsection{architecture and how it integrates in the pipeline}
-subsection{importance for maintenance and feature deploys}
-subsection{cycle time vs. notifications}
+\subsection{importance for maintenance and feature deploys}
+\subsection{cycle time vs. notifications}
 
-\chapter{Evaluation}
-\section{GapFish a startup company}
-\section{GapFish's traditional toolchain and teams}
-\section{team agility metrics}
-subsection{cycle time measures quality of delivery engine}
-subsection{locs/deploy measures risk}
-subsection{deploys per day measures agility}
-\section{software quality metrics}
-subsection{ErrorRate as monitoring measure for automation}
-subsection{problems in error rate measure defect and failure}
-subsection{solution a secific heuristic}
-\section{Results}
-subsection{traditional vs. new}
-\section{Lessons learned and future}
+\chapter{Velocity and cycletime as efficiency metrics of an agile team}
+\chapter{MTTR and ErrorRate measures the quality of a software}
 
-\chapter{Conclusion}
-\section{theoretical/practical conclusion}
-\section{for Gapfish}
+% \subsection{bugs + debugging}
+% \subsection{ilities}
+% \subsection{security}
+% \subsection{monitoring}
+
+\part{Evaluation}
+\chapter{GapFish a startup company}
+\chapter{GapFish's traditional toolchain and teams}
+\chapter{team agility metrics}
+\section{cycle time measures quality of delivery engine}
+\section{locs/deploy measures risk}
+\section{deploys per day measures agility}
+\chapter{software quality metrics}
+\section{ErrorRate as monitoring measure for automation}
+\section{problems in error rate measure defect and failure}
+\section{solution a secific heuristic}
+\chapter{Results}
+\section{traditional vs. new}
+\chapter{Lessons learned and future}
+
+\chapter{theoretical/practical conclusion}
+\chapter{for Gapfish}
