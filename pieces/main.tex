@@ -1,4 +1,5 @@
 \part{Foundations}
+
 \chapter{Introduction: Developer and operation teams converge and both use software engineering practices}
 
 \chapter{Developers use the Continuous Delivery Pipeline}
@@ -17,20 +18,36 @@ sw installation, hw installation, logging, scaling, monitoring (detecting proble
 \subsection{Measuring Latency, Traffic, Errors and Saturation identifies failures and performance problems}
 \subsection{Incident Management (/Notifications) for appropriate and fast actions in case of Problems}
 
+\chapter{Metrics can indirectly measure team efficiency and software quality}
+\section{Velocity and cycletime are efficiency metrics for an agile team}
+cycle time measures quality of delivery engine
+\subsection{Deploys/Week indirectly measures velocity}
+and it measures the effect of a quality delivery engine
+we want many deploys per week
+\subsection{Deploy Duration is import for cycle time}
+\section{MTTR and Failurerate measures the quality of a software}
+we want low risk per deploy to achieve MTTR and low Failure Rate
+\subsection{LOCS/Deploy indirectly measures the risk per Deploy}
+
+
 \part{New Practices}
+
 \chapter{Post Release Testing extends the Continuous Delivery Pipeline to support maintaining a system}
 \section{Post Release Testing leads to lower time to market}
+cycle time
 \section{It makes Releases consistent, measurable, fast and scalable}
-mttr
+mttr, automation/automatic discussion
 \section{It is a new opportunity for risk management}
 identify test before release is a mttr of zero, after release still fast. easier to test in production (complexity of system)
-
 \section{Companies are already post release testing their software systems}
 \subsection{Netflix uses Simian Army to live test their systems}
 \subsection{Synthetic Monitoring tests a complex distributed system}
-
-\section{Non Change Post Release Testing with Canaries}
-\subsection{black box monitoring is only one part and monitoring change is difficult}
+\section{Post Release Testing with Canaries is appropriate for testing non change}
+ErrorRate as monitoring measure for automation
+problems in error rate measure defect and failure
+solution a secific heuristic
+\subsection{Black-Box monitoring is only one part and monitoring change is difficult}
+\subsection{Canary testing is important for maintenance but not feature deploys}
 \subsection{Continuous Delivery is a requirement}
 \subsection{Notifications in case a canary behaves different}
 \subsection{Automated Rollbacks for a automatic self healing system}
@@ -38,38 +55,54 @@ identify test before release is a mttr of zero, after release still fast. easier
 \chapter{Implementing Canary Post Release Testing}
 \section{New technologies drive new techniques}
 \subsection{Kubernetes is a Cluster OS}
-\subsubsection{overview: cluster os - resource management}
-\subsubsection{immutability}
-\subsection{datadog}
-\subsection{ruby - sinatra}
-
-\section{the deployer}
-\subsection{architecture and how it integrates in the pipeline}
-\subsection{importance for maintenance and feature deploys}
-\subsection{cycle time vs. notifications}
-
-\chapter{Velocity and cycletime as efficiency metrics of an agile team}
-\chapter{MTTR and ErrorRate measures the quality of a software}
+\subsubsection{Resource Management in Kubernetes is made for high available services}
+\subsubsection{Deployments implement Rolling Updates}
+\subsection{DataDog is a Cluster Monitoring Systems as SaaS}
+alternativen Graphana, Prometheus
+\subsubsection{The main components are: Datacollection, Timeseriesdatabase, Graphing and Alerting}
+\subsubsection{DataDog integrates well in Kubernetes}
+\section{Deployer is a Service for Continuous Deployment and enables Canary Post Release testing}
+\subsection{Deployer integrates into the Continuous Delivery Pipeline}
+\subsection{Deployer integrates into Kubernetes and deploys itself}
+\subsection{Deployer integrates into Monitoring and enables Canary testing}
+\subsection{The main Deployer API features are Deployments and Canary deployments}
+depctl, curl
+\subsubsection{Deployments deploy a whole repository}
+\subsubsection{One Canary per Replicated Pods can be deployed and monitored}
+\subsubsection{Immediate Notifications in case of failure}
+difference depctl and curl
+\subsubsection{Automatic Rollbacks in case defect Canary}
+via datadog and triggers deployer
+future: staging deploys
 
 % \subsection{bugs + debugging}
 % \subsection{ilities}
 % \subsection{security}
 % \subsection{monitoring}
 
-\part{Evaluation}
-\chapter{GapFish a startup company}
-\chapter{GapFish's traditional toolchain and teams}
-\chapter{team agility metrics}
-\section{cycle time measures quality of delivery engine}
-\section{locs/deploy measures risk}
-\section{deploys per day measures agility}
-\chapter{software quality metrics}
-\section{ErrorRate as monitoring measure for automation}
-\section{problems in error rate measure defect and failure}
-\section{solution a secific heuristic}
-\chapter{Results}
-\section{traditional vs. new}
-\chapter{Lessons learned and future}
 
-\chapter{theoretical/practical conclusion}
-\chapter{for Gapfish}
+\part{Evaluation}
+
+\chapter{GapFish is the company to evaluate Deployer}
+\section{GapFish's services are complex and highly available}
+overview of Gapfish's services
+\subsection{GapFish's Operation Service is used by internal Staff and Customers}
+operation service == operation.gapfish.com
+\section{GapFish uses tools for continuous deployment}
+\subsection{GapFish differentiates between development and operation}
+how is the deployment tradditionally done
+\subsection{Kubernetes enables GapFish to have a development and operation in one team}
+which services are migrated to kubernetes
+
+\chapter{Implementation of Metrics: traditional vs new}
+\section{Deploys/Week}
+\section{Deploy Duration}
+\section{LOCS/Deploy}
+
+\chapter{Results}
+\section{Metrics: traditional vs. new}
+\section{theoretical/practical conclusion for deployer and cd}
+\section{for Gapfish}
+\section{Lessons learned and future}
+
+\chapter{resume}
