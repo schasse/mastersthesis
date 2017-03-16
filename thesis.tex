@@ -10,6 +10,9 @@
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
+\usepackage[style=numeric,backend=bibtex8]{biblatex}
+\bibliography{./pieces/thesis}
+
 %% \docropmarks %% turn cropmarks on
 % \draft
 % \renewcommand{\arraystretch}{0.6}
@@ -25,5 +28,7 @@
 \tableofcontents
 
 \include{pieces/main}
+
+\printbibliography
 
 \end{document}

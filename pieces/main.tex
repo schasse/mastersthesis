@@ -2,15 +2,51 @@
 
 \chapter{Introduction: Developer and operation teams converge and both use software engineering practices}
 
+Many people talk about DevOps as well as there are multiple definitions and interpretations of the term DevOps. DevOps is referred as a philosophy, a culture, practices and specific tools. For my research, I will focus on two different aspects of the term DevOps:
+
+The first one is the perspective of operation teams. Operation teams traditionally modeled infrastructure by installing physical hardware and by manually installing software components. With the rise of virtual machines and the cloud, it became possible to model infrastructure in software\footnote{``Infrastructure as Code'' describes different dynamic infrastructure types~\cite[p. 30]{infra_as_code} and how to model those by code~\cite[p. 42]{infra_as_code}.}. Modelling via software enables operation teams to use tools and practices\footnote{In the chapter ``Software Engineering Practices for Infrastrucure''~\cite[p. 179-194]{infra_as_code} practices like version controlling, continuous integration are described.} as seen in software engineering. Infrastructure code is version controlled, tested and can be automatically deployed.
+
+The other aspect of DevOps\footnote{The book ``DevOps''~\cite{devops} is written in the view of a developer running a system.} is the perspective of developer teams. Previously developer teams were only responsible for developing new features. Software engineering practices got established and proven. One of those practices is the continuous delivery pipeline\footnote{For theoretical details on the continuous delivery pipeline read Part II of ``Continuous Delivery''~\cite[p. 103-140]{continuous_delivery} or a more practical approach by Wolff~\cite{continuous_delivery2}.}. The last step of the continuous delivery pipeline is the deployment. Formerly operation teams were responsible for deploying new features. The deployment as last step of the continuous delivery pipeline shifts a responsibility from operation to development. This shows that developer teams are becoming more and more responsible for running the software, they built.
+
 \chapter{Developers use the Continuous Delivery Pipeline}
+
 \section{The Continuous Delivery Pipeline consists of commitment, continuous integration and deployment}
 \section{Software Deployment approaches evolved from manual to automated}
 \subsection{Blue-Green Deployment allows Zero Downtime releases}
+
+The approach of blue green deployment involves two environments. One is the environment which serves production traffic, the other environment is in standby. You deploy to the other environment the new version. You then switch routing from the environment, which runs the old version, to the environment with the new version.
+
+This has the major disadvantage that it is a waste of resources. Just one environment doing work with serving production traffic as the other environment is just idling. Even if you use the idling environment as a staging it would be oversized and still wasting resources.
+
 \subsection{Automation leads to resource saving Phoenix Deployment and Rolling Deployments}
+
+In times of dynamic resource allocation, automation and virtual machines, it became easy to automatically spawn new servers. In for a deploy of a new version you would not change the servers, but automatically create new ones with the version to deploy, then switch the traffic from the old servers to the new servers, and in the end just destroy the old servers. This procedure is called phoenix replacement.
+
 \subsection{Canaries test releases with a small amount of traffic}
+
+
+Canary releasing is a way to test new versions of the application in production. But testing in production is risky, because when there is an error which leads to a defect or failure the users will get affected. And this costs money in any way.
+
+There comes canary releasing into play. A single canary can't do much harm and it's not a big catastrophe if the small canary is malicious. Let me explain it at the example of a typically scaled web application. Usually you do not have just a single web server, but multiple servers. So when releasing in the canary style, you change just a small proportion of the twenty webservers to the new version. Now two versions of the webservers are running at the same time.
+
+Usually you want exactly the same version of webservers in production with the exact same configuration. This makes systems easier to debug in case of an error. The maximum count of different versions during canary releasing is two. But why go for two different versions in production with the canary releasing technique, when it makes debugging in general harder.
+
+It's because with canary releasing you can achieve different goals. The first one is truly when an error occurs. Just because less users are affected by the error. The majority of webservers is still in the old version, so just a small portion of all the users have a poor experience with the erroneous small canary version fraction.
+
+In case of success, when everything works as expected, it is proven that there is less risk of errors, even under real production conditions.
+
+
 \subsection{continuous deployment is not continuous delivery}
 
-\chapter{Operators evolved to Site Reliability Engineers}
+\chapter{Operators turned into Site Reliability Engineers}
+
+Traditionally there are two Teams, to build and maintain a software system. The Developers produced new features and the operators maintain the running system. An operator or a operations team is
+
+Historically there were typically sysadmins or operators. In the following I will use the term sysadmin and operator as equivalent. The sysadmins assembled and deployed the software to servers. Then the running system must be maintained to provide a certain quality of service. The users want to have a system to be reliable and available. Therefore another typical part of the work of a sysadmins is to monitor the system. Monitoring a system identifies security and performance problems and other failures. In case the the system did not have the quality a system should have, the sysadmin needs to react.
+
+Later the sysadmins
+
+
 \section{Site Reliability Engineers maintain applications like software engineers}
 sw installation, hw installation, logging, scaling, monitoring (detecting problems), security, incident management, support
 \section{Monitoring to identify Problems}
@@ -33,6 +69,13 @@ we want low risk per deploy to achieve MTTR and low Failure Rate
 \part{New Practices}
 
 \chapter{Post Release Testing extends the Continuous Delivery Pipeline to support maintaining a system}
+
+The three main steps in the continuous delivery pipeline are: commitment to version control, continuous integration and release. After releasing, the new version will be operated. This includes monitoring, logging, security aspects and incident management\footnote{In ``Site Reliability Engineering'' monitoring and notifying principles~\cite[p. 55-63]{site_reliability} are well described.}. To enable developers to take more responsible in running the software, it is necessary to extend the practices of the continuous delivery pipeline.
+
+In my masterthesis I want to optimize the software engineering practices in order to empower developers in their bigger responsibilities. I want to focus on the process of deployment and enhance the continuous delivery pipeline. To achieve this, I want to examine operation practices like monitoring and incident management. And then extend the deployment process by three consecutive steps.
+
+The first step is to completely automate deployments of software features and achieve continuous deployment. The next step is to sensibly monitor new releases to give automatically feedback. Third and lastly, identify incidents to automatically trigger rollbacks to self-heal the software system. I'm going to call these last two steps continuous post release testing.
+
 \section{Post Release Testing leads to lower time to market}
 cycle time
 \section{It makes Releases consistent, measurable, fast and scalable}
@@ -57,6 +100,9 @@ solution a secific heuristic
 \subsection{Kubernetes is a Cluster OS}
 \subsubsection{Resource Management in Kubernetes is made for high available services}
 \subsubsection{Deployments implement Rolling Updates}
+
+The extend to the canary releasing technique is a rolling update. It unifies phoenix replacement and canary releasing and extends it to a full deployment. You start with one server in the new version and spawn it automatically. Now it becomes part of the whole pool of servers and serves traffic as the server is ready. Now two different versions are serving traffic, just like with a canary release. But after the first step the deployment goes on and then destroys a server instance in the old version as you would do in the phoenix replacement. Then the procedure will be done multiple times until all servers of the old version are replaced by the new version.
+
 \subsection{DataDog is a Cluster Monitoring Systems as SaaS}
 alternativen Graphana, Prometheus
 \subsubsection{The main components are: Datacollection, Timeseriesdatabase, Graphing and Alerting}
