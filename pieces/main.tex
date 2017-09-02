@@ -40,15 +40,30 @@ In case of success, when everything works as expected, it is proven that there i
 
 \chapter{Operators turned into Site Reliability Engineers}
 
-Traditionally there are two Teams, to build and maintain a software system. The Developers produced new features and the operators maintain the running system. An operator or a operations team is
+Traditionally a developer team developed the software and after they were finished, another team runs the software and keeps the software running. Those teams are usually referred as operation teams. So what are their duties and responsibilities exactly?
 
-Historically there were typically sysadmins or operators. In the following I will use the term sysadmin and operator as equivalent. The sysadmins assembled and deployed the software to servers. Then the running system must be maintained to provide a certain quality of service. The users want to have a system to be reliable and available. Therefore another typical part of the work of a sysadmins is to monitor the system. Monitoring a system identifies security and performance problems and other failures. In case the the system did not have the quality a system should have, the sysadmin needs to react.
+The already developed software needs to be deployed in the first place. Therefore operators are responsible to install the infrastructure. The infrastructure consists of real hardware servers in racks and a network for the communication. The software usually doesn't without any operating system and programming libraries. After these exist the actual software can be installed.
 
-Later the sysadmins
+<-software must be configured
 
+To provide a certain quality of service, the whole system must be maintained. That means to first identify any problems and second to fix the identified problems. And to identify problems in the first place, there must be a kind of monitoring. The key insights of monitoring\cite[p. 127/8]{devops} are identifying failures resulting faults, identifying performance problems and usual workloads and lastly to detect intruders.
+
+The software usually changes. Most importantly there are security fixes to defend intruders. But it is possible that there are also new features for the software. So another aspect of maintaining the system, is to have regular updates for the system.
+
+In case there is any problem identified, the operation team needs to fix the problem. The easier and more obvious problems can be detected in advance before the problem actually occures. For example the disk is will be soon full or the utilization of the resources cpu, ram, network and disk i/o is very high. Then the operation team has to scale the system to satisfy the users.
+
+Other problems can not be detected in advance and lead to a failing system. The operation team needs to be on call and react in the case of a failure. Commonly hardware fails and then must be replaced. Or another example is that a configuration change leads to a failure and must then be fixed. In more precise words: the operation team must manage incidents.
+
+Google states that the operation team approach is not efficient\cite[p. 3/4]{site_reliability}. It is expensive, it does not scale very well and tension in interests because of wrong incentives.
+
+A growing system means there will be more hardware, more software components and a more complex configuration. With the traditional operation team approach there is the disadvantage, that the growing system needs a bigger operation team. A bigger operation team produces more costs and that means it does not scale very well.
+
+Another disadvantage is conflicting interests of the developer team and operation team. The operation team is incentived to provide a certain quality of service and therefore highly stable system is preferred. And since the greatest source of failure is change\cite[p.10]{site_reliability}, the operation team does not want to have change. Never run a changing system. On the other hand developers want to change their software very frequently, because they get paid for deliver as many features as fast as possible. This combination leads to different assumptions and a tension in interests, which produces even more costs than the scalability issue.
 
 \section{Site Reliability Engineers maintain applications like software engineers}
-sw installation, hw installation, logging, scaling, monitoring (detecting problems), security, incident management, support
+
+automation value
+
 \section{Monitoring to identify Problems}
 \subsection{Health checks measure availability}
 \subsection{Measuring Latency, Traffic, Errors and Saturation identifies failures and performance problems}
