@@ -40,45 +40,49 @@ In case of success, when everything works as expected, it is proven that there i
 
 \chapter{Operators turned into Site Reliability Engineers}
 
-Traditionally a developer team developed the software and after they were finished, another team runs the software and keeps the software running. Those teams are usually referred as operation teams. So what are their duties and responsibilities exactly?
+Companies, which run software on their servers, usually have a specialized operations team. A team of developers programs the software and after the team is finished, the software is handed to another team, which runs the software and keeps it running. Those teams are usually referred as operations teams. So what are their duties and responsibilities exactly?
 
-The already developed software needs to be deployed in the first place. Therefore operators are responsible to install the infrastructure. The infrastructure consists of real hardware servers in racks and a network for the communication. The software usually doesn't without any operating system and programming libraries. After these exist the actual software can be installed.
+At first the already developed software needs to be deployed on an infrastructure. Therefore the operations team must provide an infrastructure. Infrastructure generally consists of hardware like racks, servers and networking devices. But in most cases, software depends on other software components and services, which are for example programming languages, dns or databases. Software usually changes. Most importantly there are security patches, but also software updates with new features are mandatory to install. Hence the operations team is responsible for installing, configuring and updating hardware and software components.
 
-<-software must be configured
+To provide a certain quality of service, infrastructure as well as the software must be maintained. That means identifying any problems and moreover fixing the identified problems. To identify problems in the first place, there must be any kind of monitoring. A good monitoring system\cite[p. 127/8]{devops} finds failures and resulting faults, recognizes performance problems, usual workloads and it detects intruders. More obvious problems can be detected early, even before the problem leads to failures. For example a disk will soon be full or utilization of resources like cpu, ram, network or disk i/o is too high. Other failures can not be detected in advance and lead to a defective system.
 
-To provide a certain quality of service, the whole system must be maintained. That means to first identify any problems and second to fix the identified problems. And to identify problems in the first place, there must be a kind of monitoring. The key insights of monitoring\cite[p. 127/8]{devops} are identifying failures resulting faults, identifying performance problems and usual workloads and lastly to detect intruders.
+In case monitoring identifies a problem, the operations team needs to take care of the problem. Operations teams need to be on call and manage incidents. A new Incident must be rated how severe it is. In advance detected problems potentially leading to failures like a disk going to be full in few days, must not be handled immediately. Other incidents like an unavailable database service can be business critical and must be fixed as rapidly as possible. But often the cause of a failure is not obvious and the system must be debugged with specific tools. Critical failures mostly affect users, so another part of incident management is to inform the affected parties.
 
-The software usually changes. Most importantly there are security fixes to defend intruders. But it is possible that there are also new features for the software. So another aspect of maintaining the system, is to have regular updates for the system.
+Google states that the traditional approach of an operations team\footnote{Google actually calls it the sysadmins approach} is not efficient. It is expensive, it does not scale very well and it creates tension in interests\cite[p. 3/4]{site_reliability}.
 
-In case there is any problem identified, the operation team needs to fix the problem. The easier and more obvious problems can be detected in advance before the problem actually occures. For example the disk is will be soon full or the utilization of the resources cpu, ram, network and disk i/o is very high. Then the operation team has to scale the system to satisfy the users.
+A growing system means there will be more hardware, more software components and a more complex configuration. More people are needed to install, monitor and maintain the infrastructure and services. The traditional operations team approach has the disadvantage, that it does not scale very well and produces more costs, the bigger the system becomes. Another disadvantage is conflicting interests of the developer team and operation team. Operations teams are payed to create stability and provide a certain quality of service. But change is the biggest source of failure\cite[p.10]{site_reliability}. That's why operations teams work under the motto of 'Never change a running system'. On the other hand, a good service changes to the needs of its users. Developers get paid to deliver as much features as possible, so they want frequent change. Those are conflicting interests and they harm the whole product. For Google it's clear, that the different assumptions and tension in interests of operations and developer teams produce a lot of hidden costs.
 
-Other problems can not be detected in advance and lead to a failing system. The operation team needs to be on call and react in the case of a failure. Commonly hardware fails and then must be replaced. Or another example is that a configuration change leads to a failure and must then be fixed. In more precise words: the operation team must manage incidents.
+\section{Site Reliability Engineers maintain systems like software engineers}
 
-Google states that the operation team approach is not efficient\cite[p. 3/4]{site_reliability}. It is expensive, it does not scale very well and tension in interests because of wrong incentives.
+Operations teams developed a lot of practices to both integrate the fundamentally conflicting interests of change and stability, but also scale the operations team approach. This reduces obvious and hidden costs and makes the whole work more efficient. A lot of those practices became possible, because the infrastructure turned from pure hardware into a dynamic software defined infrastructure. Google refers to this approach as the site reliability engineering approach. It is operations how an software engineer would do it.
 
-A growing system means there will be more hardware, more software components and a more complex configuration. With the traditional operation team approach there is the disadvantage, that the growing system needs a bigger operation team. A bigger operation team produces more costs and that means it does not scale very well.
+New technologies made it possible to define all infrastructure in code. One of the first who provided an dynamic infrastructure is amazon with ec2. The technology of virtualization made provisioning and configuration to software tasks instead of hardware tasks. This is what it made automate-able. Also Docker made it easier to package software and to deploy and configure the services\footnote{See Chapter 2 'Platforms' in \cite{infra_as_code} for those technologies}.
 
-Another disadvantage is conflicting interests of the developer team and operation team. The operation team is incentived to provide a certain quality of service and therefore highly stable system is preferred. And since the greatest source of failure is change\cite[p.10]{site_reliability}, the operation team does not want to have change. Never run a changing system. On the other hand developers want to change their software very frequently, because they get paid for deliver as many features as fast as possible. This combination leads to different assumptions and a tension in interests, which produces even more costs than the scalability issue.
+With the possibility to automate the tasks an operations team has to do, there will come many benefits. The obvious value is that is scalabillity. When a task is automated and can be done by a machine, it is very cheap and easy to execute the task a lot more often. But there is a much bigger advance, which automation gives. When a task is automated it is a well defined process, which will consistently performed, where a human can easily make a mistake by manually executing the task. It can also be extended, measured and done at inconvenient times for humans\footnote{See Chapter 'Value of Automation' in \cite{site_reliability} for complete discussion of the advantages.}.
 
-\section{Site Reliability Engineers maintain applications like software engineers}
+The before one off tasks of provisioning, deploying and configuring have now well defined practices and processes. Those tasks are now reproducible because the definition or configuration of the infrastructure can now be stored in a version control system. And with automate-able deployment processes like zero downtime releases, phoenix deployment or rolling updates, those processes can be done continuously.
 
-automation value
+Operations teams have collected great knowledge on monitoring. What are the key indicators for monitoring a system. What does a good monitoring infrastructure provide. Those questions I am going to examine in detail in the upcoming sections. But very important is that monitoring can notify a human or even better trigger automated tasks, that humans do not need to be involved at all, when a problem occurs.
+
+Also incident management can partly be automated. Distributed systems like databases have nowadays automatic failovers. Issues which have been serious, major incidents before and a humans had to manually intervene can, are now automatically triggered and the systems heal themselves. Disaster recovery is now easily done, because you can automatically reprovision the whole infrastructure as mentioned before.
+
+With those practices it means that in the end this means that the conflicting interests of change and stability can nowadays be more and more integrated.
 
 \section{Monitoring to identify Problems}
 \subsection{Health checks measure availability}
 \subsection{Measuring Latency, Traffic, Errors and Saturation identifies failures and performance problems}
 \subsection{Incident Management (/Notifications) for appropriate and fast actions in case of Problems}
 
-\chapter{Metrics can indirectly measure team efficiency and software quality}
+\chapter{Metrics measure team efficiency and software quality}
 \section{Velocity and cycletime are efficiency metrics for an agile team}
 cycle time measures quality of delivery engine
 \subsection{Deploys/Week indirectly measures velocity}
 and it measures the effect of a quality delivery engine
 we want many deploys per week
 \subsection{Deploy Duration is import for cycle time}
-\section{MTTR and Failurerate measures the quality of a software}
+\section{MTTR and Failurerate measure the quality of a software}
 we want low risk per deploy to achieve MTTR and low Failure Rate
-\subsection{LOCS/Deploy indirectly measures the risk per Deploy}
+\subsection{LOCS/Deploy indirectly measures the risk per deploy}
 
 
 \part{New Practices}
@@ -118,7 +122,7 @@ solution a secific heuristic
 
 The extend to the canary releasing technique is a rolling update. It unifies phoenix replacement and canary releasing and extends it to a full deployment. You start with one server in the new version and spawn it automatically. Now it becomes part of the whole pool of servers and serves traffic as the server is ready. Now two different versions are serving traffic, just like with a canary release. But after the first step the deployment goes on and then destroys a server instance in the old version as you would do in the phoenix replacement. Then the procedure will be done multiple times until all servers of the old version are replaced by the new version.
 
-\subsection{DataDog is a Cluster Monitoring Systems as SaaS}
+\subsection{DataDog is a Cluster Monitoring Systems as a sevice}
 alternativen Graphana, Prometheus
 \subsubsection{The main components are: Datacollection, Timeseriesdatabase, Graphing and Alerting}
 \subsubsection{DataDog integrates well in Kubernetes}
@@ -152,16 +156,16 @@ operation service == operation.gapfish.com
 \section{GapFish uses tools for continuous deployment}
 \subsection{GapFish differentiates between development and operation}
 how is the deployment tradditionally done
-\subsection{Kubernetes enables GapFish to have a development and operation in one team}
+\subsection{Kubernetes enables GapFish to have development and operations in one team}
 which services are migrated to kubernetes
 
-\chapter{Implementation of Metrics: traditional vs new}
+\chapter{Metrics are implemented as logging output}
 \section{Deploys/Week}
 \section{Deploy Duration}
 \section{LOCS/Deploy}
 
 \chapter{Results}
-\section{Metrics: traditional vs. new}
+\section{Metrics: traditional vs. new approach}
 \section{theoretical/practical conclusion for deployer and cd}
 \section{for Gapfish}
 \section{Lessons learned and future}
