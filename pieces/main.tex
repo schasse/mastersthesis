@@ -1,40 +1,22 @@
 \chapter{Introduction}
-\section{Post Release Testing supports developers to efficiently do operations work}
-
-Many people talk about DevOps as well as there are multiple definitions and interpretations of the term DevOps. DevOps is referred as a philosophy, a culture, practices and specific tools. For my research, I will focus on two different aspects of the term DevOps:
-
-The first one is the perspective of operation teams. Operation teams traditionally modeled infrastructure by installing physical hardware and by manually installing software components. With the rise of virtual machines and the cloud, it became possible to model infrastructure in software\footnote{``Infrastructure as Code'' describes different dynamic infrastructure types~\cite[p. 30]{infra_as_code} and how to model those by code~\cite[p. 42]{infra_as_code}.}. Modelling via software enables operation teams to use tools and practices\footnote{In the chapter ``Software Engineering Practices for Infrastrucure''~\cite[p. 179-194]{infra_as_code} practices like version controlling, continuous integration are described.} as seen in software engineering. Infrastructure code is version controlled, tested and can be automatically deployed.
-
-The other aspect of DevOps\footnote{The book ``DevOps''~\cite{devops} is written in the view of a developer running a system.} is the perspective of developer teams. Previously developer teams were only responsible for developing new features. Software engineering practices got established and proven. One of those practices is the continuous delivery pipeline\footnote{For theoretical details on the continuous delivery pipeline read Part II of ``Continuous Delivery''~\cite[p. 103-140]{continuous_delivery} or a more practical approach by Wolff~\cite{continuous_delivery2}.}. The last step of the continuous delivery pipeline is the deployment. Formerly operation teams were responsible for deploying new features. The deployment as last step of the continuous delivery pipeline shifts a responsibility from operation to development. This shows that developer teams are becoming more and more responsible for running the software, they built.
+\section{Research Question}
+\section{Overview}
 
 In the following the structure of the thesis is outlined. Every chapter is briefly discussed, what it is about.
 
-In the fist chapter we will walk through the foundations. The chapter mentions technologies, which are used for the thesis and gives references. Furthermore it gives references to the practices which are used and are crucial for the thesis. The references are properly selected, to understand the details if they are not known and to understand what the technologies and techniques are used for. In summary those are kubernetes, continuous delivery, continuous deployment and techniques from infrastructure as code and site reliability engineering.
+In the second chapter we will walk through the foundations. The chapter mentions technologies, which are used for the thesis and gives references. Furthermore it gives references to the practices which are used and are crucial for the thesis. The references are properly selected, to understand the details if they are not known and to understand what the technologies and techniques are used for. In summary those are kubernetes, continuous delivery, continuous deployment and techniques from infrastructure as code and site reliability engineering.
 
-The second chapter is conceptual macro view to the technique nonfunction production regression testing. The text walks through the general environment and discusses the most important concepts and how they communicate with each other. The most important steps of the continous delivery pipeline are discussed and it explains how the pipeline is extended in order to have the technique of nonfunctional production regression testing. The text argues how the methodologies of nonfunctional production are embedded in the pipeline and how the pipeline must be extended.
+The third chapter is conceptual macro view to the technique nonfunction production regression testing. The text walks through the general environment and discusses the most important concepts and how they communicate with each other. The most important steps of the continous delivery pipeline are discussed and it explains how the pipeline is extended in order to have the technique of nonfunctional production regression testing. The text argues how the methodologies of nonfunctional production are embedded in the pipeline and how the pipeline must be extended.
 
-In the third chapter we will get to the concrete implementation of the nonfunctional production regression testing. The chapter will go into the details of how the concept is implemented. Concretely the software deployer is described, which was implemented in the context of this thesis.
+In the fourth chapter we will get to the concrete implementation of the nonfunctional production regression testing. The chapter will go into the details of how the concept is implemented. Concretely the software deployer is described, which was implemented in the context of this thesis.
 
-Chapter four is about the evaluation of the new approach. We will investigate the use of the technique and customized software in two different companies. The first company is Gapfish, a four year old startup, and the software department of DIN, a company which is established for a hundred years. We are going to evaluate positive outcomes, still problematic concerns and their improvements. Another part of the evaluation is the comparison to other techniques which other companies and groups developed and tested. We differentiate in their features, advantages and disadvantages.
+Chapter five is about the evaluation of the new approach. We will investigate the use of the technique and customized software in two different companies. The first company is Gapfish, a four year old startup, and the software department of DIN, a company which is established for a hundred years. We are going to evaluate positive outcomes, still problematic concerns and their improvements. Another part of the evaluation is the comparison to other techniques which other companies and groups developed and tested. We differentiate in their features, advantages and disadvantages.
 
 In the last chapter, the conclusion, the whole thesis is summarized and all the chapters are resumed. Important is the second part of the conclusion, in which we have an outlook to further improvements and how the technique can be extended to have further upgrades to delivery pipelines.
 
-\chapter{Continuous Delivery only covers practices until release}
-\section{Continous Delivery disregards security and operations topics}
-\section{Fast time to market is crucial}
-\section{Continuous monitoring is hard}
-monitoring change and trying to predict the future from data
-\section{Simple day to day work must be automated}
+\chapter{Foundations}
 
-\section{How to read this masterthesis}
-
-\chapter{State of the art technologies and practices are the foundations for NPRT}
-\section{The Continuous Delivery Pipeline consists of commit, automated testing and deployment}
-\section{Docker packages applications}
-\section{Kubernetes is a cluster operating system}
-\section{Monitoring a highly dynamic infrastructure is role centric}
-
-\chapter{Nonfunctional Production Regression Testing extends the Continuous Delivery Pipeline}
+\chapter{General Approach}
 
 Nonfunctional Production Regression Testing is the topic of the masterthesis and we will discuss the core of it in this chapter. The designation itself describes precisely what the technique and what the new practice is about. Therefore we will go shorty through every single term in the following.
 
@@ -45,6 +27,13 @@ The testing technique provides some further features, which are not included in 
 When it comes to automation and continuous, the thoughtful reader is now probably reminded of continuous integration, delivery and deployment. This testing techniques evolved naturally from those practices and extends those. Those already established practices support the developers until the software is deployed. In contrast to that, nonfunctional production regression testing, supports the developers during after the deploy and while the software runs in production.
 
 To understand the testing procedure in a whole and completely, it is necessary to show a complete overview of the whole testing and production environment. We will go through the steps of the pipeline and discuss it in a nutshell as you can see in the figures.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.8 \textwidth]{nprt}
+	\caption[GMF Dashboard View]{Nonfunction Production Regression Testing Overview.}
+	\label{fig:nprt}
+\end{figure}
 
 The steps in the very beginning are known from the established practices continuous delivery and deployment respectively. But it is necessary to touch them and integrate them to the whole picture and outline the special characteristics for the new testing technique.
 
@@ -73,23 +62,11 @@ Until this point, as it was already mentioned, it is just a usual continuous del
 The next unit is the deployer. It is the software, which is particularly implemented for this masterthesis. In the next chapter the deployer is described in detail. This chapter demonstrates how the deployer is embedded in the pipeline or in other words in the environment amongst all other tools. In the meantime tools exist, which have a similar purpose. It is crucial to have full control over the whole deployment process and as a consequence it was necessary to implement the software and have it customizable.
 
 
-\chapter{Deployer implements and automates NPRT}
-\section{Version centric testing via commit hashes}
-build, test, deploy, only 2 versions in production. undeploy a canary.
-\section{A canary and its testing metrics know about themselves}
-\section{Controlling deploys in the pipeline and manually}
-\section{Comparison of versions triggers webhooks for further actions}
-monitoring validation, fail
+\chapter{Implementation of the Approach}
 
 \chapter{Evaluation}
-\section{How NPRT changes the behaviour of development teams}
-\subsection{Deploys}
-\subsection{Cycletime}
-\subsection{Change}
-\subsection{True/False Positives/Negatives}
-\section{NPRT compared to other in production testing strategies}
-\subsection{Netflix Simian Army to intensify NPRT}
-\subsection{Synthetic Monitoring is functional post release testing}
+\section{Adoption of the approach}
+\section{Comparison of to other approaches}
 
 \chapter{Conclusion}
 \section{Resume}
