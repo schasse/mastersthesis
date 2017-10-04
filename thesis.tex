@@ -1,0 +1,34 @@
+\documentclass{lib/WileySev}
+\usepackage[a4paper]{geometry}
+
+\usepackage{lib/w-bookps}
+\usepackage[T1]{fontenc} % ä, ö, etc. in output
+\usepackage[utf8]{inputenc} % UTF8 as input
+% \usepackage{xltxtra} % xelatex: ä, ö, etc. in output
+\usepackage{graphicx}
+\graphicspath{{./figures/}}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\usepackage[style=numeric,backend=bibtex8]{biblatex}
+\bibliography{./pieces/thesis}
+
+%% \docropmarks %% turn cropmarks on
+% \draft
+% \renewcommand{\arraystretch}{0.6}
+
+
+\begin{document}
+
+% \include{pieces/title}
+% \include{pieces/copyright}
+% \include{pieces/dedication}
+% \include{pieces/abstract}
+
+\tableofcontents
+
+\include{pieces/main}
+
+\printbibliography
+
+\end{document}
