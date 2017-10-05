@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e # fail when a command exits non zero
 
-pdflatex thesis.tex
+xelatex thesis.tex
 bibtex8 -W thesis
-pdflatex thesis.tex
+xelatex thesis.tex

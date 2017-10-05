@@ -1,10 +1,42 @@
-\documentclass{report}
+\documentclass[11pt]{report}
 
 \usepackage[
 a4paper,
 total={129.78mm,210mm},
 vcentering
 ]{geometry}
+
+\usepackage{fontspec}
+\usepackage{titlesec}
+
+% format, label seperator, before code, [after code]
+\titleformat{\chapter}[display]
+{\fontspec{Source Code Pro Black}}
+{\LARGE\MakeUppercase{\chaptertitlename} \thechapter}
+{1pc}
+{\titlerule
+  \vspace{1pc}
+  \Huge}
+
+% Times New Roman
+% \setromanfont[
+% % BoldFont=Source Sans Pro Semibold,
+% % ItalicFont=Source Sans Pro Semibold,
+% % BoldItalicFont=Source Sans Pro Semibold,
+% ]{Source Sans Pro}
+% Arial
+% \setsansfont[
+% BoldFont=arialbd.ttf,
+% ItalicFont=ariali.ttf,
+% BoldItalicFont=arialbi.ttf
+% ]{arial.ttf}
+% % Courier New
+% \setmonofont[Scale=0.90,
+% BoldFont=courbd.ttf,
+% ItalicFont=couri.ttf,
+% BoldItalicFont=courbi.ttf,
+% Color={0019D4}
+% ]{cour.ttf}
 
 % \usepackage{showframe}
 
