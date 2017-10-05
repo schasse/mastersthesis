@@ -192,6 +192,99 @@ environment amongst all other tools. In the meantime tools exist, which have a s
 purpose. It is crucial to have full control over the whole deployment process and as a
 consequence it was necessary to implement the software and have it customizable.
 
+We could also implement the logic of the deploy deploy in the continuous integration
+system. But we had to decide against that, because the deploy needs full access to the
+production system and the continuous integration system is in our case outsourced to a
+third party company. We don not want to give other companies full access to another
+company. However this meant, that we had to implement some steps again, which a continuous
+integration server already implements.
+
+The deploy message, which the continuous integration system sends to the deployer,
+includes the commit hash again. And again we use the commit hash to identify the
+version. Now the deployer executes three major steps: In the first step the deployer
+fetches the code from the version control system. This is the same thing, which the
+continuous integration system does. The repository is necessary, because it holds the
+files which describe our infrastructure. We want to version control the definitions of our
+infrastructure in order to be able to to relate the version of the infrastructure to the
+version of the code and the version of the artifacts. At kubernetes those infrastructure
+definitions are made up of different resources, which were already mentioned in the
+foundations chapter.
+
+In the second step deployer modifies those infrastructure resources. The infrastructure
+should use the related docker image and be aware of its own version.
+
+And the third step or the ninth step in the figure, deployer applies the modified
+resources to the production system, which is shown in the figure as well. We note that not
+only application code changes are deployed, but also infrastructure changes. We not that
+we deploy the infrastructure changes in a continuous fashion as well.
+
+Next we go on with the process of how the production system updates itself. The production
+system is a kubernetes cluster, which the previous chapter foundations describes. For now,
+we assume, that the production system runs a typical three tier webapp. The webapp is made
+up out of a loadbalancer, multiple stateless webservers and a stateful database. The
+loadbalancer balances the requests between the webservers. And the webservers communicate
+with the database. And the database consists of a replicated cluster.
+
+We explain firmly how the typical three tier webapp is implemented in kubernetes. For more
+details refer to the references given in the foundations chapter. With kubernetes we
+define the metnioned elements with the kubernetes resources: service, deployment and its
+pods and statefulset. For simplification, we imagine the service as a loadbalancer. Then
+there is a deployment, which manages the existence of the identical pods. And lastly the
+statefulset, which manages the stateful pods, with their unique name and disk.
+
+So the loadbalancer receives a request from the client. The loadbalancer selects a pod via
+round robin and proxies the request to the pod. The pod probably communicates with the
+database and sends the request back to the client, where the loadbalancer acts again as
+proxy.
+
+We now look at the change, which happens to the production system. Earlier, deployer made
+changes to the definitions of the kubernetes resources in the deployers memory and
+communicates those changes to the production system. We are interested in particular in
+the deployments. As an illustration we only look at what happens to the deployment and the
+pods.
+
+The deployer talks to the kubernetes master api and sends the changes. The master manages
+the concrete changes. It swaps out one pod by another by stoping the pods in the old
+version and starting the pods in the new version. The procedure is called rolling
+update. Now the pods are all swapped out and run in the new version.
+
+Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
+different ways. They collect the data, we are interested in for the regression test in
+production, as well. We are talking about the nonfunctional metrics. We selected the
+metrics, defined by the four golden metrics of google's sre (identified). The metrics are
+throughput, latency, errorrate and utilization.
+
+With utilization we are lucky, because kubernetes already implements a collection of cpu
+and memory. But we need to instrument the application to collect the other metrics,
+throughput, latency and errorrate. So the pods send the instrumentation data to the
+monitoring agent. The monitoring agent is an statsd server, which collection the data and
+aggregates the data and forwards it to the monitoring system.
+
+The monitoring system consists basically out of a timeseriesdatabase, a graphing user
+interface and a alarm system. The timeseriesdatabase persists the metrics. And the user
+can define graphs from those metrics, which the user interface presents visually. You can
+define rules in the alarm system, which monitor the metrics in the timeseriesdatabase and
+then, in case the rule is violated, sends notifications.
+
+We are interested in the monitoring data of specific versions. Consequently the monitoring
+agents needs to send the monitoring labeled with the specific version to the monitoring
+system. This is important, since we want to compare the metrics of the different version.
+
+We have different possibilities to compare those version. One possibility is, that we
+compare current and historical data. For instance to compare the metrics of the current
+production system with the metrics of the production system of the day before or even the
+week before and compare the different versions of those times.
+
+We are following a different approach, because when we are comparing the current
+production system with the production system of last week, we have lots of different
+changes. The current traffic must not be the same traffic as last week, the load of the
+production system must not be the same load and other system with which the application is
+interacting with must not be the same.
+
+That is why we decided to compare two different versions which run in the production
+system concurrently. This brings not only the advantage, that you have the very same
+traffic, but also the advantage, that there is less risk involved. We illustrate the
+advantage of less risk now by showing more of the process.
 
 \chapter{Deployer implements and automates NPRT}
 \section{Version centric testing via commit hashes}
