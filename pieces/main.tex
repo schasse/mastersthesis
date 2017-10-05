@@ -284,7 +284,69 @@ interacting with must not be the same.
 That is why we decided to compare two different versions which run in the production
 system concurrently. This brings not only the advantage, that you have the very same
 traffic, but also the advantage, that there is less risk involved. We illustrate the
-advantage of less risk now by showing more of the process.
+advantage of less risk now by demonstrating the process of deploying the second version
+and comparing it to the old version.
+
+Ok, if you compare the two versions with each other, you will do at as follows. Deployer
+create another deployment resource from the one that already exists. Deployer calls this
+other deployment resource canary deployment. The creation of the canary deployment
+resource has the effect, that not only pods of version I are running in production, but
+there is pods running in version II as well. Similar to the regular deployment, the canary
+deployment defines how many pods in which version are supposed to be running.
+
+We want to test, if there is a regression respectively a degradation between the two
+versions. On account to the fact, that a regression is possible and when introducing
+change, a regression is very likely, we at least want to affect as little users. So what
+do we do for that? In our example there three pods running in version I and only one pod
+in version II. This is a ratio of three to one and due to the fact that the loadbalancer
+uses round robin as the scheduling algorithm, only one in four requests, so 25\% of the
+total traffic is sent to the pods in version II, which is to test.
+
+This certainly lowers the risk of failure and that users are affected by a
+regression. Even if the request of specific single user hits the degraded pod, the next
+request of the same user has the probability 75\% to hit the old stable version.
+
+A limitation to this technique is that the new version II needs to be able to run side by
+side with the old version I. In most cases, that means that the new version needs to be
+semantically almost identical to the old version. So version II should not provide
+functional changes compared to version I, but only nonfunctional changes. However that
+means we cannot test new feature like in an A/B test. Instead we can test performance
+improvements, refactoring or updates.
+
+Assuming we would want to test features in production, the current implementation of the
+technique is not suitable. If we wanted to do that, we would need to include the
+loadbalancer. The loadbalancer would need to remember which user is proxied to which
+version, so that the next request of that user goes to the same version, thus the user
+sees the same set of features as before. The design of the database could potentially be
+affected as well and could be needed to be loadbalanced for the users. The technique we
+just described is usually called an A/B test. The disadvantage of the A/B test is that the
+same user will hit on the same potentially degraded service and it is not that simple to
+automatically provide a stable service to the user. Due to simplification, we did decide
+to not include the implementation of the loadbalancing.
+
+We want to state that it is suboptimal to run multiple versions in the cluster like also
+mentioned in devops TODO. Rolling updates require it to be able to have two versions in
+production, though. And kubernetes utilizes rolling updates as a technique to provide zero
+downtime deployments. Accordingly our proposed technique does not introduce a worsening to
+that. But as in devops mentioned, you should avoid to run more than two versions at the
+same time in production. Deployer ensures that by either updating a deployment, creating a
+canary deployment, or creating a deployment in a new version, just before it deleted the
+canary deployment.
+
+Especially to test the latter, security updates, is absolutely appealing, since we can
+fully automate the procedure of updating the dependencies of our application in a fully
+automated and in a way, which would have a very low risk. We could have a job, which
+checks frequently for any new version, pushes the updates to the version control system,
+the continous integration system runs the pre deploy tests, deployer deploys the update
+and even in production we check the update for an regression. We could save a lot of
+developer time, who would usually need to take care of the whole updating procedure. And
+even if there is a degradation in production, a small amount requests is affected, because
+we send only a reasonable amount of traffic, which arrives at the same time, to the
+potentially degraded version. Further more we limit the time the degraded version is in
+production, because we automate detection of the degradation and the rollback to the old
+stable version.
+
+
 
 \chapter{Deployer implements and automates NPRT}
 \section{Version centric testing via commit hashes}
