@@ -313,6 +313,10 @@ functional changes compared to version I, but only nonfunctional changes. Howeve
 means we cannot test new feature like in an A/B test. Instead we can test performance
 improvements, refactoring or updates.
 
+They call this technique canary releasing. Again, you change would only change a part of
+the production system, the canary instead of the whole. Devops TODO examines this
+technique in more detail.
+
 Assuming we would want to test features in production, the current implementation of the
 technique is not suitable. If we wanted to do that, we would need to include the
 loadbalancer. The loadbalancer would need to remember which user is proxied to which
@@ -346,6 +350,35 @@ potentially degraded version. Further more we limit the time the degraded versio
 production, because we automate detection of the degradation and the rollback to the old
 stable version.
 
+Now version I and version II send metrics via the monitoring agent to the monitoring
+system. We tag the metrics with the specific version as well. The monitoring system stores
+the two comparable metrics of the two different version in the timeseriesdatabase. Now you
+can define a graph to the metrics of version I and you can too define a graph of metrics
+in version II. We then compare the two graphs by for instance substracting one from the
+other and monitor the result. We let this running for a specified time in production. We
+need to decide on how long we want to compare the versions. That depends on how much
+traffic is in production, because when we would few traffic in production, we wanted to
+compare for a longer time. We suggest to have a well balanced test scenario in terms of
+load.
+
+We do not need to generate the test traffic, we do not need to weight traffic and we do
+not need to think about edge cases. These are all advantages, that we get for free from
+the production traffic. We save time and work, because the users generate the test data,
+instead of us. The users create more requests and with that test data for parts of the
+application, which are more important. Consequently the users reasonably weight the test
+data. And lastly the longer we run the comparison in production, users will produce more
+of those edge cases, which would be hard to make up.
+
+We are aware of that the two compared versions do not receive the very same
+requests. Hence the comparison is not perfect. In future work we could extend the
+technique to achieve that. We could simply clone the requests, send the original request
+to the stable version and send a cloned request to the canary. The loadbalancer could then
+differentiate between the two responses of the two versions. We would reject the response
+of the canary. And we would forward the response of the stable version.
+
+As a result we even lower the risk, because the potentially degraded version does not even
+respond to real users. Ergo we do not have any risk of a degradation of our production
+service which we cause by testing the new version.
 
 
 \chapter{Deployer implements and automates NPRT}
