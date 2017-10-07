@@ -249,7 +249,7 @@ version and starting the pods in the new version. The procedure is called rollin
 update. Now the pods are all swapped out and run in the new version.
 
 Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
-different ways. They collect the data, we are interested in for the regression test in
+different ways. They collect the data, we are interested in, for the regression test in
 production, as well. We are talking about the nonfunctional metrics. We selected the
 metrics, defined by the four golden metrics of google's sre (identified). The metrics are
 throughput, latency, errorrate and utilization.
@@ -563,9 +563,6 @@ The other case would be that the tag is not specified in the kubernetes resource
 deployer appends the tag to the container image according to the either given commit hash
 or given tag.
 
-The sixth step is the communication with kubernetes. Deployer now sends the modified
-resources to the kubernetes api, which the last chapter already described.
-
 Sometimes something unexpected is happening during the deployment. This can be for example
 that a verification of deployer fails, such as deployer does not find the tag
 corresponding to the commit. Or maybe kubernetes api server returns an error for any
@@ -582,6 +579,61 @@ The other scenario is that a developer manually sends a deploy request. In that 
 the developer typically uses depctl. Deployer discriminates usual curl requests from
 requests with depctl. Instead of utilizing bugsnag, deployer answers with an error in the
 http response. We can do this due to the fact that the http requests are synchronous.
+
+The sixth step is the communication with kubernetes. Deployer now sends the modified
+resources to the kubernetes api, which the last chapter already described. In this chapter
+we focus on the comparison between the stable version and new version and how deployer
+deploys the canary for the new version.
+
+To deploy the canary, the client sends the deploy canary request to a separate http path ,
+which is different from the usual deploy and which deployer defines as well. The client
+needs to provide the same arguments as for the deploy request. Namely those arguments are
+the service, which is required, and either a commit hash, a tag or both. When deployer
+received the canary request, it proceeds almost identical to the deploy request. The steps
+are verification, version checkout, modification and application to the kubernetes
+api. The difference to the deploy lies in the modification step. Deployer create a new
+canary deployment resource.
+
+In the modification step deployer does not only change the container image version, but it
+also changes the name of the deployment, which would then represent another
+deployment. Deployer names this new deployment resource with the suffix canary. Since
+deployer changes the name, kubernetes does not identify the canary deployment as the
+original deployment. Instead it treads the canary deployment as a separate resource and
+creates pods for that deployment in the different version, which deployer specified.
+
+The service though, which does our loadbalancing, selects both. It selects the pods which
+were created from the original deployment. And it selects the pods, which were created
+from the canary deployment. Hence the service selects its pods on account of the
+label. And the original and the canary deployment share some of their labels, but not all
+the labels. In our example the shared label is 'deploy=webserver' and the different labels
+are 'track=stable' respectively 'track=canary'.
+
+As it was mentioned in the previous chapter, we want to have fewer pods in the canary
+version than in the stable version. Deploy does this simply by scaling the canary
+deployment to only one replica.
+
+Now we want to focus on how we collect the metrics during the two versions are in
+production. We differentiate between two different collection mechanisms. There is the
+group of metrics, which are picked up on the host. The host has information about the
+pods' utilization of cpu and memory. So on each kubernetes host, there is a monitoring
+agent running, which watches the proc directory and the docker daemon, picks up the
+information frequently and then sends it to our monitoring system.
+
+The other group is the metrics, which the application sends. We need to have the
+application instrumented in order to collect metrics like throughput, latency and
+errorrate. In practice we use the statsd protocol and statsd server for that
+purpose. There are statsd libraries for the most languages and frameworks and we get the
+instrumentation out of the box. To summarize the process of the data collection shortly,
+the instrumented application sends the data to the statsd server in each request and the
+statsd server aggregates the data. From there the statsd server forwards the aggregated
+metrics data to our monitoring system.
+
+It is important to correctly label the metrics independent from we collect the metric. The
+monitoring system is then able to distinguish between the metrics of the stable version
+and the metrics of the canary version. For the first group of metrics collection, the
+monitoring agent can pick up the label from the labeled pod. And for the second group of
+metrics collection the instrumentation code of the application picks up the label from
+environment variables, which have been set by deployer, either stable or canary.
 
 \section{Version centric testing via commit hashes}
 build, test, deploy, only 2 versions in production. undeploy a canary.
