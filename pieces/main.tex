@@ -427,8 +427,162 @@ save time not only by automization, but also by not having to write load and int
 tests with edge cases, which occur in production. And ultimately the amount of work and
 time saved comes at a low risk.
 
-
 \chapter{Deployer implements and automates NPRT}
+
+This chapter discusses the software deployer. Deployer is the implementation in account to
+the new testing procedure nonfunctional production regression testing. The chapter does
+not go into implementation details, but describes how deployer works and how to use
+deployer from a user's perspective. The chapter does not discuss the surrounding
+applications, such as implementations of version control systems, continuous integration
+systems. Whereas we discuss the monitoring system, since the testing rules for the metrics
+are implemented with it. And we will go into more detail how deployer is integrated with
+kubernetes, since this is an important part.
+
+Initially we want to mention in short the technologies we used to implement deployer. It
+is implemented in ruby and since it is a webserver, sinatra is it's framework. Deployer
+uses git and svn to communicate with the control version system. Moreover deployer has a
+plugin which sends messages to bugsnag and slack, to inform the developer in case it
+identifies a problem. Also to mention is that deployer uses kubectl to interact with
+kubernetes master. Deployer itself is containerized with docker and its natural hosting
+solution would be kubernetes. Deployer is published on github under GPL-3.0, an free
+software license.
+
+The monitoring system, which we used in our evaluation, is datadog, a commercial
+service. Nevertheless prometheus is also a suitable open source solution as monitoring
+system.
+
+Similar to the previous chapter, we demonstrate the implementation with the help of
+a figure, which shows the whole picture of the implementation. And we are going through
+the parts of the figure.
+
+As mentioned earlier, deployer is a webserver, which runs in kubernetes itself. The ... in
+the figure is the kuberntes cluster, which is also our production environment. There is a
+kubernetes resource service. The service is, as we already know, a loadbalancer and
+clients can reach deployer via an http interface. The figure show us that deployer is
+composed of multiple pods. The pods are replicated and identical in their behaviour. The
+pods are basically stateless, yet every pod has its own caching layer, which we will
+discuss in a later section. We assert, that because of the statelessness, we can scale
+deployer horizontally and can just add more pods. Along the way, deployer uses
+approximately 50 mega bytes ram and very few cpu, so resources shouldn't be a problem. A
+deploy takes about 10 seconds. This depends on the size of the repository and the download
+rate from the version control system. A request is blocking and waits for the deployment
+process to complete. Certainly we do not need a queuing system here and can scale deployer
+to the concurrent deploys we need.
+
+Next we want to go through the steps involved in the deployment process. Initially a
+client sends a http request to deployer. Therefore the client needs to authenticate via
+http basic authentication. In other words, the client authenticates via a username and
+password. As we mentioned earlier, our continuous integration system is a software as a
+service solution, and one of the reasons why we could not implement a deploy logic inside
+the continuous integration system, were security concerns. In this case the token
+authorizes to only deploy a specific version from the repository. What that means for us,
+is that the client is not able to do everything to our production system. It is for
+example not able to deploy other code than ours or read credentials from the production
+cluster.
+
+So the loadbalancer proxies the request to a pod and after deployer authenticated a valid
+user, deployer starts the deploy procedure itself. At first deployer validates the given
+arguments by the client. The deploy request requires the service to deploy and a version
+of the service. The client needs to specify either the commit hash or the tag name or
+both. The tag would additionally include the branch name, which is used for readability
+reasons.
+
+Deployer initially validates the arguments from the request. To be specific, it checks if
+the service exists in the configuration. Furthermore Deployer checks if the commit exists
+in the repository and deployer checks checks if a the tag, which is associated to the
+commit, exists for all the images, which are necessary in order to deploy the
+service. Deployer executes the latter validation by communicating with the docker
+registry. The client, which can be depctl or curl, do in contrast not have any
+validations. The reason for that is that we want to have a single definition for the
+validations.
+
+We designed the deployer deploy interface to have the option to only give either a commit
+hash or a tag, because it makes things a lot easier when a developer needs to deploy
+manually. It makes the development flow more efficient. The commit is totally sufficient
+to determine the version, so the clients usually pass the commit hash only.
+
+After deployer validated the deploy request, it then fetches the code in the version
+control system lies. When there is git as the version control system, we are using commit
+hashes and branches to determine the application version. And when there is subversion, we
+are using revision numbers. We implemented subversion, which is more of an ancient
+technology, to be able to do the evaluation with DIN legacy system.
+
+As we know, the process of cloning a repository includes persistence and disk
+interaction. That is true, but deployer uses its volume just as cache. The reason why
+there is a cache at all is of course performance. One of the bottlenecks of the deploy is
+to download the repository. If a repository is big, for instance because of images or it
+is a repository with a long history of commits, it lasts quite an amount of time to
+download it. And if the download rate, the throughput, is very low the duration is even
+longer, which is bad. Therefore deployer keeps the already downloaded repositories on
+volume, as a cache, and the next time it deploys the same repository, but in a different
+version, it only downloads the changes.
+
+As a simplification, every pod has its own cache and it is not very long living. So every
+pod utilizes its own volume as a cache, so the cache is integrated in the pod and there is
+no extra instance or communication to a caching service. Since docker containers are
+immutable, every time kubernetes recreates a pod, docker destroys the volume. Thus the old
+data is not available anymore and in other words the cache is empty again.
+
+The version control system contains not only application code, moreover it contains the
+infrastructure code as well. In kubernetes especially these infrastructure definitions are
+different resource definitions. These resources are deployments and statefulsets and so
+on. These resource defintions should be stored in the 'kubernetes' directory. This is a
+convention and deployer assumes that this is the location. If an application is not able
+to locate it there or does not want to locate it there for any reason, the configuration
+of deployer provides an option to reconfigure this location.
+
+The configuration of deployer is very little, because we designed deployer to have
+conventions. This is the design, which we know from the rails community as well. It has
+the advantage of good defaults instead and there is not the need for everyone to invent a
+good configuration.
+
+The configuration of the kubernetes resource path enables two different methodologies in
+the microservice approach. The first one is the multiple repository methodology. In that
+methodology we have for every single service or microservice a dedicated repository.
+Deployers configuration would have for each service the repository url, which would be
+sufficient. Second methodology is the single repository, which contains multiple
+microservices. There we would have multiple services defined with the identical repository
+url. However deployer can differentiate between services, due to the fact that the
+configuration for each service has a different location for the kubernetes resource
+definitions. An example for these different configurations are shown below TODO.
+
+After having the specific commit hash of the repository checked out, deployer takes the
+resources and modifies them in a next step. Especially deployments and statefulsets are
+relevant to that modification the deployer makes. In contrast to those resources, deployer
+does not modify all other resources, such as services.
+
+Deployer applies two modifications. The most important is the image version. The version
+of a docker image is specified by the docker tag. And if the deployment already specifies
+a tag, such as 'debian:wheezy', deployer does not change that tag. The reason for that is,
+that there may be containers, which the continuous integration system does not build and
+tag with the specific commit hash. Commonly another party maintains that docker image. An
+example is an additional statsd container running in pod side by side to the application
+container.
+
+The other case would be that the tag is not specified in the kubernetes resource. Then
+deployer appends the tag to the container image according to the either given commit hash
+or given tag.
+
+The sixth step is the communication with kubernetes. Deployer now sends the modified
+resources to the kubernetes api, which the last chapter already described.
+
+Sometimes something unexpected is happening during the deployment. This can be for example
+that a verification of deployer fails, such as deployer does not find the tag
+corresponding to the commit. Or maybe kubernetes api server returns an error for any
+reason. If something like the described happens, deployer will inform the developers. We
+distinguish between two scenarios. One is, when the continuous integration system
+requested the deploy. There our already mentioned bugsnag plugin takes hold. Deployer
+raises an error and the error is send to bugsnag, which collects all the errors of
+systems. Bugsnag informs the developers via sending a message to a specified slack
+channel. Slack notifies the developer who is on call about the bugsnag message and the
+developer knows about the problem. Another possibility would be, that the one who created
+the commit and triggered the deploy is informed.
+
+The other scenario is that a developer manually sends a deploy request. In that case
+the developer typically uses depctl. Deployer discriminates usual curl requests from
+requests with depctl. Instead of utilizing bugsnag, deployer answers with an error in the
+http response. We can do this due to the fact that the http requests are synchronous.
+
 \section{Version centric testing via commit hashes}
 build, test, deploy, only 2 versions in production. undeploy a canary.
 \section{A canary and its testing metrics know about themselves}
