@@ -352,14 +352,20 @@ stable version.
 
 Now version I and version II send metrics via the monitoring agent to the monitoring
 system. We tag the metrics with the specific version as well. The monitoring system stores
-the two comparable metrics of the two different version in the timeseriesdatabase. Now you
-can define a graph to the metrics of version I and you can too define a graph of metrics
-in version II. We then compare the two graphs by for instance substracting one from the
-other and monitor the result. We let this running for a specified time in production. We
-need to decide on how long we want to compare the versions. That depends on how much
-traffic is in production, because when we would few traffic in production, we wanted to
-compare for a longer time. We suggest to have a well balanced test scenario in terms of
-load.
+the two comparable metrics of the two different versions in the timeseriesdatabase. Now
+you can define a graph to the metrics of version I and you can, too, define a graph of the
+metrics in version II. We then compare the two graphs by for instance substracting one
+from the other and monitor the result. We let this running for a specified time in
+production. We need to decide on how long we want to compare the versions. That depends on
+how much traffic is in production, because when we would few traffic in production, we
+wanted to compare for a longer time. We suggest to have a well balanced test scenario in
+terms of load. The time depends on how much traffic there is in production and how often a
+team wants to deploy its application. A team which is working with a monolithic
+application has the disadvantage, that every change in every part of the software causes a
+deploy and deploys are more frequent. This limits the time in production for the
+canary. Instead if we have a microservice environment, the deploy affects only a specific
+service, hence little part of the whole application. As a result deploys are less frequent
+and we have more time for the canary in production.
 
 We do not need to generate the test traffic, we do not need to weight traffic and we do
 not need to think about edge cases. These are all advantages, that we get for free from
@@ -379,6 +385,47 @@ of the canary. And we would forward the response of the stable version.
 As a result we even lower the risk, because the potentially degraded version does not even
 respond to real users. Ergo we do not have any risk of a degradation of our production
 service which we cause by testing the new version.
+
+Now there are two different scenarios. The first one would be, that the canary runs in
+production for a certain amount time and the monitoring system does not identify any
+regression. Afterwards the monitoring system triggers the full rollout of the new
+version. It sends a deploy message of the new version to deployer, and deployer deletes
+the canary and modifies the other deployment to have the new version and the production
+system proceeds and stops and starts the pods accordingly.
+
+The other scenario is that the new version turns out to be a regression to the old
+version, or in other words, that we have a deviation, which is above a certain threshold
+and which is regression instead of an improvement. Then we want to rollback the
+canary. Our monitoring system identifies the deviation and it sends a message to deployer,
+as shown in step 12 of the figure. Accordingly our test for regression is failed.
+
+Deployer receives the rollback message and sends a deploy to the production system. Just
+to be precise, it is actually a deploy message with the commit hash of the stable version,
+which the monitoring system knows about because of the metrics it monitors. Deployer now
+modifies the infrastructure definitions that there is no canary deployment anymore and the
+production system itself takes care of deleting the canary. Since the version to deploy is
+already in production, the production system will not touch the other deployment and its
+pods.
+
+We illustrated that we are able to automate the whole testing procedure, which is the
+advantage of nonfunctional production regression testing. So we can extend the continuous
+delivery pipeline in a natural way and we support the developers not only until the
+deploy, furthermore we support the developers during run time. The pipeline is now
+advanced in a way, that even jobs, which for instance are able to update dependencies of
+an application at a very low risk. The update would go through the whole pipeline
+including tests in a testing environment, an automated deploy and tests in the production
+environment. If the nonfunctional production regression test and automated update is
+successful, developers would be completely free of work. The changes of bots would be
+robust enough to be able to act fully automated and unguarded, but we would still test the
+changes they make and can be sure to not have a major degradation to our production
+system.
+
+Finally we want to summarize, what we examined so far: The whole process of nonfunctional
+production regression testing is fully automatable, every step is determined and traceable
+throughout and even reproducible until the deploy on the basis of the commit hash. We can
+save time not only by automization, but also by not having to write load and integration
+tests with edge cases, which occur in production. And ultimately the amount of work and
+time saved comes at a low risk.
 
 
 \chapter{Deployer implements and automates NPRT}
