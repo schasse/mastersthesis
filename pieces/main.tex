@@ -628,12 +628,100 @@ the instrumented application sends the data to the statsd server in each request
 statsd server aggregates the data. From there the statsd server forwards the aggregated
 metrics data to our monitoring system.
 
-It is important to correctly label the metrics independent from we collect the metric. The
-monitoring system is then able to distinguish between the metrics of the stable version
-and the metrics of the canary version. For the first group of metrics collection, the
-monitoring agent can pick up the label from the labeled pod. And for the second group of
-metrics collection the instrumentation code of the application picks up the label from
-environment variables, which have been set by deployer, either stable or canary.
+It is important to correctly label the metrics independently from which version we collect
+the metric. The monitoring system is then able to distinguish between the metrics of the
+stable version and the metrics of the canary version. For the first group of metrics
+collection, the monitoring agent can pick up the label from the labeled pod. And for the
+second group of metrics collection the instrumentation code of the application picks up
+the label from environment variables, which have been set by deployer, either stable or
+canary.
+
+Requests to deployer are very simple. We can easily create a curl request and execute it
+from our continuous integration system. Another way to interact with deployer is to use
+the depctl command line interface. Developers use this tool to manually deploy as well as
+during development and to stage versions. Depctl is a very helpful tool, because it
+provides shortcuts to deploy a version to a staging system, without having the need to
+wait for the whole delivery pipeline. With depctl we can easily skip steps like
+tests, which would run on the continuous integration system. This makes the development
+flow more fluently.
+
+In the following we will go through the interface of deployer. Deployer provides different
+endpoints: ls, show, tags, deploy, canary and version. The design of the deployer api
+feels more like remote procedure calls instead of a restful api. This simplifies the calls
+with curl and approaches a more intuitive way of deploying a service. Nevertheless the
+endpoints are very similar to a restful api. With index, show and tags you can read the
+information services, whereas deploy and canary update the services to a specific
+version. Deployer does not provide create or delete, though. To add or remove services
+from deployer, you edit the configuration.
+
+A client speaks to deployer by either http calls or by simply using depctl command line
+interface, which wraps the http calls and assists the developer by automatically
+completing information such as the repository to deploy and the version to deploy. You
+find the http call and the corresponding depctl command in the following tables.
+
+As mentioned earlier you need to call deploy and canary on a specific repository and you
+need to provide either a commit hash, a tag or both. This call updates the service, so
+this is why we are using a http put call. An example curl request would be
+
+\begin{table}[!htbp]
+  \begin{tabular}{ l|l|l }
+    Endpoint & \texttt{depctl} command & Parameters \\
+    \hline \hline
+    \textbf{GET /} & ls & \\
+    \textbf{GET /SERVICE} & show & \\
+    \textbf{GET /SERVICE/tags} & tags & \\
+    \textbf{PUT /SERVICE/deploy} & deploy & commit, tag \\
+    \textbf{PUT /SERVICE/canary} & canary & commit, tag \\
+    \textbf{GET /version} & version & \\
+    \multicolumn{3}{l}{} % empty line
+  \end{tabular}
+
+  Examples:
+
+\begin{verbatim}
+ curl --data commit=025838f23a70f5d1df5851c31fa6e36dc0d58b9b \
+    https://auth_token:secret@deployer.company.com/gapfish/deploy
+
+ depctl deploy
+\end{verbatim}
+\end{table}
+
+The ls or index endpoint returns the configured services and the show endpoint for a
+specific service shows the current configuration for that service. The tags endpoint show
+the available tags for that service. Deployer queries the docker image registry for all
+available tags for all images in a service and returns them to the client. The version
+endpoint simply returns the deployer version.
+
+The monitoring system provides a tool, which is simply called monitor. And those monitors
+continuously evaluate metrics by given rules. So when we have the metrics in the
+timeseriesdatabase, the monitors draw continuously graphs from those timeseriesdatabase
+metrics. As an example we have a graph for our errorate. In the example we have first have
+a graph for the stable version's errorate. The errorate is very low as you expect it. The
+other graph is the graph of the canary version and this graph has some higher errorates.
+
+Next we define a composite graph. That would be the graph of the canary version and then
+subtract the graph of the stable version. So if the resulting graph goes over the
+threshold of 10 errors per second, a alarm is triggered. The monitoring sends the an alert
+to deployer, which is a deploy command with the commit hash of the stable version.
+
+The monitoring system we were using in our evaluation, was datadog. But there is also the
+opens source monitoring system prometheus, which provides very similar features. Also
+google has a similar monitoring system in there internal infrastructure.
+
+Finally in this chapter, we summarize what we have discussed so far. We went through the
+infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
+deployer has simple interface, with the two most important commands deploy and canary. We
+went through a canary deploy and saw that deployer validates the given arguments and how
+it notifies developers if an error occurs. We discussed how and what modificactions
+deployer does to the kubernetes resources. We demonstrated the different test metrics and
+how the production system sends those metrics to the test system. We went briefly through
+the deployer interface and which commands are all provided. We had a look on the
+monitoring system and the tests itself and how we rollback the canary in case the test
+fails.
+
+Another nice thing to mention about deployer, is that it deploys itself, which fits to the
+declarative model and recursion. That means we develop deployer itself with the continuous
+deployment flow and can apply nonfunctional production regression testing to deployer.
 
 \section{Version centric testing via commit hashes}
 build, test, deploy, only 2 versions in production. undeploy a canary.
