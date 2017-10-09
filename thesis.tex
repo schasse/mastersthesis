@@ -12,20 +12,25 @@ vcentering
 \usepackage{fontspec}
 \usepackage{titlesec}
 
-% \setmainfont[Path=fonts/Alegreya/]{Alegreya-Regular}
-% \setmainfont[Path=fonts/Alegreya/]{Alegreya-Regular}
-% \setmainfont[Path=fonts/Alegreya/]{Alegreya-Regular}
-% \setsansfont{Helvetica Neue LT Std}
-% \setsansfont{Helvetica LT Std}
-% \setsansfont{Source Code Pro}
-% \setromanfont{Garamond Premier Pro}
-% \setromanfont{Times LT Std}
-% \setromanfont{DTL Nobel}
-% \setromanfont{Adobe Caslon Pro}
-% \setromanfont{Walbaum MT Std}
-% \setromanfont{Baskerville MT Std}
-% \setromanfont{Source Code Pro}
-% \setmonofont{Source Code Pro}
+\setsansfont{SourceCodePro-Bold}[
+  Path=fonts/SourceCodePro/,
+  BoldFont=SourceCodePro-Black
+]
+\setromanfont{Alegreya-Regular}[Path=fonts/Alegreya/]
+\setmonofont{SourceCodePro-Medium}[Path=fonts/SourceCodePro/]
+
+\titleformat{\chapter}[block]
+{
+  \filcenter\large
+  \addtolength{\titlewidth}{2pc}%
+  \titleline*[c]{\titlerule*[.6pc]{\tiny\textbullet}}%
+  \addvspace{6pt}%
+  \LARGE\sffamily
+}
+{\thechapter}{1em}{\uppercase}
+% \titlespacing{\section}
+% {5pc}{*2}{*2}[5pc]
+
 % format, label seperator, before code, [after code]
 % \titleformat{\chapter}[display]
 % {\sffamily}
@@ -37,11 +42,11 @@ vcentering
 %   \huge
 %   \uppercase
 % }
-% \titleformat{\section}[hang]
-% {\sffamily\Large}
-% {\thesection}
-% {1pc}
-% {}
+\titleformat{\section}[hang]
+{\sffamily\large}
+{\thesection}
+{1pc}
+{}
 
 % Times New Roman
 % \setromanfont[
@@ -93,7 +98,7 @@ vcentering
 
 \tableofcontents
 
-% \include{pieces/main}
+\include{pieces/main}
 
 \printbibliography
 
