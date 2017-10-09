@@ -249,7 +249,7 @@ version and starting the pods in the new version. The procedure is called rollin
 update. Now the pods are all swapped out and run in the new version.
 
 Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
-different ways. They collect the data, we are interested in for the regression test in
+different ways. They collect the data, we are interested in, for the regression test in
 production, as well. We are talking about the nonfunctional metrics. We selected the
 metrics, defined by the four golden metrics of google's sre (identified). The metrics are
 throughput, latency, errorrate and utilization.
@@ -352,14 +352,20 @@ stable version.
 
 Now version I and version II send metrics via the monitoring agent to the monitoring
 system. We tag the metrics with the specific version as well. The monitoring system stores
-the two comparable metrics of the two different version in the timeseriesdatabase. Now you
-can define a graph to the metrics of version I and you can too define a graph of metrics
-in version II. We then compare the two graphs by for instance substracting one from the
-other and monitor the result. We let this running for a specified time in production. We
-need to decide on how long we want to compare the versions. That depends on how much
-traffic is in production, because when we would few traffic in production, we wanted to
-compare for a longer time. We suggest to have a well balanced test scenario in terms of
-load.
+the two comparable metrics of the two different versions in the timeseriesdatabase. Now
+you can define a graph to the metrics of version I and you can, too, define a graph of the
+metrics in version II. We then compare the two graphs by for instance substracting one
+from the other and monitor the result. We let this running for a specified time in
+production. We need to decide on how long we want to compare the versions. That depends on
+how much traffic is in production, because when we would few traffic in production, we
+wanted to compare for a longer time. We suggest to have a well balanced test scenario in
+terms of load. The time depends on how much traffic there is in production and how often a
+team wants to deploy its application. A team which is working with a monolithic
+application has the disadvantage, that every change in every part of the software causes a
+deploy and deploys are more frequent. This limits the time in production for the
+canary. Instead if we have a microservice environment, the deploy affects only a specific
+service, hence little part of the whole application. As a result deploys are less frequent
+and we have more time for the canary in production.
 
 We do not need to generate the test traffic, we do not need to weight traffic and we do
 not need to think about edge cases. These are all advantages, that we get for free from
@@ -380,8 +386,343 @@ As a result we even lower the risk, because the potentially degraded version doe
 respond to real users. Ergo we do not have any risk of a degradation of our production
 service which we cause by testing the new version.
 
+Now there are two different scenarios. The first one would be, that the canary runs in
+production for a certain amount time and the monitoring system does not identify any
+regression. Afterwards the monitoring system triggers the full rollout of the new
+version. It sends a deploy message of the new version to deployer, and deployer deletes
+the canary and modifies the other deployment to have the new version and the production
+system proceeds and stops and starts the pods accordingly.
+
+The other scenario is that the new version turns out to be a regression to the old
+version, or in other words, that we have a deviation, which is above a certain threshold
+and which is regression instead of an improvement. Then we want to rollback the
+canary. Our monitoring system identifies the deviation and it sends a message to deployer,
+as shown in step 12 of the figure. Accordingly our test for regression is failed.
+
+Deployer receives the rollback message and sends a deploy to the production system. Just
+to be precise, it is actually a deploy message with the commit hash of the stable version,
+which the monitoring system knows about because of the metrics it monitors. Deployer now
+modifies the infrastructure definitions that there is no canary deployment anymore and the
+production system itself takes care of deleting the canary. Since the version to deploy is
+already in production, the production system will not touch the other deployment and its
+pods.
+
+We illustrated that we are able to automate the whole testing procedure, which is the
+advantage of nonfunctional production regression testing. So we can extend the continuous
+delivery pipeline in a natural way and we support the developers not only until the
+deploy, furthermore we support the developers during run time. The pipeline is now
+advanced in a way, that even jobs, which for instance are able to update dependencies of
+an application at a very low risk. The update would go through the whole pipeline
+including tests in a testing environment, an automated deploy and tests in the production
+environment. If the nonfunctional production regression test and automated update is
+successful, developers would be completely free of work. The changes of bots would be
+robust enough to be able to act fully automated and unguarded, but we would still test the
+changes they make and can be sure to not have a major degradation to our production
+system.
+
+Finally we want to summarize, what we examined so far: The whole process of nonfunctional
+production regression testing is fully automatable, every step is determined and traceable
+throughout and even reproducible until the deploy on the basis of the commit hash. We can
+save time not only by automization, but also by not having to write load and integration
+tests with edge cases, which occur in production. And ultimately the amount of work and
+time saved comes at a low risk.
 
 \chapter{Deployer implements and automates NPRT}
+
+This chapter discusses the software deployer. Deployer is the implementation in account to
+the new testing procedure nonfunctional production regression testing. The chapter does
+not go into implementation details, but describes how deployer works and how to use
+deployer from a user's perspective. The chapter does not discuss the surrounding
+applications, such as implementations of version control systems, continuous integration
+systems. Whereas we discuss the monitoring system, since the testing rules for the metrics
+are implemented with it. And we will go into more detail how deployer is integrated with
+kubernetes, since this is an important part.
+
+Initially we want to mention in short the technologies we used to implement deployer. It
+is implemented in ruby and since it is a webserver, sinatra is it's framework. Deployer
+uses git and svn to communicate with the control version system. Moreover deployer has a
+plugin which sends messages to bugsnag and slack, to inform the developer in case it
+identifies a problem. Also to mention is that deployer uses kubectl to interact with
+kubernetes master. Deployer itself is containerized with docker and its natural hosting
+solution would be kubernetes. Deployer is published on github under GPL-3.0, an free
+software license.
+
+The monitoring system, which we used in our evaluation, is datadog, a commercial
+service. Nevertheless prometheus is also a suitable open source solution as monitoring
+system.
+
+Similar to the previous chapter, we demonstrate the implementation with the help of
+a figure, which shows the whole picture of the implementation. And we are going through
+the parts of the figure.
+
+As mentioned earlier, deployer is a webserver, which runs in kubernetes itself. The ... in
+the figure is the kuberntes cluster, which is also our production environment. There is a
+kubernetes resource service. The service is, as we already know, a loadbalancer and
+clients can reach deployer via an http interface. The figure show us that deployer is
+composed of multiple pods. The pods are replicated and identical in their behaviour. The
+pods are basically stateless, yet every pod has its own caching layer, which we will
+discuss in a later section. We assert, that because of the statelessness, we can scale
+deployer horizontally and can just add more pods. Along the way, deployer uses
+approximately 50 mega bytes ram and very few cpu, so resources shouldn't be a problem. A
+deploy takes about 10 seconds. This depends on the size of the repository and the download
+rate from the version control system. A request is blocking and waits for the deployment
+process to complete. Certainly we do not need a queuing system here and can scale deployer
+to the concurrent deploys we need.
+
+Next we want to go through the steps involved in the deployment process. Initially a
+client sends a http request to deployer. Therefore the client needs to authenticate via
+http basic authentication. In other words, the client authenticates via a username and
+password. As we mentioned earlier, our continuous integration system is a software as a
+service solution, and one of the reasons why we could not implement a deploy logic inside
+the continuous integration system, were security concerns. In this case the token
+authorizes to only deploy a specific version from the repository. What that means for us,
+is that the client is not able to do everything to our production system. It is for
+example not able to deploy other code than ours or read credentials from the production
+cluster.
+
+So the loadbalancer proxies the request to a pod and after deployer authenticated a valid
+user, deployer starts the deploy procedure itself. At first deployer validates the given
+arguments by the client. The deploy request requires the service to deploy and a version
+of the service. The client needs to specify either the commit hash or the tag name or
+both. The tag would additionally include the branch name, which is used for readability
+reasons.
+
+Deployer initially validates the arguments from the request. To be specific, it checks if
+the service exists in the configuration. Furthermore Deployer checks if the commit exists
+in the repository and deployer checks checks if a the tag, which is associated to the
+commit, exists for all the images, which are necessary in order to deploy the
+service. Deployer executes the latter validation by communicating with the docker
+registry. The client, which can be depctl or curl, do in contrast not have any
+validations. The reason for that is that we want to have a single definition for the
+validations.
+
+We designed the deployer deploy interface to have the option to only give either a commit
+hash or a tag, because it makes things a lot easier when a developer needs to deploy
+manually. It makes the development flow more efficient. The commit is totally sufficient
+to determine the version, so the clients usually pass the commit hash only.
+
+After deployer validated the deploy request, it then fetches the code in the version
+control system lies. When there is git as the version control system, we are using commit
+hashes and branches to determine the application version. And when there is subversion, we
+are using revision numbers. We implemented subversion, which is more of an ancient
+technology, to be able to do the evaluation with DIN legacy system.
+
+As we know, the process of cloning a repository includes persistence and disk
+interaction. That is true, but deployer uses its volume just as cache. The reason why
+there is a cache at all is of course performance. One of the bottlenecks of the deploy is
+to download the repository. If a repository is big, for instance because of images or it
+is a repository with a long history of commits, it lasts quite an amount of time to
+download it. And if the download rate, the throughput, is very low the duration is even
+longer, which is bad. Therefore deployer keeps the already downloaded repositories on
+volume, as a cache, and the next time it deploys the same repository, but in a different
+version, it only downloads the changes.
+
+As a simplification, every pod has its own cache and it is not very long living. So every
+pod utilizes its own volume as a cache, so the cache is integrated in the pod and there is
+no extra instance or communication to a caching service. Since docker containers are
+immutable, every time kubernetes recreates a pod, docker destroys the volume. Thus the old
+data is not available anymore and in other words the cache is empty again.
+
+The version control system contains not only application code, moreover it contains the
+infrastructure code as well. In kubernetes especially these infrastructure definitions are
+different resource definitions. These resources are deployments and statefulsets and so
+on. These resource defintions should be stored in the 'kubernetes' directory. This is a
+convention and deployer assumes that this is the location. If an application is not able
+to locate it there or does not want to locate it there for any reason, the configuration
+of deployer provides an option to reconfigure this location.
+
+The configuration of deployer is very little, because we designed deployer to have
+conventions. This is the design, which we know from the rails community as well. It has
+the advantage of good defaults instead and there is not the need for everyone to invent a
+good configuration.
+
+The configuration of the kubernetes resource path enables two different methodologies in
+the microservice approach. The first one is the multiple repository methodology. In that
+methodology we have for every single service or microservice a dedicated repository.
+Deployers configuration would have for each service the repository url, which would be
+sufficient. Second methodology is the single repository, which contains multiple
+microservices. There we would have multiple services defined with the identical repository
+url. However deployer can differentiate between services, due to the fact that the
+configuration for each service has a different location for the kubernetes resource
+definitions. An example for these different configurations are shown below TODO.
+
+After having the specific commit hash of the repository checked out, deployer takes the
+resources and modifies them in a next step. Especially deployments and statefulsets are
+relevant to that modification the deployer makes. In contrast to those resources, deployer
+does not modify all other resources, such as services.
+
+Deployer applies two modifications. The most important is the image version. The version
+of a docker image is specified by the docker tag. And if the deployment already specifies
+a tag, such as 'debian:wheezy', deployer does not change that tag. The reason for that is,
+that there may be containers, which the continuous integration system does not build and
+tag with the specific commit hash. Commonly another party maintains that docker image. An
+example is an additional statsd container running in pod side by side to the application
+container.
+
+The other case would be that the tag is not specified in the kubernetes resource. Then
+deployer appends the tag to the container image according to the either given commit hash
+or given tag.
+
+Sometimes something unexpected is happening during the deployment. This can be for example
+that a verification of deployer fails, such as deployer does not find the tag
+corresponding to the commit. Or maybe kubernetes api server returns an error for any
+reason. If something like the described happens, deployer will inform the developers. We
+distinguish between two scenarios. One is, when the continuous integration system
+requested the deploy. There our already mentioned bugsnag plugin takes hold. Deployer
+raises an error and the error is send to bugsnag, which collects all the errors of
+systems. Bugsnag informs the developers via sending a message to a specified slack
+channel. Slack notifies the developer who is on call about the bugsnag message and the
+developer knows about the problem. Another possibility would be, that the one who created
+the commit and triggered the deploy is informed.
+
+The other scenario is that a developer manually sends a deploy request. In that case
+the developer typically uses depctl. Deployer discriminates usual curl requests from
+requests with depctl. Instead of utilizing bugsnag, deployer answers with an error in the
+http response. We can do this due to the fact that the http requests are synchronous.
+
+The sixth step is the communication with kubernetes. Deployer now sends the modified
+resources to the kubernetes api, which the last chapter already described. In this chapter
+we focus on the comparison between the stable version and new version and how deployer
+deploys the canary for the new version.
+
+To deploy the canary, the client sends the deploy canary request to a separate http path ,
+which is different from the usual deploy and which deployer defines as well. The client
+needs to provide the same arguments as for the deploy request. Namely those arguments are
+the service, which is required, and either a commit hash, a tag or both. When deployer
+received the canary request, it proceeds almost identical to the deploy request. The steps
+are verification, version checkout, modification and application to the kubernetes
+api. The difference to the deploy lies in the modification step. Deployer create a new
+canary deployment resource.
+
+In the modification step deployer does not only change the container image version, but it
+also changes the name of the deployment, which would then represent another
+deployment. Deployer names this new deployment resource with the suffix canary. Since
+deployer changes the name, kubernetes does not identify the canary deployment as the
+original deployment. Instead it treads the canary deployment as a separate resource and
+creates pods for that deployment in the different version, which deployer specified.
+
+The service though, which does our loadbalancing, selects both. It selects the pods which
+were created from the original deployment. And it selects the pods, which were created
+from the canary deployment. Hence the service selects its pods on account of the
+label. And the original and the canary deployment share some of their labels, but not all
+the labels. In our example the shared label is 'deploy=webserver' and the different labels
+are 'track=stable' respectively 'track=canary'.
+
+As it was mentioned in the previous chapter, we want to have fewer pods in the canary
+version than in the stable version. Deploy does this simply by scaling the canary
+deployment to only one replica.
+
+Now we want to focus on how we collect the metrics during the two versions are in
+production. We differentiate between two different collection mechanisms. There is the
+group of metrics, which are picked up on the host. The host has information about the
+pods' utilization of cpu and memory. So on each kubernetes host, there is a monitoring
+agent running, which watches the proc directory and the docker daemon, picks up the
+information frequently and then sends it to our monitoring system.
+
+The other group is the metrics, which the application sends. We need to have the
+application instrumented in order to collect metrics like throughput, latency and
+errorrate. In practice we use the statsd protocol and statsd server for that
+purpose. There are statsd libraries for the most languages and frameworks and we get the
+instrumentation out of the box. To summarize the process of the data collection shortly,
+the instrumented application sends the data to the statsd server in each request and the
+statsd server aggregates the data. From there the statsd server forwards the aggregated
+metrics data to our monitoring system.
+
+It is important to correctly label the metrics independently from which version we collect
+the metric. The monitoring system is then able to distinguish between the metrics of the
+stable version and the metrics of the canary version. For the first group of metrics
+collection, the monitoring agent can pick up the label from the labeled pod. And for the
+second group of metrics collection the instrumentation code of the application picks up
+the label from environment variables, which have been set by deployer, either stable or
+canary.
+
+Requests to deployer are very simple. We can easily create a curl request and execute it
+from our continuous integration system. Another way to interact with deployer is to use
+the depctl command line interface. Developers use this tool to manually deploy as well as
+during development and to stage versions. Depctl is a very helpful tool, because it
+provides shortcuts to deploy a version to a staging system, without having the need to
+wait for the whole delivery pipeline. With depctl we can easily skip steps like
+tests, which would run on the continuous integration system. This makes the development
+flow more fluently.
+
+In the following we will go through the interface of deployer. Deployer provides different
+endpoints: ls, show, tags, deploy, canary and version. The design of the deployer api
+feels more like remote procedure calls instead of a restful api. This simplifies the calls
+with curl and approaches a more intuitive way of deploying a service. Nevertheless the
+endpoints are very similar to a restful api. With index, show and tags you can read the
+information services, whereas deploy and canary update the services to a specific
+version. Deployer does not provide create or delete, though. To add or remove services
+from deployer, you edit the configuration.
+
+A client speaks to deployer by either http calls or by simply using depctl command line
+interface, which wraps the http calls and assists the developer by automatically
+completing information such as the repository to deploy and the version to deploy. You
+find the http call and the corresponding depctl command in the following tables.
+
+As mentioned earlier you need to call deploy and canary on a specific repository and you
+need to provide either a commit hash, a tag or both. This call updates the service, so
+this is why we are using a http put call. An example curl request would be
+
+\begin{table}[!htbp]
+  \begin{tabular}{ l|l|l }
+    Endpoint & \texttt{depctl} command & Parameters \\
+    \hline \hline
+    \textbf{GET /} & ls & \\
+    \textbf{GET /SERVICE} & show & \\
+    \textbf{GET /SERVICE/tags} & tags & \\
+    \textbf{PUT /SERVICE/deploy} & deploy & commit, tag \\
+    \textbf{PUT /SERVICE/canary} & canary & commit, tag \\
+    \textbf{GET /version} & version & \\
+    \multicolumn{3}{l}{} % empty line
+  \end{tabular}
+
+  Examples:
+
+\begin{verbatim}
+ curl --data commit=025838f23a70f5d1df5851c31fa6e36dc0d58b9b \
+    https://auth_token:secret@deployer.company.com/gapfish/deploy
+
+ depctl deploy
+\end{verbatim}
+\end{table}
+
+The ls or index endpoint returns the configured services and the show endpoint for a
+specific service shows the current configuration for that service. The tags endpoint show
+the available tags for that service. Deployer queries the docker image registry for all
+available tags for all images in a service and returns them to the client. The version
+endpoint simply returns the deployer version.
+
+The monitoring system provides a tool, which is simply called monitor. And those monitors
+continuously evaluate metrics by given rules. So when we have the metrics in the
+timeseriesdatabase, the monitors draw continuously graphs from those timeseriesdatabase
+metrics. As an example we have a graph for our errorate. In the example we have first have
+a graph for the stable version's errorate. The errorate is very low as you expect it. The
+other graph is the graph of the canary version and this graph has some higher errorates.
+
+Next we define a composite graph. That would be the graph of the canary version and then
+subtract the graph of the stable version. So if the resulting graph goes over the
+threshold of 10 errors per second, a alarm is triggered. The monitoring sends the an alert
+to deployer, which is a deploy command with the commit hash of the stable version.
+
+The monitoring system we were using in our evaluation, was datadog. But there is also the
+opens source monitoring system prometheus, which provides very similar features. Also
+google has a similar monitoring system in there internal infrastructure.
+
+Finally in this chapter, we summarize what we have discussed so far. We went through the
+infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
+deployer has simple interface, with the two most important commands deploy and canary. We
+went through a canary deploy and saw that deployer validates the given arguments and how
+it notifies developers if an error occurs. We discussed how and what modificactions
+deployer does to the kubernetes resources. We demonstrated the different test metrics and
+how the production system sends those metrics to the test system. We went briefly through
+the deployer interface and which commands are all provided. We had a look on the
+monitoring system and the tests itself and how we rollback the canary in case the test
+fails.
+
+Another nice thing to mention about deployer, is that it deploys itself, which fits to the
+declarative model and recursion. That means we develop deployer itself with the continuous
+deployment flow and can apply nonfunctional production regression testing to deployer.
+
 \section{Version centric testing via commit hashes}
 build, test, deploy, only 2 versions in production. undeploy a canary.
 \section{A canary and its testing metrics know about themselves}
