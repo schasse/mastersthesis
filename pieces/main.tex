@@ -72,7 +72,7 @@ delivery pipelines.
 
 \chapter{The Technique: Nonfunctional Production Regression Testing}
 
-\subsubsection{the term}
+\section{defintion}
 Nonfunctional Production Regression Testing is the topic of the masterthesis and we will
 discuss the core of it in this chapter. The term itself describes precisely what the
 technique and what the new practice is about. Therefore we will go shortly through every
@@ -86,13 +86,11 @@ refering to the testing strategy. The metrics will be compared between two diffe
 versions and the latter version is tested for a regression, concretely a decline of the
 monitored metrics.
 
-\subsubsection{features not defined by the term: automatable, conintuous, deterministic, informative}
 The testing technique provides some further features, which are not included in the
 designation. Indeed the testing technique is completely automatable and you can
 continuously apply it to the new versions. The testing technique is designed in respect to
 failing as fast as possible and inform developers.
 
-\subsubsection{evolved from cd, but supports in prod}
 When it comes to automation and continuous, the thoughtful reader is now probably reminded
 of continuous integration, delivery and deployment. This testing techniques evolved
 naturally from those practices and extends those. Those already established practices
@@ -100,24 +98,23 @@ support the developers until the software is deployed. In contrast to that, nonf
 production regression testing, supports the developers during and after the deploy and
 while the software runs in production.
 
-\subsection{going through the steps: the whole picture}
+\section{the flow}
 To understand the testing procedure in a whole and completely, it is necessary to show a
 complete overview of the whole testing and production environment. We will go through the
 steps of the pipeline and discuss it in a nutshell as you can see in the figures.
 
+\subsection{usual cd}
 The steps in the very beginning are known from the established practices continuous
 delivery and deployment respectively. But it is necessary to touch them and integrate them
 to the whole picture and outline the special characteristics for the new testing
 technique.
 
-\subsubsection{the developer commits code to a vcs}
 At the very beginning, there is a developer, who changed the code locally on his working
 machine. There is also a version control system. And in the first step the developer
 commits the code to the version control system. The main focus is on git. Subversion is
 possible, too though. In the following description we will stick to the terms and notions
 of git.
 
-\subsubsection{ci: build, test, deploy}
 Next there is a continuous integration system. After the commit happened, the second step
 is a message to the continuous integration system. The message holds the information that
 a new commit exists and the continuous integration server clones the code from the version
@@ -125,12 +122,10 @@ control system and checks out the specified version. Now the continuous integrat
 has three major jobs. The first one is to start a build process, the second is to run the
 tests and the third is to give the deploy signal.
 
-\subsubsection{build}
 In step four, namely running the build, it is typical to compile binaries, render assets
 and further artifacts. For our purposes it is especially necessary to build at least one
-or multiple docker images.https://www.sharelatex.com/project/59e4a70e5a824071cbeb6575
+or multiple docker images
 
-\subsubsection{importance of commit hash}
 The import thing about this is, that we need to identify every docker image to a specific
 build. Therefore we use the commit hash, the version created by the version control
 system. This commit hash will follow us through the whole pipeline. This is important to
@@ -140,17 +135,14 @@ branch. Along the way it is mentioned, that the branch name is not absolutely ne
 definitely determine the version. The branch name is included for better readability for
 the developer and approximately recognize what the image version is about.
 
-\subsubsection{push image}
 The continuous integration server then pushes the ready build docker image to an image
 registry, such as docker hub. Nevertheless this can be a private registry as well. This
 registry serves later as an artifact repository.
 
-\subsubsection{test}
 The second continuous integration step, or in total step six, the continuous integration
 server runs the tests. There can be multiple stages, such as unit, feature or smoke
 tests. Yet we do net need to recall all the details here.
 
-\subsubsection{deploy signal: green tests}
 The last step of the continuous integration system is to send a deploy signal. In the
 shown figure this is step seven. When you look at the tests, the result could on the one
 hand be a failure or on the other hand be successful. If the tests have failed, the
@@ -159,7 +151,6 @@ it from a typical continuous integration system. If the tests have been successf
 accordingly the build including all test stages have been successful, the continuous
 integration system sends the signal to deploy.
 
-\subsubsection{deploy signal: branch}
 It makes sense to deploy only specific versions and not every commit. The practice which
 is pretty common, is that you develop new features in a seperate branch. For those version
 it is common to not send a deploy signal even though the branch build and tests are
@@ -168,13 +159,11 @@ production, even though it is a very small change. But when the decision is made
 merged into a specified branch, for instance the master branch, this version will go to
 production.
 
-\subsubsection{image build: independent from green tests and branch}
 However, just to clarify, each built image for every single version is sent, independently
 of successful tests and independently of the intention to go to production, to the image
 repository. The reason could be a staging system and even running the tests inside the
 build image. But this is just a side note.
 
-\subsubsection{until here cd}
 So the deploy signal is given when two requirements are fulfilled: the build and tests are
 successful and it is a version which is planned to go to production.
 
@@ -186,7 +175,7 @@ deployments is precondition. From now on it is becoming interesting, hence the t
 technique supports the developers post deployment in production instead of the old
 practices before the deploy.
 
-\subsubsection{deployer is customized}
+\subsection{continuous deployment with deployer}
 The next unit is the deployer. It is the software, which is particularly implemented for
 this masterthesis. In the next chapter the deployer is described in detail. This chapter
 demonstrates how the deployer is embedded in the pipeline or in other words in the
@@ -194,7 +183,6 @@ environment amongst all other tools. In the meantime tools exist, which have a s
 purpose. It is crucial to have full control over the whole deployment process and as a
 consequence it was necessary to implement the software and have it customizable.
 
-\subsubsection{why deployer is implemented as a service instead in ci}
 We could also implement the logic of the deploy deploy in the continuous integration
 system. But we had to decide against that, because the deploy needs full access to the
 production system and the continuous integration system is in our case outsourced to a
@@ -202,7 +190,6 @@ third party company. We don not want to give other companies full access to anot
 company. However this meant, that we had to implement some steps again, which a continuous
 integration server already implements.
 
-\subsubsection{commit hash identifies infrastructure definitions, deployer fetches code}
 The deploy message, which the continuous integration system sends to the deployer,
 includes the commit hash again. And again we use the commit hash to identify the
 version. Now the deployer executes three major steps: In the first step the deployer
@@ -214,17 +201,14 @@ version of the code and the version of the artifacts. At kubernetes those infras
 definitions are made up of different resources, which were already mentioned in the
 background chapter.
 
-\subsubsection{deployer modifies infrastructure definitions}
 In the second step deployer modifies those infrastructure resources. The infrastructure
 should use the related docker image and be aware of its own version.
 
-\subsubsection{send infrastructure definitions to k8s}
 And the third step or the ninth step in the figure, deployer applies the modified
 resources to the production system, which is shown in the figure as well. We note that not
 only application code changes are deployed, but also infrastructure changes. We not that
 we deploy the infrastructure changes in a continuous fashion as well.
 
-\subsubsection{production system holds a 3 tier webapp}
 Next we go on with the process of how the production system updates itself. The production
 system is a kubernetes cluster, which the previous chapter foundations describes. For now,
 we assume, that the production system runs a typical three tier webapp. The webapp is made
@@ -232,7 +216,6 @@ up out of a loadbalancer, multiple stateless webservers and a stateful database.
 loadbalancer balances the requests between the webservers. And the webservers communicate
 with the database. And the database consists of a replicated cluster.
 
-\subsubsection{three tier webapp in kubernetes}
 We explain firmly how the typical three tier webapp is implemented in kubernetes. For more
 details refer to the references given in the foundations chapter. With kubernetes we
 define the metnioned elements with the kubernetes resources: service, deployment and its
@@ -240,73 +223,64 @@ pods and statefulset. For simplification, we imagine the service as a loadbalanc
 there is a deployment, which manages the existence of the identical pods. And lastly the
 statefulset, which manages the stateful pods, with their unique name and disk.
 
-\subsubsection{loadbalancing in kubernetes}
 So the loadbalancer receives a request from the client. The loadbalancer selects a pod via
 round robin and proxies the request to the pod. The pod probably communicates with the
 database and sends the request back to the client, where the loadbalancer acts again as
 a proxy.
 
-\subsubsection{deployments are focus}
 We now look at the change, which happens to the production system. Earlier, deployer made
 changes to the definitions of the kubernetes resources in the deployers memory and
 communicates those changes to the production system. We are interested in particular in
 the deployments. As an illustration we only look at what happens to the deployment and the
 pods.
 
-\subsubsection{deployments are getting rolling update}
 The deployer talks to the kubernetes master api and sends the changes. The master manages
 the concrete changes. It swaps out one pod by another by stoping the pods in the old
 version and starting the pods in the new version. The procedure is called rolling
 update. Now the pods are all swapped out and run in the new version.
 
-\subsubsection{four metrics picked up by monitoring agents}
+\subsection{metrics collection}
 Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
 different ways. They collect the data, we are interested in, for the regression test in
 production, as well. We are talking about the nonfunctional metrics. We selected the
 metrics, defined by the four golden metrics of google's sre (identified). The metrics are
 throughput, latency, errorrate and utilization.
 
-\subsubsection{monitoring agents on hosts}
 With utilization we are lucky, because kubernetes already implements a collection of cpu
 and memory. But we need to instrument the application to collect the other metrics,
 throughput, latency and errorrate. So the pods send the instrumentation data to the
 monitoring agent. The monitoring agent is an statsd server, which collection the data and
 aggregates the data and forwards it to the monitoring system.
 
-\subsubsection{monitoring system structure}
 The monitoring system consists basically out of a timeseriesdatabase, a graphing user
 interface and a alarm system. The timeseriesdatabase persists the metrics. And the user
 can define graphs from those metrics, which the user interface presents visually. You can
 define rules in the alarm system, which monitor the metrics in the timeseriesdatabase and
 then, in case the rule is violated, sends notifications.
 
-\subsubsection{commit hash is in the label of the metrics }
 We are interested in the monitoring data of specific versions. Consequently the monitoring
 agents needs to send the monitoring labeled with the specific version to the monitoring
 system. This is important, since we want to compare the metrics of the different version.
 
-\subsubsection{possibility: comparing historical}
+\subsection{metrics comparison}
+
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
 production system with the metrics of the production system of the day before or even the
 week before and compare the different versions of those times.
 
-\subsubsection{comparing historical data has the disadvantage of different environment and
-different requests}
 We are following a different approach, because when we are comparing the current
 production system with the production system of last week, we have lots of different
 changes. The current traffic must not be the same traffic as last week, the load of the
 production system must not be the same load and other system with which the application is
 interacting with must not be the same.
 
-\subsubsection{comparing same traffic is better}
 That is why we decided to compare two different versions which run in the production
 system concurrently. This brings not only the advantage, that you have the very same
 traffic, but also the advantage, that there is less risk involved. We illustrate the
 advantage of less risk now by demonstrating the process of deploying the second version
 and comparing it to the old version.
 
-\subsubsection{how deployer deploys 2 different versions: canary}
 Ok, if you compare the two versions with each other, you will do it as follows. Deployer
 create another deployment resource from the one that already exists. Deployer calls this
 other deployment resource canary deployment. The creation of the canary deployment
@@ -314,7 +288,6 @@ resource has the effect, that not only pods of version I are running in producti
 there is pods running in version II as well. Similar to the regular deployment, the canary
 deployment defines how many pods in which version are supposed to be running.
 
-\subsubsection{low risk because small amount of traffic in new version}
 We want to test, if there is a regression respectively a degradation between the two
 versions. On account to the fact, that a regression is possible and when introducing
 change, a regression is very likely, we at least want to affect as little users. So what
@@ -327,7 +300,6 @@ This certainly lowers the risk of failure and that users are affected by a
 regression. Even if the request of specific single user hits the degraded pod, the next
 request of the same user has the probability 75\% to hit the old stable version.
 
-\subsubsection{limitation: versions must be semantically identical}
 A limitation to this technique is that the new version II needs to be able to run side by
 side with the old version I. In most cases, that means that the new version needs to be
 semantically almost identical to the old version. So version II should not provide
@@ -335,13 +307,11 @@ functional changes compared to version I, but only nonfunctional changes. Howeve
 means we cannot test new feature like in an A/B test. Instead we can test performance
 improvements, refactoring or updates.
 
-\subsubsection{usually known as canary testing}
 They call this technique canary releasing. Again, you change would only change a part of
 the production system, the canary instead of the whole. Devops TODO examines this
 technique in more detail.
 % TODO: difference to canary testing
 
-\subsubsection{difference to a/b testing features}
 Assuming we would want to test features in production, the current implementation of the
 technique is not suitable. If we wanted to do that, we would need to include the
 loadbalancer. The loadbalancer would need to remember which user is proxied to which
@@ -353,7 +323,6 @@ same user will hit on the same potentially degraded service and it is not that s
 automatically provide a stable service to the user. Due to simplification, we did decide
 to not include the implementation of the loadbalancing.
 
-\subsubsection{2 versions in production is common and unproblematic}
 We want to state that it is suboptimal to run multiple versions in the cluster like also
 mentioned in devops TODO. Rolling updates require it to be able to have two versions in
 production, though. And kubernetes utilizes rolling updates as a technique to provide zero
@@ -363,7 +332,7 @@ same time in production. Deployer ensures that by either updating a deployment, 
 canary deployment, or creating a deployment in a new version, just before it deleted the
 canary deployment.
 
-\subsubsection{automatic deployment and testing of updates saves time}
+\subsection{rollouts and rollbacks}
 Especially to test the latter, security updates, is absolutely appealing, since we can
 fully automate the procedure of updating the dependencies of our application in a fully
 automated and in a way, which would have a very low risk. We could have a job, which
@@ -372,14 +341,12 @@ the continous integration system runs the pre deploy tests, deployer deploys the
 and even in production we check the update for an regression. We could save a lot of
 developer time, who would usually need to take care of the whole updating procedure.
 
-\subsubsection{lower risk: regression triggers automatic rollback}
 And even if there is a degradation in production, a small amount of requests is affected,
 because we send only a reasonable amount of traffic, which arrives at the same time, to
 the potentially degraded version. Further more we limit the time the degraded version is
 in production, because we automate detection of the degradation and the rollback to the
 old stable version.
 
-\subsubsection{compare two graphs}
 Now version I and version II send metrics via the monitoring agent to the monitoring
 system. We tag the metrics with the specific version as well. The monitoring system stores
 the two comparable metrics of the two different versions in the timeseriesdatabase. Now
@@ -387,7 +354,6 @@ you can define a graph to the metrics of version I and you can, too, define a gr
 metrics in version II. We then compare the two graphs by for instance substracting one
 from the other and monitor the result.
 
-\subsubsection{time of comparison}
 We let this running for a specified time in production. We need to decide on how long we
 want to compare the versions. That depends on how much traffic is in production, because
 when we would few traffic in production, we wanted to compare for a longer time. We
@@ -400,35 +366,30 @@ microservice environment, the deploy affects only a specific service, hence litt
 the whole application. As a result deploys are less frequent and we have more time for the
 canary in production.
 
-\subsubsection{advantage: no need to write a test, which is good}
 We do not need to generate the test traffic, we do not need to weight traffic and we do
 not need to think about edge cases. These are all advantages, that we get for free from
 the production traffic. We save time and work, because the users generate the test data,
 instead of us.
 
-\subsubsection{advantage: test truely reflects production}
 The users create more requests and with that test data for parts of the application, which
 are more important. Consequently the users reasonably weight the test data. And lastly the
 longer we run the comparison in production, users will produce more of those edge cases,
 which would be hard to make up.
 
-\subsubsection{comparison not totally perfect: different prod traffic}
 We are aware of that the two compared versions do not receive the very same
 requests. Hence the comparison is not perfect. In future work we could extend the
 technique to achieve that.
 
-\subsubsection{alternative: cloning requests}
 We could simply clone the requests, send the original request to the stable version and
 send a cloned request to the canary. The loadbalancer could then differentiate between the
 two responses of the two versions. We would reject the response of the canary. And we
 would forward the response of the stable version.
 
-\subsubsection{cloning requests advantage: no risk of degredation}
 As a result we even lower the risk, because the potentially degraded version does not even
 respond to real users. Ergo we do not have any risk of a degradation of our production
 service which we cause by testing the new version.
 
-\subsubsection{no regression happening: normal deploy}
+\subsubsection{next deploy triggers rollout}
 Now there are two different scenarios. The first one would be, that the canary runs in
 production for a certain amount time and the monitoring system does not identify any
 regression. Afterwards the monitoring system triggers the full rollout of the new
@@ -436,14 +397,13 @@ version. It sends a deploy message of the new version to deployer, and deployer 
 the canary and modifies the other deployment to have the new version and the production
 system proceeds and stops and starts the pods accordingly.
 
-\subsubsection{regression happening: rollback}
+\subsubsection{regression triggrers rollback}
 The other scenario is that the new version turns out to be a regression to the old
 version, or in other words, that we have a deviation, which is above a certain threshold
 and which is regression instead of an improvement. Then we want to rollback the
 canary. Our monitoring system identifies the deviation and it sends a message to deployer,
 as shown in step 12 of the figure. Accordingly our test for regression is failed.
 
-\subsubsection{deployer receives request and applies to production}
 Deployer receives the rollback message and sends a deploy to the production system. Just
 to be precise, it is actually a deploy message with the commit hash of the stable version,
 which the monitoring system knows about because of the metrics it monitors. Deployer now
@@ -452,7 +412,6 @@ production system itself takes care of deleting the canary. Since the version to
 already in production, the production system will not touch the other deployment and its
 pods.
 
-\subsubsection{advantages: natural to cd, automated, low risk, timesaver, bots can trigger updates}
 We illustrated that we are able to automate the whole testing procedure, which is the
 advantage of nonfunctional production regression testing. So we can extend the continuous
 delivery pipeline in a natural way and we support the developers not only until the
@@ -466,8 +425,6 @@ robust enough to be able to act fully automated and unguarded, but we would stil
 changes they make and can be sure to not have a major degradation to our production
 system.
 
-\subsubsection{automatable, traceable, reproducible, load and integration testing for
-  free, low risk}
 Finally we want to summarize, what we examined so far: The whole process of nonfunctional
 production regression testing is fully automatable, every step is determined and traceable
 throughout and even reproducible until the deploy on the basis of the commit hash. We can
@@ -475,7 +432,7 @@ save time not only by automization, but also by not having to write load and int
 tests with edge cases, which occur in production. And ultimately the amount of work and
 time saved comes at a low risk.
 
-\chapter{Deployer implements and automates NPRT}
+\chapter{NPRT in practice}
 
 This chapter discusses the software deployer. Deployer is the implementation in account to
 the new testing procedure nonfunctional production regression testing. The chapter does
@@ -486,6 +443,7 @@ systems. Whereas we discuss the monitoring system, since the testing rules for t
 are implemented with it. And we will go into more detail how deployer is integrated with
 kubernetes, since this is an important part.
 
+\section{Technologies}
 Initially we want to mention in short the technologies we used to implement deployer. It
 is implemented in ruby and since it is a webserver, sinatra is it's framework. Deployer
 uses git and svn to communicate with the control version system. Moreover deployer has a
@@ -499,6 +457,7 @@ The monitoring system, which we used in our evaluation, is datadog, a commercial
 service. Nevertheless prometheus is also a suitable open source solution as monitoring
 system.
 
+\section{deployer archtecture}
 Similar to the previous chapter, we demonstrate the implementation with the help of
 a figure, which shows the whole picture of the implementation. And we are going through
 the parts of the figure.
@@ -517,6 +476,9 @@ rate from the version control system. A request is blocking and waits for the de
 process to complete. Certainly we do not need a queuing system here and can scale deployer
 to the concurrent deploys we need.
 
+\section{flow}
+
+\subsection{authorization}
 Next we want to go through the steps involved in the deployment process. Initially a
 client sends a http request to deployer. Therefore the client needs to authenticate via
 http basic authentication. In other words, the client authenticates via a username and
@@ -528,6 +490,7 @@ is that the client is not able to do everything to our production system. It is 
 example not able to deploy other code than ours or read credentials from the production
 cluster.
 
+\subsection{validations}
 So the loadbalancer proxies the request to a pod and after deployer authenticated a valid
 user, deployer starts the deploy procedure itself. At first deployer validates the given
 arguments by the client. The deploy request requires the service to deploy and a version
@@ -549,6 +512,7 @@ hash or a tag, because it makes things a lot easier when a developer needs to de
 manually. It makes the development flow more efficient. The commit is totally sufficient
 to determine the version, so the clients usually pass the commit hash only.
 
+\subsection{fetching code}
 After deployer validated the deploy request, it then fetches the code in the version
 control system lies. When there is git as the version control system, we are using commit
 hashes and branches to determine the application version. And when there is subversion, we
@@ -628,6 +592,7 @@ the developer typically uses depctl. Deployer discriminates usual curl requests 
 requests with depctl. Instead of utilizing bugsnag, deployer answers with an error in the
 http response. We can do this due to the fact that the http requests are synchronous.
 
+\subsection{canary creation}
 The sixth step is the communication with kubernetes. Deployer now sends the modified
 resources to the kubernetes api, which the last chapter already described. In this chapter
 we focus on the comparison between the stable version and new version and how deployer
@@ -684,6 +649,7 @@ second group of metrics collection the instrumentation code of the application p
 the label from environment variables, which have been set by deployer, either stable or
 canary.
 
+\section{interface}
 Requests to deployer are very simple. We can easily create a curl request and execute it
 from our continuous integration system. Another way to interact with deployer is to use
 the depctl command line interface. Developers use this tool to manually deploy as well as
@@ -740,6 +706,7 @@ the available tags for that service. Deployer queries the docker image registry 
 available tags for all images in a service and returns them to the client. The version
 endpoint simply returns the deployer version.
 
+\section{comparison}
 The monitoring system provides a tool, which is simply called monitor. And those monitors
 continuously evaluate metrics by given rules. So when we have the metrics in the
 timeseriesdatabase, the monitors draw continuously graphs from those timeseriesdatabase
@@ -756,6 +723,7 @@ The monitoring system we were using in our evaluation, was datadog. But there is
 opens source monitoring system prometheus, which provides very similar features. Also
 google has a similar monitoring system in there internal infrastructure.
 
+\section{summary}
 Finally in this chapter, we summarize what we have discussed so far. We went through the
 infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
 deployer has simple interface, with the two most important commands deploy and canary. We
