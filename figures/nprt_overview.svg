@@ -21,6 +21,19 @@
      id="defs4">
     <marker
        inkscape:isstock="true"
+       id="marker371119"
+       refX="5"
+       refY="3"
+       orient="auto-start-reverse"
+       inkscape:stockid="ExperimentalArrow">
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:context-stroke;stroke:#000000;stroke-opacity:1"
+         d="M 10,3 0,6 V 0 Z"
+         id="path371117" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
        id="marker310143"
        refX="5"
        refY="3"
@@ -92,7 +105,8 @@
        refY="3"
        refX="5"
        id="marker213169"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path213167"
          d="M 10,3 0,6 V 0 Z"
@@ -945,9 +959,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="621.20744"
-     inkscape:cy="441.54142"
+     inkscape:zoom="1"
+     inkscape:cx="465.08287"
+     inkscape:cy="315.69847"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1306,7 +1320,7 @@
          id="tspan79237"
          x="68.205101"
          y="933.81232"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">developer</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">Developer</tspan></text>
     <text
        id="text79245"
        y="932.1731"
@@ -1653,7 +1667,7 @@
          y="1014.4373"
          x="525.70508"
          id="tspan370759"
-         sodipodi:role="line">(1)</tspan></text>
+         sodipodi:role="line">(8)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:12.49999523px;line-height:100%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1675,7 +1689,7 @@
          y="778.18732"
          x="756.33008"
          id="tspan370767"
-         sodipodi:role="line">(8)</tspan></text>
+         sodipodi:role="line">(10)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:12.49999523px;line-height:100%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1686,7 +1700,7 @@
          id="tspan370771"
          x="478.83008"
          y="684.43732"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">(9)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">(11)</tspan></text>
     <text
        id="text370777"
        y="684.43732"
@@ -1697,7 +1711,7 @@
          y="684.43732"
          x="1001.0176"
          id="tspan370775"
-         sodipodi:role="line">(11)</tspan></text>
+         sodipodi:role="line">(13)</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:12.49999523px;line-height:100%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1708,6 +1722,34 @@
          id="tspan370779"
          x="499.45508"
          y="553.18732"
-         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">(10)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">(12)</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.99842453;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.99684899, 3.99684899;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker371119)"
+       d="m 762.04995,996.6432 c 64.98767,59.583 -56.90236,81.6426 -18.65603,3.9601"
+       id="path370949"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:12.49999523px;line-height:100%;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="788.20508"
+       y="1014.4373"
+       id="text379755"><tspan
+         sodipodi:role="line"
+         id="tspan379753"
+         x="788.20508"
+         y="1014.4373"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;stroke-width:0.93749964px">(9)</tspan></text>
+    <text
+       id="text379759"
+       y="540.2981"
+       x="639.76117"
+       style="font-style:normal;font-weight:normal;font-size:11.71874619px;line-height:100%;font-family:sans-serif;letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#00527a;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         id="tspan379757"
+         style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:12.49999523px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;fill:#00527a;stroke:none;stroke-width:0.93749964px"
+         y="540.2981"
+         x="639.76117"
+         sodipodi:role="line">Production Cluster</tspan></text>
   </g>
 </svg>

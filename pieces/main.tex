@@ -85,29 +85,31 @@ delivery pipelines.
 In nonfunctional production regression testing we compare a new version with the current
 stable version side by side in production and test if the nonfunctional metrics show a
 regression. This is nonfunctional production regression testing in one sentence.
-Nevertheless we will go through the term in more detail in the following. The approach is a
-novelty and we name the approach in the context of this thesis.
+Nevertheless we will go through the term in more detail in the following. The approach is
+a novelty and we name the approach in the context of this thesis.
 
-Nonfunctional refers to the metrics, which we evaluate in a test. They are
-nonfunctional and as a consequence generically applicable to multiple
-applications. The next word, production, refers to the environment, because we
-monitor the production application and collect the metrics from it. Finally the word regression
-refers to the testing strategy. The test compares the metrics of the two different
-versions, a stable version and a new version. We are create a canary from the new version
-in the production environment. We test the canary version for a regression, concretely a 
-decline of the monitored metrics. If the test identifies a regression, we roll back to the stable version.
+Nonfunctional refers to the metrics, which we evaluate in a test. They are nonfunctional
+and as a consequence generically applicable to multiple applications. The next word,
+production, refers to the environment, because we monitor the production application and
+collect the metrics from it. Finally the word regression refers to the testing
+strategy. The test compares the metrics of the two different versions, a stable version
+and a new version. We are create a canary from the new version in the production
+environment. We test the canary version for a regression, concretely a decline of the
+monitored metrics. If the test identifies a regression, we roll back to the stable
+version.
 
-The approach provides some further features, which are not included in the
-term. Indeed the testing approach is completely automatable and you can
-continuously apply it to the new versions. The approach is designed in respect to
-failing as fast as possible and inform developers.
+The approach provides some further features, which are not included in the term. Indeed
+the testing approach is completely automatable and you can continuously apply it to the
+new versions. The approach is designed in respect to failing as fast as possible and
+inform developers.
 
-This testing approach naturally evolves from common practices such as continuous integration,
-continuous delivery and continuous deployment and extends those practices. The already
-established practices support developers before and until the software deployment. In contrast
-to that, nonfunctional production regression testing, supports developers during and after
-the deployment. In other words it supports the developers to run applications in production, which
-formerly has been a business of operations teams.
+This testing approach naturally evolves from common practices such as continuous
+integration, continuous delivery and continuous deployment and extends those
+practices. The already established practices support developers before and until the
+software deployment. In contrast to that, nonfunctional production regression testing,
+supports developers during and after the deployment. In other words it supports the
+developers to run applications in production, which formerly has been a business of
+operations teams.
 
 \section{Pipeline Overview}
 
@@ -118,49 +120,53 @@ formerly has been a business of operations teams.
   \label{fig:nprt_flow}
 \end{figure}
 
-To understand the testing approach in a whole, it is necessary to show a
-complete overview of the whole pipeline and environment. Figure \ref{fig:nprt_flow}
-pictures this overview. In the following we will go through the steps of the pipeline
-and discuss them.
+To understand the testing approach in a whole, it is necessary to show a complete overview
+of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures this
+overview. In the following we will go through the steps of the pipeline and discuss them.
 
 \subsection{Continuous Integration is a Requirement}
 
 The first parts of the pipeline are commonly known and established practices: continuous
-integration, delivery and deployment. It is necessary, though, to touch on them and integrate them
-in the whole picture. It will illustrate important design characteristics for the new testing
-approach.
+integration, delivery and deployment. It is necessary, though, to touch on them and
+integrate them in the whole picture. It will illustrate important design characteristics
+for the new testing approach.
 
-First the developer changes some code on his local machine and creates a new version. He then 
-pushes the new version to the version control system as shown in (1).
+First the developer changes some code on his local machine and creates a new version. He
+then pushes the new version to the version control system as shown in (1).
 
-After the push of the new version, the second step
-is a message (2) to the continuous integration system. This message holds the reference of new versions and the continuous integration server pulls the new version
-from the version control system (3). Now the continuous integration system
-has three major jobs. The firstly it starts a build process, secondly it runs the
-tests and the thirdly gives the deploy signal.
+After the push of the new version, the second step is a message (2) to the continuous
+integration system. This message holds the reference of new versions and the continuous
+integration server pulls the new version from the version control system (3). Now the
+continuous integration system has three major jobs. The firstly it starts a build process,
+secondly it runs the tests and the thirdly gives the deploy signal.
 
-In step (4), namely the build, the continuous integration system typical compiles binaries, renders assets
-and may create further artifacts. For our purposes it is especially necessary to build at least one
-or multiple container images. The continuous integration system then pushes the ready built
-container image to an image repository in (5). Later the image repository serves the built images.
+In step (4), namely the build, the continuous integration system typical compiles
+binaries, renders assets and may create further artifacts. For our purposes it is
+especially necessary to build at least one or multiple container images. The continuous
+integration system then pushes the ready built container image to an image repository in
+(5). Later the image repository serves the built images.
 
-One import thing is that we need to associate every built container image with a specific version. Therefore we use the version reference, which was created by the version control
-system. It is important to
-be able to trace the version through every step in the pipeline. With this thought in
-mind, the continuous integration system tags the container image with the version reference and an extra name. Just to mention that the extra name is not absolutely necessary to
-definitely associate the container image with a version. But it turned out that a human
-readable name is very helpful to recognize a version and know what the version is about 
-at first sight. The continuous integration system derives that extra name from the branch 
-name. This tag, consisting out of the version and extra name, will follow us through the 
-whole pipeline as readable and unique reference.
+One import thing is that we need to associate every built container image with a specific
+version. Therefore we use the version reference, which was created by the version control
+system. It is important to be able to trace the version through every step in the
+pipeline. With this thought in mind, the continuous integration system tags the container
+image with the version reference and an extra name. Just to mention that the extra name is
+not absolutely necessary to definitely associate the container image with a version. But
+it turned out that a human readable name is very helpful to recognize a version and know
+what the version is about at first sight. The continuous integration system derives that
+extra name from the branch name. This tag, consisting out of the version and extra name,
+will follow us through the whole pipeline as readable and unique reference.
 
-The second continuous integration step is to run the tests. This is shown as step (6) 
-in figure \ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such as unit, feature and smoke tests. Yet we do net need to recall all the details here.
+The second continuous integration step is to run the tests. This is shown as step (6) in
+figure \ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such
+as unit, feature and smoke tests. Yet we do net need to recall all the details here.
 
-The last step of the continuous integration system is to send a deploy signal, step (7)
-in the figure. But it depends on the results of the tests, whether to send that deploy signal or not. The tests can be successful or fail. If the tests fail, the
-continuous integration system does not send a deploy message, the pipeline stops and the continuous integration system may inform the responsible developer. If the tests are successful in all test stages, the continuous
-integration system sends the deploy signal to the deployer.
+The last step of the continuous integration system is to send a deploy signal, step (7) in
+the figure. But it depends on the results of the tests, whether to send that deploy signal
+or not. The tests can be successful or fail. If the tests fail, the continuous integration
+system does not send a deploy message, the pipeline stops and the continuous integration
+system may inform the responsible developer. If the tests are successful in all test
+stages, the continuous integration system sends the deploy signal to the deployer.
 
 It makes sense to deploy only specific versions and not every commit. The practice which
 is pretty common, is that you develop new features in a seperate branch. For those version
