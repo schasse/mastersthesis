@@ -2,7 +2,7 @@
 
 for svg_figure in $(find figures -name '*.svg'); do
   pdf_name=${svg_figure%.*}.pdf
-  inkscape --export-area-drawing --without-gui \
+  inkscape --export-area-page --without-gui \
            --file=$svg_figure \
            --export-pdf=$pdf_name
 done
