@@ -78,7 +78,7 @@ delivery pipelines.
 \end{figure}
 
 
-\chapter{The Approach}
+\chapter{Approach}
 
 \section{In Short}
 
@@ -109,11 +109,11 @@ to that, nonfunctional production regression testing, supports developers during
 the deployment. In other words it supports the developers to run applications in production, which
 formerly has been a business of operations teams.
 
-\section{The Flow}
+\section{Pipeline Overview}
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=1.0 \textwidth]{nprt_overview}
+  \includegraphics[width=0.9\textheight, angle=90]{nprt_overview}
   \caption[nprtflow]{Overview of the NPRT flow.}
   \label{fig:nprt_flow}
 \end{figure}
@@ -196,25 +196,22 @@ production system and the continuous integration system is in our case outsource
 third party company. We don not want to give other companies full access to another
 company. However this meant, that we had to implement some steps again, which a continuous
 integration server already implements.
+the continuous integration system pulls the version from the version control system as well as the deployer. (2 different things: one application code, 2 infrastructure code. But good to have them both in a single repository, to have the relation.
 
-The deploy message, which the continuous integration system sends to the deployer,
-includes the commit hash again. And again we use the commit hash to identify the
-version. Now the deployer executes three major steps: In the first step the deployer
-fetches the code from the version control system. This is the same thing, which the
-continuous integration system does. The repository is necessary, because it holds the
-files which describe our infrastructure. We want to version control the definitions of our
-infrastructure in order to be able to relate the version of the infrastructure to the
-version of the code and the version of the artifacts. At kubernetes those infrastructure
+Deployer receives the deploy signal from the continuous integration system (7). It again
+includes the version reference. Now deployer executes three major steps: firstly pull infrastructure code, secondly modify the infrastructure code and thirdly send the infrastructure code to the production cluster.
+
+So in the first step deployer pulls the code from the version control system (8). The version control system holds also the
+files, which describe our infrastructure. We want to version control the infrastructure definitions of in order to be able to relate the version of the infrastructure to the
+version of the code and the version of the artifacts. In kubernetes those infrastructure
 definitions are made up of different resources, which were already mentioned in the
 background chapter.
 
-In the second step deployer modifies those infrastructure resources. The infrastructure
-should use the related docker image and be aware of its own version.
+In the second step deployer modifies those infrastructure (9) defintions in a way, that the production system uses the related container image and that the version in which it is running. The latter is
+important to later tag the metrics with running version.
 
-And the third step or the ninth step in the figure, deployer applies the modified
-resources to the production system, which is shown in the figure as well. We note that not
-only application code changes are deployed, but also infrastructure changes. We not that
-we deploy the infrastructure changes in a continuous fashion as well.
+The third step of deployer is to apply the modified
+infrastructure definitions to the production cluster, which is shown in the figure as step (10). We note that two things are changed: infrastructure changes as well as application code changes.
 
 Next we go on with the process of how the production system updates itself. The production
 system is a kubernetes cluster, which the previous chapter foundations describes. For now,
