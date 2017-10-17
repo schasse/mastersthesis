@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for svg_figure in $(find figures -name '*.svg'); do
+  pdf_name=${svg_figure%.*}.pdf
+  inkscape --export-area-drawing --without-gui \
+           --file=$svg_figure \
+           --export-pdf=$pdf_name
+done

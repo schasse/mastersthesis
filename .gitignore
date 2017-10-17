@@ -203,6 +203,7 @@ TSWLatexianTemp*
 
 # auto folder when using emacs and auctex 
 /auto/*
+/pieces/auto/*
 
 # expex forward references with \gathertags
 *-tags.tex
