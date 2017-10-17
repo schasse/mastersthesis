@@ -78,61 +78,62 @@ delivery pipelines.
 \end{figure}
 
 
-\chapter{The Technique: Nonfunctional Production Regression Testing}
+\chapter{The Approach}
 
-\section{defintion}
-Nonfunctional Production Regression Testing is the topic of the masterthesis and we will
-discuss the core of it in this chapter. The term itself describes precisely what the
-technique and what the new practice is about. Therefore we will go shortly through every
-single term in the following.
+\section{In Short}
 
-Nonfunctional refers to the metrics, which we're evaluating in the test; These metrics are
-only nonfunctional and as a consequence generically applicable to multiple
-applications. The term production refers to the environment. The metrics, which are
-collected are collected in the production environment. And finally the term regression
-refering to the testing strategy. The metrics will be compared between two different
-versions and the latter version is tested for a regression, concretely a decline of the
-monitored metrics.
+In nonfunctional production regression testing we compare a new version with the current
+stable version side by side in production and test if the nonfunctional metrics show a
+regression. This is nonfunctional production regression testing in one sentence.
+Nevertheless we will go through the term in more detail in the following. The approach is a
+novelty and we name the approach in the context of this thesis.
 
-The testing technique provides some further features, which are not included in the
-designation. Indeed the testing technique is completely automatable and you can
-continuously apply it to the new versions. The testing technique is designed in respect to
+Nonfunctional refers to the metrics, which we evaluate in a test. They are
+nonfunctional and as a consequence generically applicable to multiple
+applications. The next word, production, refers to the environment, because we
+monitor the production application and collect the metrics from it. Finally the word regression
+refers to the testing strategy. The test compares the metrics of the two different
+versions, a stable version and a new version. We are referring to the new version with canary version in the following. We test the canary version for a regression, concretely a decline of the
+monitored metrics. If the test identifies a regression, we roll back to the stable version.
+
+The approach provides some further features, which are not included in the
+term. Indeed the testing approach is completely automatable and you can
+continuously apply it to the new versions. The approach is designed in respect to
 failing as fast as possible and inform developers.
 
-When it comes to automation and continuous, the thoughtful reader is now probably reminded
-of continuous integration, delivery and deployment. This testing techniques evolved
-naturally from those practices and extends those. Those already established practices
-support the developers until the software is deployed. In contrast to that, nonfunctional
-production regression testing, supports the developers during and after the deploy and
-while the software runs in production.
+This testing approach naturally evolves from common practices such as continuous integration,
+continuous delivery and continuous deployment and extends those practices. The already
+established practices support developers before and until the software deployment. In contrast
+to that, nonfunctional production regression testing, supports developers during and after
+the deployment. In other words it supports the developers to run applications in production, which
+formerly has been a business of a operations team.
 
-\section{the flow}
+\section{The Flow}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{nprt_overview}
-  \caption[nprt_flow]{Overview of the NPRT flow.}
+  \caption[nprtflow]{Overview of the NPRT flow.}
   \label{fig:nprt_flow}
 \end{figure}
 
 To understand the testing procedure in a whole and completely, it is necessary to show a
-complete overview of the whole testing and production environment. We will go through the
-steps of the pipeline and discuss it in a nutshell as you can see in the figures.
+complete overview of the whole pipeline and environment. Figure \ref{fig:nprt_flow}
+pictures this overview. In the following we will go through the steps of the pipeline
+and discuss them.
 
-\subsection{usual cd}
-The steps in the very beginning are known from the established practices continuous
-delivery and deployment respectively. But it is necessary to touch them and integrate them
-to the whole picture and outline the special characteristics for the new testing
-technique.
+\subsection{Continuous Deployment is a Requirement}
 
-At the very beginning, there is a developer, who changed the code locally on his working
-machine. There is also a version control system. And in the first step the developer
-commits the code to the version control system. The main focus is on git. Subversion is
-possible, too though. In the following description we will stick to the terms and notions
-of git.
+The first parts of the pipeline are commonly known and established practices: continuous
+integration, delivery and deployment. It is necessary, though, to on touch them and integrate them
+in the whole picture. It will illustrate important design characteristics for the new testing
+approach.
 
-Next there is a continuous integration system. After the commit happened, the second step
-is a message to the continuous integration system. The message holds the information that
+Firstly the developer changes the code on his local machine and creates a new version. He then 
+pushes the new version to the version control system as shown in (1).
+
+After the push of the new version, the second step
+is a message (2) to the continuous integration system. This message holds the information that
 a new commit exists and the continuous integration server clones the code from the version
 control system and checks out the specified version. Now the continuous integration system
 has three major jobs. The first one is to start a build process, the second is to run the
@@ -448,7 +449,7 @@ save time not only by automization, but also by not having to write load and int
 tests with edge cases, which occur in production. And ultimately the amount of work and
 time saved comes at a low risk.
 
-\chapter{NPRT in practice}
+\chapter{In Practice}
 
 This chapter discusses the software deployer. Deployer is the implementation in account to
 the new testing procedure nonfunctional production regression testing. The chapter does
