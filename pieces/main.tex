@@ -258,58 +258,74 @@ running instances are in the stable version (red) and only one instance or in pr
 instances are in the new version (orange). The loadbalancer sends traffic to both versions
 and both versions respond to clients, which is not shown in the figure.
 
-The production cluster collects the data, in which we are interested for the regression tests.
-The collected metrics are nonfunctional metrics. We adapted those metrics from the four golden
-metrics of google's sre. The metrics are throughput, latency, errorrate and utilization.
+The production cluster collects the data, in which we are interested for the regression
+tests.  The collected metrics are nonfunctional metrics. We adapted those metrics from the
+four golden metrics of google's sre. The metrics are throughput, latency, errorrate and
+utilization.
 
-We are interested in the monitoring data of specific versions. Consequently the production cluster label the metrics
-with the specific version. This is important, since we want to compare the metrics of the different version.
-The production cluster sends those labeled metrics to the monitoring
-system (11).
+We are interested in the monitoring data of specific versions. Consequently the production
+cluster label the metrics with the specific version. This is important, since we want to
+compare the metrics of the different version.  The production cluster sends those labeled
+metrics to the monitoring system (11).
 
-The monitoring system stores
- all the metrics of the two different versions in a timeseriesdatabase. The monitoring system evaluates those metrics by drawing different graphs and diagrams and comparing those graphs with each other. One example would be that it draws two graphs for the latency in one diagram. The first latency graph is the one of the stable version. The second latency graph is the one of the new version. The monitoring system monitors now those two graphs for a regression. That means in the case of latency, that if the latency of the new version is much bigger than the latency of the stable version, the monitoring system detects this as a regression. In other words we would have a deviation of a monitored metric, which is above a certain threshold. We discuss the specific implementations of the different metrics and their comparisons in the following chapter.
+The monitoring system stores all the metrics of the two different versions in a
+timeseriesdatabase. The monitoring system evaluates those metrics by drawing different
+graphs and diagrams and comparing those graphs with each other. One example would be that
+it draws two graphs for the latency in one diagram. The first latency graph is the one of
+the stable version. The second latency graph is the one of the new version. The monitoring
+system monitors now those two graphs for a regression. That means in the case of latency,
+that if the latency of the new version is much bigger than the latency of the stable
+version, the monitoring system detects this as a regression. In other words we would have
+a deviation of a monitored metric, which is above a certain threshold. We discuss the
+specific implementations of the different metrics and their comparisons in the following
+chapter.
 
 \subsection{Rollouts and Rollbacks}
 
-Now there are two different scenarios. The first one would be, that the new version runs in
-production for a certain amount time and the monitoring system does not identify any
-regression. In this case the monitoring system does nothing. A scheduled job triggers the full rollout of the new
-version. This job sends a usual deploy message of the new version to deployer in case the new version still exists in production and was not rolled back beforehand. Deployer receives this deploy message, deletes
-the canary and modifies infrastructure definitions to have the new version as the new stable version and the production
-system proceeds and stops and starts the running instances accordingly.
+Now there are two different scenarios. The first one would be, that the new version runs
+in production for a certain amount time and the monitoring system does not identify any
+regression. In this case the monitoring system does nothing. A scheduled job triggers the
+full rollout of the new version. This job sends a usual deploy message of the new version
+to deployer in case the new version still exists in production and was not rolled back
+beforehand. Deployer receives this deploy message, deletes the canary and modifies
+infrastructure definitions to have the new version as the new stable version and the
+production system proceeds and stops and starts the running instances accordingly.
 
-The other scenario is that the new version turns out to be a regression compared to the stable
-version. In that case we want to rollback the
-new version. Our monitoring system identifies the regression and it sends a message to deployer,
-as shown in step (13) in the figure. Accordingly our test for regression is failed.
+The other scenario is that the new version turns out to be a regression compared to the
+stable version. In that case we want to rollback the new version. Our monitoring system
+identifies the regression and it sends a message to deployer, as shown in step (13) in the
+figure. Accordingly our test for regression is failed.
 
 Deployer receives the rollback message and sends a deploy to the production system. Just
 to be precise, it is actually a deploy message with the commit hash of the stable version,
-which the monitoring system is aware about because of the metrics it monitors. Deployer now
-modifies the infrastructure definitions similar to step (9). The important thing is that there must not be instances of the new version anymore. The
-production system itself takes care of deleting instances in the new version. Since instances of the stable version are already
-running in the production cluster, the production cluster does not touch the other instances.
+which the monitoring system is aware about because of the metrics it monitors. Deployer
+now modifies the infrastructure definitions similar to step (9). The important thing is
+that there must not be instances of the new version anymore. The production system itself
+takes care of deleting instances in the new version. Since instances of the stable version
+are already running in the production cluster, the production cluster does not touch the
+other instances.
 
 \section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
 advantage of nonfunctional production regression testing. We can extend the continuous
-delivery pipeline in a natural way and support developers not only until the
-deploy, furthermore we automated a part of the developer's job during run time. The pipeline is now
-advanced in a way, that we can change application code and test it without the supervision of the developers at a very low risk. The change goes through the whole pipeline
-including tests in a testing environment, an automated deploy and tests in the production
-environment. If the nonfunctional production regression test and automated deploy is
-successful, developers will be completely free of work. Potential changes of bots would be
-robust enough to be able to act fully automated and unsupervised. However we still test the
-changes they make and can be sure to not have a regression in our production
-system.
+delivery pipeline in a natural way and support developers not only until the deploy,
+furthermore we automated a part of the developer's job during run time. The pipeline is
+now advanced in a way, that we can change application code and test it without the
+supervision of the developers at a very low risk. The change goes through the whole
+pipeline including tests in a testing environment, an automated deploy and tests in the
+production environment. If the nonfunctional production regression test and automated
+deploy is successful, developers will be completely free of work. Potential changes of
+bots would be robust enough to be able to act fully automated and unsupervised. However we
+still test the changes they make and can be sure to not have a regression in our
+production system.
 
 Finally we want to summarize, what we examined so far: The whole process of nonfunctional
 production regression testing is fully automatable, every step is determined and traceable
-throughout and even reproducible until the deploy on the basis of the version reference. We save time not only by automization, but also by not having to write load and integration
-tests with edge cases, which occur in production. And ultimately the amount of work and
-time saved comes at a low risk.
+throughout and even reproducible until the deploy on the basis of the version
+reference. We save time not only by automization, but also by not having to write load and
+integration tests with edge cases, which occur in production. And ultimately the amount of
+work and time saved comes at a low risk.
 
 \chapter{In Practice}
 
