@@ -67,6 +67,19 @@ delivery pipelines.
 
 \chapter{Background}
 
+We explain firmly how the typical three tier webapp is implemented in kubernetes. For more
+details refer to the references given in the foundations chapter. With kubernetes we
+define the mentioned elements with the kubernetes resources: service, deployment and its
+pods and statefulset. For simplification, we imagine the service as a loadbalancer. Then
+there is a deployment, which manages the existence of the identical pods. And lastly the
+statefulset, which manages the stateful pods, with their unique name and disk.
+
+So the loadbalancer receives a request from the client. The loadbalancer selects a pod via
+round robin and proxies the request to the pod. The pod probably communicates with the
+database and sends the request back to the client, where the loadbalancer acts again as a
+proxy.
+
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{3tierwebapp}
@@ -203,7 +216,7 @@ and as a consequence it was necessary to implement the software and have it cust
 We could also implement the logic of the deploy deploy in the continuous integration
 system. But we had to decide against that, because the deploy needs full access to the
 production system and the continuous integration system is in our case outsourced to a
-third party company. We don not want to give other companies full access to another
+third party company. We do not want to give other companies full access to another
 company. However this meant, that we had to implement some steps again, which a continuous
 integration server already implements.  the continuous integration system pulls the
 version from the version control system as well as the deployer. (2 different things: one
@@ -231,36 +244,6 @@ The third step of deployer is to apply the modified infrastructure definitions t
 production cluster, which is shown in the figure as step (10). We note that two things are
 changed: infrastructure changes as well as application code changes.
 
-Next we go on with the process of how the production system updates itself. The production
-system is a kubernetes cluster, which the previous chapter foundations describes. For now,
-we assume, that the production system runs a typical three tier webapp. The webapp is made
-up out of a loadbalancer, multiple stateless webservers and a stateful database. The
-loadbalancer balances the requests between the webservers. And the webservers communicate
-with the database. And the database consists of a replicated cluster.
-
-We explain firmly how the typical three tier webapp is implemented in kubernetes. For more
-details refer to the references given in the foundations chapter. With kubernetes we
-define the mentioned elements with the kubernetes resources: service, deployment and its
-pods and statefulset. For simplification, we imagine the service as a loadbalancer. Then
-there is a deployment, which manages the existence of the identical pods. And lastly the
-statefulset, which manages the stateful pods, with their unique name and disk.
-
-So the loadbalancer receives a request from the client. The loadbalancer selects a pod via
-round robin and proxies the request to the pod. The pod probably communicates with the
-database and sends the request back to the client, where the loadbalancer acts again as a
-proxy.
-
-We now look at the change, which happens to the production system. Earlier, deployer made
-changes to the definitions of the kubernetes resources in the deployers memory and
-communicates those changes to the production system. We are interested in particular in
-the deployments. As an illustration we only look at what happens to the deployment and the
-pods.
-
-Deployer talks to the kubernetes master api and sends the changes. The master manages the
-concrete changes. It swaps out one pod by another by stoping the pods in the old version
-and starting the pods in the new version. The procedure is called rolling update. Now the
-pods are all swapped out and run in the new version.
-
 The production cluster receives the modified infrastructure definitions. The production
 changes the cluster state according to the definitions. Most important is that two
 versions in parallel are in the cluster. The production cluster fetches the container
@@ -268,201 +251,63 @@ image in step (11) from the image repository. The image, which the continuous in
 system built in step (4). The production cluster is aware of the specific image identified
 by the tag, which we described before.
 
+\subsection{Metrics Collection and Comparison}
+
 The figure illustrates the two different versions with two differnt colors. Most of the
 running instances are in the stable version (red) and only one instance or in practice few
 instances are in the new version (orange). The loadbalancer sends traffic to both versions
 and both versions respond to clients, which is not shown in the figure.
 
-\subsection{Metrics Collection and Comparison}
-
 The production cluster collects the data, in which we are interested for the regression tests.
 The collected metrics are nonfunctional metrics. We adapted those metrics from the four golden
 metrics of google's sre. The metrics are throughput, latency, errorrate and utilization.
 
-We are interested in the monitoring data of specific versions. Consequently the monitoring
-agents needs to send the monitoring labeled with the specific version to the monitoring
-system. This is important, since we want to compare the metrics of the different version.
+We are interested in the monitoring data of specific versions. Consequently the production cluster label the metrics
+with the specific version. This is important, since we want to compare the metrics of the different version.
+The production cluster sends those labeled metrics to the monitoring
+system (11).
 
-Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
-different ways.
+The monitoring system stores
+ all the metrics of the two different versions in a timeseriesdatabase. The monitoring system evaluates those metrics by drawing different graphs and diagrams and comparing those graphs with each other. One example would be that it draws two graphs for the latency in one diagram. The first latency graph is the one of the stable version. The second latency graph is the one of the new version. The monitoring system monitors now those two graphs for a regression. That means in the case of latency, that if the latency of the new version is much bigger than the latency of the stable version, the monitoring system detects this as a regression. In other words we would have a deviation of a monitored metric, which is above a certain threshold. We discuss the specific implementations of the different metrics and their comparisons in the following chapter.
 
-With utilization we are lucky, because kubernetes already implements a collection of cpu
-and memory. But we need to instrument the application to collect the other metrics,
-throughput, latency and errorrate. So the pods send the instrumentation data to the
-monitoring agent. The monitoring agent is an statsd server, which collection the data and
-aggregates the data and forwards it to the monitoring system.
+\subsection{Rollouts and Rollbacks}
 
-The monitoring system consists basically out of a timeseriesdatabase, a graphing user
-interface and a alarm system. The timeseriesdatabase persists the metrics. And the user
-can define graphs from those metrics, which the user interface presents visually. You can
-define rules in the alarm system, which monitor the metrics in the timeseriesdatabase and
-then, in case the rule is violated, sends notifications.
-
-We have different possibilities to compare those version. One possibility is, that we
-compare current and historical data. For instance to compare the metrics of the current
-production system with the metrics of the production system of the day before or even the
-week before and compare the different versions of those times.
-
-We are following a different approach, because when we are comparing the current
-production system with the production system of last week, we have lots of different
-changes. The current traffic must not be the same traffic as last week, the load of the
-production system must not be the same load and other system with which the application is
-interacting with must not be the same.
-
-That is why we decided to compare two different versions which run in the production
-system concurrently. This brings not only the advantage, that you have the very same
-traffic, but also the advantage, that there is less risk involved. We illustrate the
-advantage of less risk now by demonstrating the process of deploying the second version
-and comparing it to the old version.
-
-Ok, if you compare the two versions with each other, you will do it as follows. Deployer
-create another deployment resource from the one that already exists. Deployer calls this
-other deployment resource canary deployment. The creation of the canary deployment
-resource has the effect, that not only pods of version I are running in production, but
-there is pods running in version II as well. Similar to the regular deployment, the canary
-deployment defines how many pods in which version are supposed to be running.
-
-We want to test, if there is a regression respectively a degradation between the two
-versions. On account to the fact, that a regression is possible and when introducing
-change, a regression is very likely, we at least want to affect as little users. So what
-do we do for that? In our example there three pods running in version I and only one pod
-in version II. This is a ratio of three to one and due to the fact that the loadbalancer
-uses round robin as the scheduling algorithm, only one in four requests, so 25\% of the
-total traffic is sent to the pods in version II, which is to test.
-
-This certainly lowers the risk of failure and that users are affected by a
-regression. Even if the request of specific single user hits the degraded pod, the next
-request of the same user has the probability 75\% to hit the old stable version.
-
-A limitation to this technique is that the new version II needs to be able to run side by
-side with the old version I. In most cases, that means that the new version needs to be
-semantically almost identical to the old version. So version II should not provide
-functional changes compared to version I, but only nonfunctional changes. However that
-means we cannot test new feature like in an A/B test. Instead we can test performance
-improvements, refactoring or updates.
-
-They call this technique canary releasing. Again, you change would only change a part of
-the production system, the canary instead of the whole. Devops TODO examines this
-technique in more detail.
-% TODO: difference to canary testing
-
-Assuming we would want to test features in production, the current implementation of the
-technique is not suitable. If we wanted to do that, we would need to include the
-loadbalancer. The loadbalancer would need to remember which user is proxied to which
-version, so that the next request of that user goes to the same version, thus the user
-sees the same set of features as before. The design of the database could potentially be
-affected as well and could be needed to be loadbalanced for the users. The technique we
-just described is usually called an A/B test. The disadvantage of the A/B test is that the
-same user will hit on the same potentially degraded service and it is not that simple to
-automatically provide a stable service to the user. Due to simplification, we did decide
-to not include the implementation of the loadbalancing.
-
-We want to state that it is suboptimal to run multiple versions in the cluster like also
-mentioned in devops TODO. Rolling updates require it to be able to have two versions in
-production, though. And kubernetes utilizes rolling updates as a technique to provide zero
-downtime deployments. Accordingly our proposed technique does not introduce a worsening to
-that. But as in devops mentioned, you should avoid to run more than two versions at the
-same time in production. Deployer ensures that by either updating a deployment, creating a
-canary deployment, or creating a deployment in a new version, just before it deleted the
-canary deployment.
-
-\subsection{rollouts and rollbacks}
-Especially to test the latter, security updates, is absolutely appealing, since we can
-fully automate the procedure of updating the dependencies of our application in a fully
-automated and in a way, which would have a very low risk. We could have a job, which
-checks frequently for any new version, pushes the updates to the version control system,
-the continous integration system runs the pre deploy tests, deployer deploys the update
-and even in production we check the update for an regression. We could save a lot of
-developer time, who would usually need to take care of the whole updating procedure.
-
-And even if there is a degradation in production, a small amount of requests is affected,
-because we send only a reasonable amount of traffic, which arrives at the same time, to
-the potentially degraded version. Further more we limit the time the degraded version is
-in production, because we automate detection of the degradation and the rollback to the
-old stable version.
-
-Now version I and version II send metrics via the monitoring agent to the monitoring
-system. We tag the metrics with the specific version as well. The monitoring system stores
-the two comparable metrics of the two different versions in the timeseriesdatabase. Now
-you can define a graph to the metrics of version I and you can, too, define a graph of the
-metrics in version II. We then compare the two graphs by for instance substracting one
-from the other and monitor the result.
-
-We let this running for a specified time in production. We need to decide on how long we
-want to compare the versions. That depends on how much traffic is in production, because
-when we would few traffic in production, we wanted to compare for a longer time. We
-suggest to have a well balanced test scenario in terms of load. The time depends on how
-much traffic there is in production and how often a team wants to deploy its
-application. A team which is working with a monolithic application has the disadvantage,
-that every change in every part of the software causes a deploy and deploys are more
-frequent. This limits the time in production for the canary. Instead if we have a
-microservice environment, the deploy affects only a specific service, hence little part of
-the whole application. As a result deploys are less frequent and we have more time for the
-canary in production.
-
-We do not need to generate the test traffic, we do not need to weight traffic and we do
-not need to think about edge cases. These are all advantages, that we get for free from
-the production traffic. We save time and work, because the users generate the test data,
-instead of us.
-
-The users create more requests and with that test data for parts of the application, which
-are more important. Consequently the users reasonably weight the test data. And lastly the
-longer we run the comparison in production, users will produce more of those edge cases,
-which would be hard to make up.
-
-We are aware of that the two compared versions do not receive the very same
-requests. Hence the comparison is not perfect. In future work we could extend the
-technique to achieve that.
-
-We could simply clone the requests, send the original request to the stable version and
-send a cloned request to the canary. The loadbalancer could then differentiate between the
-two responses of the two versions. We would reject the response of the canary. And we
-would forward the response of the stable version.
-
-As a result we even lower the risk, because the potentially degraded version does not even
-respond to real users. Ergo we do not have any risk of a degradation of our production
-service which we cause by testing the new version.
-
-\subsubsection{next deploy triggers rollout}
-Now there are two different scenarios. The first one would be, that the canary runs in
+Now there are two different scenarios. The first one would be, that the new version runs in
 production for a certain amount time and the monitoring system does not identify any
-regression. Afterwards the monitoring system triggers the full rollout of the new
-version. It sends a deploy message of the new version to deployer, and deployer deletes
-the canary and modifies the other deployment to have the new version and the production
-system proceeds and stops and starts the pods accordingly.
+regression. In this case the monitoring system does nothing. A scheduled job triggers the full rollout of the new
+version. This job sends a usual deploy message of the new version to deployer in case the new version still exists in production and was not rolled back beforehand. Deployer receives this deploy message, deletes
+the canary and modifies infrastructure definitions to have the new version as the new stable version and the production
+system proceeds and stops and starts the running instances accordingly.
 
-\subsubsection{regression triggrers rollback}
-The other scenario is that the new version turns out to be a regression to the old
-version, or in other words, that we have a deviation, which is above a certain threshold
-and which is regression instead of an improvement. Then we want to rollback the
-canary. Our monitoring system identifies the deviation and it sends a message to deployer,
-as shown in step 12 of the figure. Accordingly our test for regression is failed.
+The other scenario is that the new version turns out to be a regression compared to the stable
+version. In that case we want to rollback the
+new version. Our monitoring system identifies the regression and it sends a message to deployer,
+as shown in step (13) in the figure. Accordingly our test for regression is failed.
 
 Deployer receives the rollback message and sends a deploy to the production system. Just
 to be precise, it is actually a deploy message with the commit hash of the stable version,
-which the monitoring system knows about because of the metrics it monitors. Deployer now
-modifies the infrastructure definitions that there is no canary deployment anymore and the
-production system itself takes care of deleting the canary. Since the version to deploy is
-already in production, the production system will not touch the other deployment and its
-pods.
+which the monitoring system is aware about because of the metrics it monitors. Deployer now
+modifies the infrastructure definitions similar to step (9). The important thing is that there must not be instances of the new version anymore. The
+production system itself takes care of deleting instances in the new version. Since instances of the stable version are already
+running in the production cluster, the production cluster does not touch the other instances.
+
+\section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of nonfunctional production regression testing. So we can extend the continuous
-delivery pipeline in a natural way and we support the developers not only until the
-deploy, furthermore we support the developers during run time. The pipeline is now
-advanced in a way, that even jobs, which for instance are able to update dependencies of
-an application at a very low risk. The update would go through the whole pipeline
+advantage of nonfunctional production regression testing. We can extend the continuous
+delivery pipeline in a natural way and support developers not only until the
+deploy, furthermore we automated a part of the developer's job during run time. The pipeline is now
+advanced in a way, that we can change application code and test it without the supervision of the developers at a very low risk. The change goes through the whole pipeline
 including tests in a testing environment, an automated deploy and tests in the production
-environment. If the nonfunctional production regression test and automated update is
-successful, developers would be completely free of work. The changes of bots would be
-robust enough to be able to act fully automated and unguarded, but we would still test the
-changes they make and can be sure to not have a major degradation to our production
+environment. If the nonfunctional production regression test and automated deploy is
+successful, developers will be completely free of work. Potential changes of bots would be
+robust enough to be able to act fully automated and unsupervised. However we still test the
+changes they make and can be sure to not have a regression in our production
 system.
 
 Finally we want to summarize, what we examined so far: The whole process of nonfunctional
 production regression testing is fully automatable, every step is determined and traceable
-throughout and even reproducible until the deploy on the basis of the commit hash. We can
-save time not only by automization, but also by not having to write load and integration
+throughout and even reproducible until the deploy on the basis of the version reference. We save time not only by automization, but also by not having to write load and integration
 tests with edge cases, which occur in production. And ultimately the amount of work and
 time saved comes at a low risk.
 
@@ -683,6 +528,17 @@ second group of metrics collection the instrumentation code of the application p
 the label from environment variables, which have been set by deployer, either stable or
 canary.
 
+We now look at the change, which happens to the production system. Earlier, deployer made
+changes to the definitions of the kubernetes resources in the deployers memory and
+communicates those changes to the production system. We are interested in particular in
+the deployments. As an illustration we only look at what happens to the deployment and the
+pods.
+
+Deployer talks to the kubernetes master api and sends the changes. The master manages the
+concrete changes. It swaps out one pod by another by stoping the pods in the old version
+and starting the pods in the new version. The procedure is called rolling update. Now the
+pods are all swapped out and run in the new version.
+
 \section{interface}
 Requests to deployer are very simple. We can easily create a curl request and execute it
 from our continuous integration system. Another way to interact with deployer is to use
@@ -741,6 +597,22 @@ available tags for all images in a service and returns them to the client. The v
 endpoint simply returns the deployer version.
 
 \section{comparison}
+
+Another part of the cluster are the monitoring agents. They pick up monitoring metrics in
+different ways.
+
+With utilization we are lucky, because kubernetes already implements a collection of cpu
+and memory. But we need to instrument the application to collect the other metrics,
+throughput, latency and errorrate. So the pods send the instrumentation data to the
+monitoring agent. The monitoring agent is an statsd server, which collection the data and
+aggregates the data and forwards it to the monitoring system.
+
+The monitoring system consists basically out of a timeseriesdatabase, a graphing user
+interface and a alarm system. The timeseriesdatabase persists the metrics. And the user
+can define graphs from those metrics, which the user interface presents visually. You can
+define rules in the alarm system, which monitor the metrics in the timeseriesdatabase and
+then, in case the rule is violated, sends notifications.
+
 The monitoring system provides a tool, which is simply called monitor. And those monitors
 continuously evaluate metrics by given rules. So when we have the metrics in the
 timeseriesdatabase, the monitors draw continuously graphs from those timeseriesdatabase
@@ -774,6 +646,124 @@ declarative model and recursion. That means we develop deployer itself with the 
 deployment flow and can apply nonfunctional production regression testing to deployer.
 
 \chapter{Evaluation}
+
+We have different possibilities to compare those version. One possibility is, that we
+compare current and historical data. For instance to compare the metrics of the current
+production system with the metrics of the production system of the day before or even the
+week before and compare the different versions of those times.
+
+We are following a different approach, because when we are comparing the current
+production system with the production system of last week, we have lots of different
+changes. The current traffic must not be the same traffic as last week, the load of the
+production system must not be the same load and other system with which the application is
+interacting with must not be the same.
+
+That is why we decided to compare two different versions which run in the production
+system concurrently. This brings not only the advantage, that you have the very same
+traffic, but also the advantage, that there is less risk involved. We illustrate the
+advantage of less risk now by demonstrating the process of deploying the second version
+and comparing it to the old version.
+
+Ok, if you compare the two versions with each other, you will do it as follows. Deployer
+create another deployment resource from the one that already exists. Deployer calls this
+other deployment resource canary deployment. The creation of the canary deployment
+resource has the effect, that not only pods of version I are running in production, but
+there is pods running in version II as well. Similar to the regular deployment, the canary
+deployment defines how many pods in which version are supposed to be running.
+
+We want to test, if there is a regression respectively a degradation between the two
+versions. On account to the fact, that a regression is possible and when introducing
+change, a regression is very likely, we at least want to affect as little users. So what
+do we do for that? In our example there three pods running in version I and only one pod
+in version II. This is a ratio of three to one and due to the fact that the loadbalancer
+uses round robin as the scheduling algorithm, only one in four requests, so 25\% of the
+total traffic is sent to the pods in version II, which is to test.
+
+This certainly lowers the risk of failure and that users are affected by a
+regression. Even if the request of specific single user hits the degraded pod, the next
+request of the same user has the probability 75\% to hit the old stable version.
+
+A limitation to this technique is that the new version II needs to be able to run side by
+side with the old version I. In most cases, that means that the new version needs to be
+semantically almost identical to the old version. So version II should not provide
+functional changes compared to version I, but only nonfunctional changes. However that
+means we cannot test new feature like in an A/B test. Instead we can test performance
+improvements, refactoring or updates.
+
+They call this technique canary releasing. Again, you change would only change a part of
+the production system, the canary instead of the whole. Devops TODO examines this
+technique in more detail.
+% TODO: difference to canary testing
+
+Assuming we would want to test features in production, the current implementation of the
+technique is not suitable. If we wanted to do that, we would need to include the
+loadbalancer. The loadbalancer would need to remember which user is proxied to which
+version, so that the next request of that user goes to the same version, thus the user
+sees the same set of features as before. The design of the database could potentially be
+affected as well and could be needed to be loadbalanced for the users. The technique we
+just described is usually called an A/B test. The disadvantage of the A/B test is that the
+same user will hit on the same potentially degraded service and it is not that simple to
+automatically provide a stable service to the user. Due to simplification, we did decide
+to not include the implementation of the loadbalancing.
+
+We want to state that it is suboptimal to run multiple versions in the cluster like also
+mentioned in devops TODO. Rolling updates require it to be able to have two versions in
+production, though. And kubernetes utilizes rolling updates as a technique to provide zero
+downtime deployments. Accordingly our proposed technique does not introduce a worsening to
+that. But as in devops mentioned, you should avoid to run more than two versions at the
+same time in production. Deployer ensures that by either updating a deployment, creating a
+canary deployment, or creating a deployment in a new version, just before it deleted the
+canary deployment.
+
+Especially to test the latter, security updates, is absolutely appealing, since we can
+fully automate the procedure of updating the dependencies of our application in a fully
+automated and in a way, which would have a very low risk. We could have a job, which
+checks frequently for any new version, pushes the updates to the version control system,
+the continous integration system runs the pre deploy tests, deployer deploys the update
+and even in production we check the update for an regression. We could save a lot of
+developer time, who would usually need to take care of the whole updating procedure.
+
+And even if there is a degradation in production, a small amount of requests is affected,
+because we send only a reasonable amount of traffic, which arrives at the same time, to
+the potentially degraded version. Further more we limit the time the degraded version is
+in production, because we automate detection of the degradation and the rollback to the
+old stable version.
+
+
+We let this running for a specified time in production. We need to decide on how long we
+want to compare the versions. That depends on how much traffic is in production, because
+when we would few traffic in production, we wanted to compare for a longer time. We
+suggest to have a well balanced test scenario in terms of load. The time depends on how
+much traffic there is in production and how often a team wants to deploy its
+application. A team which is working with a monolithic application has the disadvantage,
+that every change in every part of the software causes a deploy and deploys are more
+frequent. This limits the time in production for the canary. Instead if we have a
+microservice environment, the deploy affects only a specific service, hence little part of
+the whole application. As a result deploys are less frequent and we have more time for the
+canary in production.
+
+We do not need to generate the test traffic, we do not need to weight traffic and we do
+not need to think about edge cases. These are all advantages, that we get for free from
+the production traffic. We save time and work, because the users generate the test data,
+instead of us.
+
+The users create more requests and with that test data for parts of the application, which
+are more important. Consequently the users reasonably weight the test data. And lastly the
+longer we run the comparison in production, users will produce more of those edge cases,
+which would be hard to make up.
+
+We are aware of that the two compared versions do not receive the very same
+requests. Hence the comparison is not perfect. In future work we could extend the
+technique to achieve that.
+
+We could simply clone the requests, send the original request to the stable version and
+send a cloned request to the canary. The loadbalancer could then differentiate between the
+two responses of the two versions. We would reject the response of the canary. And we
+would forward the response of the stable version.
+
+As a result we even lower the risk, because the potentially degraded version does not even
+respond to real users. Ergo we do not have any risk of a degradation of our production
+service which we cause by testing the new version.
 
 \chapter{Conclusion}
 \section{Resume}
