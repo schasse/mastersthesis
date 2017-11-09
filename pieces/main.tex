@@ -34,30 +34,31 @@ becoming more and more responsible for running the software, they built.
 In the following outlines the structure of the thesis. We discuss every chapter briefly
 and talk about its contents.
 
-In the first chapter we will walk through the foundations. The chapter provides references the practices and 
-technologies, which are crucial to understand the thesis. The references
-are properly selected to understand the details in case those are not known. In summary those practices and technologies are kubernetes,
-continuous delivery, continuous deployment and techniques from infrastructure as code and
-site reliability engineering.
+In the first chapter we will walk through the foundations. The chapter provides references
+the practices and technologies, which are crucial to understand the thesis. The references
+are properly selected to understand the details in case those are not known. In summary
+those practices and technologies are kubernetes, continuous delivery, continuous
+deployment and techniques from infrastructure as code and site reliability engineering.
 
 The second chapter is a conceptual macro view to the method nonfunctional production
-regression testing. The text goes through components of the whole environment and discusses the most
-important concepts and how they communicate with each other. The explanation of the communication between the components clarifies
-how the pipeline embeds the methodologies of nonfunctional production regression testing and 
-how those extend the pipeline.
+regression testing. The text goes through components of the whole environment and
+discusses the most important concepts and how they communicate with each other. The
+explanation of the communication between the components clarifies how the pipeline embeds
+the methodologies of nonfunctional production regression testing and how those extend the
+pipeline.
 
-In the third chapter we will get to the concrete design of nonfunctional
-production regression testing. To enable nonfunctional production regression testing, I wrote the software deployer. 
-The chapter explains the details of the design concept and design decisions. After reading this chapter it is clear
-how to use the software deployer.
+In the third chapter we will get to the concrete design of nonfunctional production
+regression testing. To enable nonfunctional production regression testing, I wrote the
+software deployer.  The chapter explains the details of the design concept and design
+decisions. After reading this chapter it is clear how to use the software deployer.
 
 Chapter four is about the evaluation of the new approach. It evaluates the usage of
-deployer and the technique in two different companies. The first company is
-Gapfish, a four year old startup, and the software department of DIN, a company 
-established for a hundred years. We are going to evaluate positive outcomes, still
-problematic concerns and their improvements. Another part of the evaluation is the
-comparison to other techniques which other companies and groups developed and tested. We
-differentiate in their features, advantages and disadvantages.
+deployer and the technique in two different companies. The first company is Gapfish, a
+four year old startup, and the software department of DIN, a company established for a
+hundred years. We are going to evaluate positive outcomes, still problematic concerns and
+their improvements. Another part of the evaluation is the comparison to other techniques
+which other companies and groups developed and tested. We differentiate in their features,
+advantages and disadvantages.
 
 In the last chapter, the conclusion, the whole thesis is summarized and all the chapters
 are resumed. Important is the second part of the conclusion, in which we have an outlook
@@ -79,10 +80,10 @@ delivery pipelines.
 \section{In Short}
 
 In nonfunctional production regression testing we compare a new version with the current
-stable version side by side in production. We test in production if the nonfunctional metrics show a
-regression. This is nonfunctional production regression testing in two sentences.
-Nevertheless we will go through the term in more detail in the following. The approach is
-a novelty and we name the approach in the context of this thesis.
+stable version side by side in production. We test in production if the nonfunctional
+metrics show a regression. This is nonfunctional production regression testing in two
+sentences.  Nevertheless we will go through the term in more detail in the following. The
+approach is a novelty and we name the approach in the context of this thesis.
 
 Nonfunctional refers to the metrics, which we evaluate in a test. They are nonfunctional
 and as a consequence generically applicable to multiple applications. The next word,
@@ -109,9 +110,8 @@ operations teams.
 
 \section{Pipeline Overview}
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.9\textheight, angle=90]{nprt_overview}
+\begin{figure}[htbp] \centering \includegraphics[width=0.9\textheight,
+angle=90]{nprt_overview}
   \caption[nprtflow]{Overview of the NPRT flow.}
   \label{fig:nprt_flow}
 \end{figure}
@@ -133,8 +133,8 @@ then pushes the new version to the version control system as shown in (1).
 After the push of the new version, the second step is a message (2) to the continuous
 integration system. This message holds the reference of the new version and the continuous
 integration server pulls the new version from the version control system (3). Now the
-continuous integration system has three major jobs. Firstly it starts a build process (4)(5),
-secondly it runs the tests (6) and the thirdly gives the deploy signal (7).
+continuous integration system has three major jobs. Firstly it starts a build process
+(4)(5), secondly it runs the tests (6) and the thirdly gives the deploy signal (7).
 
 In step (4), namely the build, the continuous integration system typically compiles
 binaries, renders assets and may create further artifacts. For our purposes it is
@@ -148,15 +148,15 @@ system. It is important to be able to trace the version through every step in th
 pipeline. With this thought in mind, the continuous integration system tags the container
 image with the version reference and an extra name. Just to mention that the extra name is
 not absolutely necessary to definitely associate the container image with a version. But
-it turned out that a human readable name is very helpful to recognize a version and to know
-what the version is about at first sight. The continuous integration system derives that
-extra name from the branch name. This tag, consisting out of the version and extra name,
-will follow us through the whole pipeline as readable and unique reference.
+it turned out that a human readable name is very helpful to recognize a version and to
+know what the version is about at first sight. The continuous integration system derives
+that extra name from the branch name. This tag, consisting out of the version and extra
+name, will follow us through the whole pipeline as readable and unique reference.
 
 The second continuous integration step is to run the tests. This is shown as step (6) in
 figure \ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such
-as unit, feature and smoke tests. Yet we do net need to recall all the details of automated
-testing at this point.
+as unit, feature and smoke tests. Yet we do net need to recall all the details of
+automated testing at this point.
 
 The last step of the continuous integration system is to send a deploy signal, step (7) in
 the figure. But it depends on the results of the tests, whether to send that deploy signal
@@ -181,40 +181,55 @@ build image. But this is just a side note.
 So the deploy signal is given when two requirements are fulfilled: the build and tests are
 successful and it is a version which is planned to go to production.
 
-Until this point, as we already mentioned, it is continuous integration practice, which is commonly used in software development. We require it for our approach and again, it is important to nonfunctional production regression testing to associate and trace every step through the whole pipeline. For that purpose we need to especially tag the container images.
+Until this point, as we already mentioned, it is continuous integration practice, which is
+commonly used in software development. We require it for our approach and again, it is
+important to nonfunctional production regression testing to associate and trace every step
+through the whole pipeline. For that purpose we need to especially tag the container
+images.
 
 \subsection{Customizations of Continuous Deployment}
 
 Nonfunctional production regression testing is an approach, which we designed to be
-completely automatable. It is crucial to not only have continuous integration, but to have a customized continuous deployment process as well.
+completely automatable. It is crucial to not only have continuous integration, but to have
+a customized continuous deployment process as well.
 
-The next component in the pipeline is the deployer. Deployer is a service, which realizes the customized parts of the continuous deployment practice. In the context of this thesis, we implemented the software. We describe deployer in detail in the next chapter. This chapter
-demonstrates how deployer integrates in the pipeline and in the
-environment among all the other tools. It is crucial to have full control over the whole deployment process and as a
-consequence it was necessary to implement the software and have it customizable.
+The next component in the pipeline is the deployer. Deployer is a service, which realizes
+the customized parts of the continuous deployment practice. In the context of this thesis,
+we implemented the software. We describe deployer in detail in the next chapter. This
+chapter demonstrates how deployer integrates in the pipeline and in the environment among
+all the other tools. It is crucial to have full control over the whole deployment process
+and as a consequence it was necessary to implement the software and have it customizable.
 
 We could also implement the logic of the deploy deploy in the continuous integration
 system. But we had to decide against that, because the deploy needs full access to the
 production system and the continuous integration system is in our case outsourced to a
 third party company. We don not want to give other companies full access to another
 company. However this meant, that we had to implement some steps again, which a continuous
-integration server already implements.
-the continuous integration system pulls the version from the version control system as well as the deployer. (2 different things: one application code, 2 infrastructure code. But good to have them both in a single repository, to have the relation.
+integration server already implements.  the continuous integration system pulls the
+version from the version control system as well as the deployer. (2 different things: one
+application code, 2 infrastructure code. But good to have them both in a single
+repository, to have the relation.
 
 Deployer receives the deploy signal from the continuous integration system (7). It again
-includes the version reference. Now deployer executes three major steps: firstly pull infrastructure code (8), secondly modify the infrastructure code (9) and thirdly send the infrastructure code to the production cluster (10).
+includes the version reference. Now deployer executes three major steps: firstly pull
+infrastructure code (8), secondly modify the infrastructure code (9) and thirdly send the
+infrastructure code to the production cluster (10).
 
-So in the first step deployer pulls the code from the version control system (8). The version control system also holds the
-files, which describe our infrastructure. We want to version control the infrastructure definitions of in order to be able to relate the version of the infrastructure to the
-version of the code and the version of the artifacts. In kubernetes those infrastructure
-definitions are made up of different resources, which were already mentioned in the
-background chapter.
+So in the first step deployer pulls the code from the version control system (8). The
+version control system also holds the files, which describe our infrastructure. We want to
+version control the infrastructure definitions of in order to be able to relate the
+version of the infrastructure to the version of the code and the version of the
+artifacts. In kubernetes those infrastructure definitions are made up of different
+resources, which were already mentioned in the background chapter.
 
-In the second step deployer modifies those infrastructure (9) defintions in a way, that the production system uses the related container image. The running container needs to be aware of the its version. The modifications of deployer achieve that as well. The latter is
-important to later tag the metrics with running version.
+In the second step deployer modifies those infrastructure (9) defintions in a way, that
+the production system uses the related container image. The running container needs to be
+aware of the its version. The modifications of deployer achieve that as well. The latter
+is important to later tag the metrics with running version.
 
-The third step of deployer is to apply the modified
-infrastructure definitions to the production cluster, which is shown in the figure as step (10). We note that two things are changed: infrastructure changes as well as application code changes.
+The third step of deployer is to apply the modified infrastructure definitions to the
+production cluster, which is shown in the figure as step (10). We note that two things are
+changed: infrastructure changes as well as application code changes.
 
 Next we go on with the process of how the production system updates itself. The production
 system is a kubernetes cluster, which the previous chapter foundations describes. For now,
@@ -232,8 +247,8 @@ statefulset, which manages the stateful pods, with their unique name and disk.
 
 So the loadbalancer receives a request from the client. The loadbalancer selects a pod via
 round robin and proxies the request to the pod. The pod probably communicates with the
-database and sends the request back to the client, where the loadbalancer acts again as
-a proxy.
+database and sends the request back to the client, where the loadbalancer acts again as a
+proxy.
 
 We now look at the change, which happens to the production system. Earlier, deployer made
 changes to the definitions of the kubernetes resources in the deployers memory and
@@ -241,14 +256,22 @@ communicates those changes to the production system. We are interested in partic
 the deployments. As an illustration we only look at what happens to the deployment and the
 pods.
 
-Deployer talks to the kubernetes master api and sends the changes. The master manages
-the concrete changes. It swaps out one pod by another by stoping the pods in the old
-version and starting the pods in the new version. The procedure is called rolling
-update. Now the pods are all swapped out and run in the new version.
+Deployer talks to the kubernetes master api and sends the changes. The master manages the
+concrete changes. It swaps out one pod by another by stoping the pods in the old version
+and starting the pods in the new version. The procedure is called rolling update. Now the
+pods are all swapped out and run in the new version.
 
-The production cluster receives the modified infrastructure definitions. The production changes the cluster state according to the definitions. Most important is that two versions in parallel are in the cluster. The production cluster fetches the container image in step (11) from the image repository. The image, which the continuous integration system built in step (4). The production cluster is aware of the specific image identified by the tag, which we described before.
+The production cluster receives the modified infrastructure definitions. The production
+changes the cluster state according to the definitions. Most important is that two
+versions in parallel are in the cluster. The production cluster fetches the container
+image in step (11) from the image repository. The image, which the continuous integration
+system built in step (4). The production cluster is aware of the specific image identified
+by the tag, which we described before.
 
-The figure illustrates the two different versions with two differnt colors. Most of the running instances are in the stable version (red) and only one instance or in practice few instances are in the new version (orange). The loadbalancer sends traffic to both versions and both versions respond to clients, which is not shown in the figure.
+The figure illustrates the two different versions with two differnt colors. Most of the
+running instances are in the stable version (red) and only one instance or in practice few
+instances are in the new version (orange). The loadbalancer sends traffic to both versions
+and both versions respond to clients, which is not shown in the figure.
 
 \subsection{Metrics Collection and Comparison}
 
