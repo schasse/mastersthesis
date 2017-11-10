@@ -186,10 +186,7 @@ production, even though it is a very small change. But when the decision is made
 merged into a specified branch, for instance the master branch, this version will go to
 production.
 
-However, just to clarify, each built image for every single version is sent, independently
-of successful tests and independent from the intention to go to production, to the image
-repository. The reason could be a staging system and even running the tests inside the
-build image. But this is just a side note.
+However, just to clarify, the continuous integration system sends each built image for every single version to the image repository. This is independent of successful tests or the intention to go to production. The reason why we want to have every built image in the repository is to be able to test it in the continuous integration system, locally and a staging system. But this is just a side note.
 
 So the deploy signal is given when two requirements are fulfilled: the build and tests are
 successful and it is a version which is planned to go to production.
@@ -305,6 +302,10 @@ takes care of deleting instances in the new version. Since instances of the stab
 are already running in the production cluster, the production cluster does not touch the
 other instances.
 
+\section{Design Decisions}
+
+\section{Advantages}
+
 \section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
@@ -329,23 +330,18 @@ work and time saved comes at a low risk.
 
 \chapter{In Practice}
 
-This chapter discusses the software deployer. Deployer is the implementation in account to
-the new testing procedure nonfunctional production regression testing. The chapter does
-not go into implementation details, but describes how deployer works and how to use
-deployer from a user's perspective. The chapter does not discuss the surrounding
-applications, such as implementations of version control systems, continuous integration
-systems. Whereas we discuss the monitoring system, since the testing rules for the metrics
-are implemented with it. And we will go into more detail how deployer is integrated with
-kubernetes, since this is an important part.
+This chapter discusses deployer. We implemented deployer in order to realize nonfunctional production regression testing with kubernetes. Deployer receives deploy messages, modifies kubernetes resources and applies those modified resources to the production cluster.
+
 
 \section{Technologies}
-Initially we want to mention in short the technologies we used to implement deployer. It
+
+Initially we want to mention in short the technologies we used to implement deployer. Deployer
 is implemented in ruby and since it is a webserver, sinatra is it's framework. Deployer
-uses git and svn to communicate with the control version system. Moreover deployer has a
+uses git and svn to communicate with the either git or svn as the control version system. Moreover deployer has a
 plugin which sends messages to bugsnag and slack, to inform the developer in case it
-identifies a problem. Also to mention is that deployer uses kubectl to interact with
+identifies a problem. Deployer uses kubectl to interact with
 kubernetes master. Deployer itself is containerized with docker and its natural hosting
-solution would be kubernetes. Deployer is published on github under GPL-3.0, an free
+solution would be kubernetes. We published deployer on github under GPL-3.0, a free
 software license.
 
 The monitoring system, which we used in our evaluation, is datadog, a commercial
@@ -353,6 +349,7 @@ service. Nevertheless prometheus is also a suitable open source solution as moni
 system.
 
 \section{deployer archtecture}
+
 Similar to the previous chapter, we demonstrate the implementation with the help of
 a figure, which shows the whole picture of the implementation. And we are going through
 the parts of the figure.
@@ -360,8 +357,7 @@ the parts of the figure.
 As mentioned earlier, deployer is a webserver, which runs in kubernetes itself. The ... in
 the figure is the kuberntes cluster, which is also our production environment. There is a
 kubernetes resource service. The service is, as we already know, a loadbalancer and
-clients can reach deployer via an http interface. The figure show us that deployer is
-composed of multiple pods. The pods are replicated and identical in their behaviour. The
+clients can reach deployer via an http interface. The figure shows us that deployer consists of multiple pods. The pods are replicated and identical in their behaviour. The
 pods are basically stateless, yet every pod has its own caching layer, which we will
 discuss in a later section. We assert, that because of the statelessness, we can scale
 deployer horizontally and can just add more pods. Along the way, deployer uses
@@ -374,6 +370,7 @@ to the concurrent deploys we need.
 \section{flow}
 
 \subsection{authorization}
+
 Next we want to go through the steps involved in the deployment process. Initially a
 client sends a http request to deployer. Therefore the client needs to authenticate via
 http basic authentication. In other words, the client authenticates via a username and
@@ -386,6 +383,7 @@ example not able to deploy other code than ours or read credentials from the pro
 cluster.
 
 \subsection{validations}
+
 So the loadbalancer proxies the request to a pod and after deployer authenticated a valid
 user, deployer starts the deploy procedure itself. At first deployer validates the given
 arguments by the client. The deploy request requires the service to deploy and a version
