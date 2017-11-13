@@ -330,18 +330,21 @@ work and time saved comes at a low risk.
 
 \chapter{In Practice}
 
-This chapter discusses deployer. We implemented deployer in order to realize nonfunctional production regression testing with kubernetes. Deployer receives deploy messages, modifies kubernetes resources and applies those modified resources to the production cluster.
+This chapter discusses deployer. We implemented deployer in order to realize nonfunctional
+production regression testing with kubernetes. Deployer receives deploy messages, modifies
+kubernetes resources and applies those modified resources to the production cluster.
 
 
 \section{Technologies}
 
-Initially we want to mention in short the technologies we used to implement deployer. Deployer
-is implemented in ruby and since it is a webserver, sinatra is it's framework. Deployer
-uses git and svn to communicate with the either git or svn as the control version system. Moreover deployer has a
-plugin which sends messages to bugsnag and slack, to inform the developer in case it
-identifies a problem. Deployer uses kubectl to interact with
-kubernetes master. Deployer itself is containerized with docker and its natural hosting
-solution would be kubernetes. We published deployer on github under GPL-3.0, a free
+Initially we want to mention in short the technologies we used to implement
+deployer. Deployer is implemented in ruby and since it is a webserver, sinatra is it's
+framework. Deployer uses git and svn to communicate with the either git or svn as the
+control version system. Moreover deployer has a plugin which sends messages to bugsnag and
+slack, to inform the developer in case it identifies a problem. Deployer uses kubectl to
+interact with kubernetes master. Deployer itself is containerized with docker and its
+natural hosting solution would be kubernetes. We published deployer on github under
+GPL-3.0, a free
 software license.
 
 The monitoring system, which we used in our evaluation, is datadog, a commercial
@@ -350,14 +353,15 @@ system.
 
 \section{deployer archtecture}
 
-Similar to the previous chapter, we demonstrate the implementation with the help of
-a figure, which shows the whole picture of the implementation. And we are going through
-the parts of the figure.
+Similar to the previous chapter, we demonstrate the implementation with the help of a
+figure, which shows the whole picture of the implementation. And we are going through the
+parts of the figure.
 
 As mentioned earlier, deployer is a webserver, which runs in kubernetes itself. The ... in
 the figure is the kuberntes cluster, which is also our production environment. There is a
 kubernetes resource service. The service is, as we already know, a loadbalancer and
-clients can reach deployer via an http interface. The figure shows us that deployer consists of multiple pods. The pods are replicated and identical in their behaviour. The
+clients can reach deployer via an http interface. The figure shows us that deployer
+consists of multiple pods. The pods are replicated and identical in their behaviour. The
 pods are basically stateless, yet every pod has its own caching layer, which we will
 discuss in a later section. We assert, that because of the statelessness, we can scale
 deployer horizontally and can just add more pods. Along the way, deployer uses
