@@ -1052,9 +1052,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="476.85708"
-     inkscape:cy="318.24907"
+     inkscape:zoom="1.2526286"
+     inkscape:cx="555.91642"
+     inkscape:cy="322.26522"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1103,14 +1103,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-3.4956008,-377.29426)">
-    <rect
-       style="fill:#f63300;fill-opacity:1;fill-rule:nonzero;stroke:#f63300;stroke-width:9.37499619;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.24000168;stroke-opacity:1"
-       id="rect5102"
-       width="40.47934"
-       height="42.083916"
-       x="-457.18274"
-       y="556.90808"
-       transform="scale(-1,1)" />
     <rect
        transform="scale(-1,1)"
        y="627.92371"
@@ -1870,29 +1862,21 @@
          sodipodi:role="line">Production Cluster</tspan></text>
     <rect
        transform="scale(-1,1)"
-       y="426.479"
-       x="-673.76196"
-       height="363.58899"
-       width="359.33688"
+       y="503.79691"
+       x="-674.28033"
+       height="286.78949"
+       width="360.37366"
        id="rect5053"
-       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00527a;stroke-width:9.37499714;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:9.37499707, 9.37499707;stroke-dashoffset:0;stroke-opacity:1" />
-    <rect
-       transform="scale(-1,1)"
-       y="485.89246"
-       x="-421.34"
-       height="42.083916"
-       width="40.47934"
-       id="rect5055"
-       style="fill:#c12800;fill-opacity:1;fill-rule:nonzero;stroke:#c12800;stroke-width:9.37499619;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.24000168;stroke-opacity:1" />
+       style="fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#00527a;stroke-width:9.37499681;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:9.37499681,9.37499681;stroke-dashoffset:0;stroke-opacity:1" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:11.71874619px;line-height:100%;font-family:sans-serif;letter-spacing:0.93749964px;word-spacing:0.93749964px;fill:#00527a;fill-opacity:1;stroke:none;stroke-width:0.93749964px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="329.10703"
-       y="450.31879"
+       y="526.81561"
        id="text5069"><tspan
          sodipodi:role="line"
          x="329.10703"
-         y="450.31879"
+         y="526.81561"
          style="font-style:normal;font-variant:normal;font-weight:900;font-stretch:normal;font-size:12.49999523px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Heavy';letter-spacing:0.93749964px;fill:#00527a;stroke:none;stroke-width:0.93749964px"
          id="tspan5067">Production Cluster</tspan></text>
     <g
@@ -1917,16 +1901,8 @@
        width="40.47934"
        height="42.083916"
        x="-421.34"
-       y="485.89246"
+       y="556.96326"
        transform="scale(-1,1)" />
-    <rect
-       transform="scale(-1,1)"
-       y="556.90808"
-       x="-421.34"
-       height="42.083916"
-       width="40.47934"
-       id="rect5083"
-       style="fill:#c12800;fill-opacity:1;fill-rule:nonzero;stroke:#c12800;stroke-width:9.37499619;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.24000168;stroke-opacity:1" />
     <rect
        style="fill:#c12800;fill-opacity:1;fill-rule:nonzero;stroke:#c12800;stroke-width:9.37499619;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.24000168;stroke-opacity:1"
        id="rect5085"
@@ -1943,15 +1919,6 @@
        width="40.47934"
        id="rect5087"
        style="fill:#c12800;fill-opacity:1;fill-rule:nonzero;stroke:#c12800;stroke-width:9.37499619;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.24000168;stroke-opacity:1" />
-    <use
-       style="fill:#ececec"
-       transform="matrix(-0.27323162,0,0,0.27323162,454.1327,566.10439)"
-       height="100%"
-       width="100%"
-       y="0"
-       x="0"
-       xlink:href="#database"
-       id="use5098" />
     <use
        id="use5108"
        xlink:href="#database"
