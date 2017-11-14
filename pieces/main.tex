@@ -587,21 +587,22 @@ deployment to only one replica.
 \subsection{Metrics Collection}
 
 Now we want to focus on how we collect the metrics during the two versions are in
-production. We differentiate between two different collection mechanisms. Metrics collected from hosts and metrics from applications.
+production. We differentiate between two different collection mechanisms. Metrics
+collected from hosts and metrics from applications.
 
-Firstly the
-group of metrics, which are picked up from the host. The host has information about the
-pods' utilization of cpu and memory. So on each kubernetes host, there is a monitoring
-agent running, which watches the \verb!/proc! directory and the docker daemon. The agent picks up the
-information frequently and then sends it to our monitoring system.
+Firstly the group of metrics, which are picked up from the host. The host has information
+about the pods' utilization of cpu and memory. So on each kubernetes host, there is a
+monitoring agent running, which watches the \verb!/proc! directory and the docker
+daemon. The agent picks up the information frequently and then sends it to our monitoring
+system.
 
 Secondly the group of metrics, which the application sends. We need to have the
 application instrumented in order to collect metrics like throughput, latency and
 errorrate. In practice we use the statsd protocol and statsd server for that
 purpose. There are statsd libraries for the most languages and frameworks and you get the
-instrumentation without much effort. The instrumented application sends the data to the statsd server after each request and the
-statsd server aggregates the data. From there the statsd server forwards the aggregated
-metrics data to our monitoring system.
+instrumentation without much effort. The instrumented application sends the data to the
+statsd server after each request and the statsd server aggregates the data. From there the
+statsd server forwards the aggregated metrics data to our monitoring system.
 
 It is important to correctly label the metrics independently from which version we collect
 the metric. The monitoring system is then able to distinguish between the metrics of the
@@ -612,13 +613,15 @@ the label from environment variables, which have been set by deployer as either 
 canary.
 
 \section{interface}
-Requests to deployer are very simple. We can use curl request or any other http client and execute it
-for instance from our continuous integration system. Another way to interact with deployer is to use
-the depctl command line interface.
+Requests to deployer are very simple. We can use curl request or any other http client and
+execute it for instance from our continuous integration system. Another way to interact
+with deployer is to use the depctl command line interface.
 
-Depctl command line
-interface wraps http calls and assists developers with automatic
-completion of the repository to deploy and completion of the version to deploy. With depctl developers can easily skip steps of the whole nonfunctional production regression testing flow. For instance they can skip the tests, which would run on the continuous integration system. This makes development more fluently and developer friendly.
+Depctl command line interface wraps http calls and assists developers with automatic
+completion of the repository to deploy and completion of the version to deploy. With
+depctl developers can easily skip steps of the whole nonfunctional production regression
+testing flow. For instance they can skip the tests, which would run on the continuous
+integration system. This makes development more fluently and developer friendly.
 
 In the following we will go through the interface of deployer. Deployer provides different
 endpoints: ls, show, tags, deploy, canary and version.
@@ -662,12 +665,13 @@ endpoint simply returns the deployer version.
 
 \section{Metrics Comparison}
 
-Another part of nonfunctional production regression testing is the comparison within the monitoring system.
+Another part of nonfunctional production regression testing is the comparison within the
+monitoring system.
 
 The monitoring system consists basically out of a timeseriesdatabase, a graphing user
 interface and an alarm system. The timeseriesdatabase persists the metrics. And the user
 can define graphs from those metrics, which the user interface displays. Moreover you can
-define rules in the alarm system, which monitor the metrics in the timeseriesdatabase. 
+define rules in the alarm system, which monitor the metrics in the timeseriesdatabase.
 In case the metrics violate any rule, the monitoring system sends a notification.
 
 The monitoring system provides a tool, which is simply called monitor. And those monitors
