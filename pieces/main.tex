@@ -133,6 +133,22 @@ To understand the testing approach in a whole, it is necessary to show a complet
 of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures this
 overview. In the following we will go through the steps of the pipeline and discuss them.
 
+\begin{description}
+    \item [(1)] push new version
+    \item [(2)] inform about new version
+    \item [(3)] fetch code
+    \item [(4)] build
+    \item [(5)] push container image(s)
+    \item [(6)] run tests
+    \item [(7)] deploy message
+    \item [(8)] fetch code
+    \item [(9)] modify resource definitions
+    \item [(10)] apply to production cluster
+    \item [(11)] pull container image(s)
+    \item [(12)] send metrics
+    \item [(13)] trigger full rollout or rollback
+\end{description}
+
 \subsection{Continuous Integration is a Requirement}
 
 The first parts of the pipeline are commonly known and established practices: continuous
