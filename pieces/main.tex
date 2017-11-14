@@ -123,8 +123,8 @@ operations teams.
 
 \section{Pipeline Overview}
 
-\begin{figure}[htbp] \centering \includegraphics[width=0.9\textheight,
-angle=90]{nprt_overview}
+\begin{figure}[htbp]
+  \includegraphics[width=0.97\textheight,angle=90]{nprt_overview}
   \caption[nprtflow]{Overview of the NPRT flow.}
   \label{fig:nprt_flow}
 \end{figure}
@@ -133,21 +133,21 @@ To understand the testing approach in a whole, it is necessary to show a complet
 of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures this
 overview. In the following we will go through the steps of the pipeline and discuss them.
 
-\begin{description}
-    \item [(1)] push new version
-    \item [(2)] inform about new version
-    \item [(3)] fetch code
-    \item [(4)] build
-    \item [(5)] push container image(s)
-    \item [(6)] run tests
-    \item [(7)] deploy message
-    \item [(8)] fetch code
-    \item [(9)] modify resource definitions
-    \item [(10)] apply to production cluster
-    \item [(11)] pull container image(s)
-    \item [(12)] send metrics
-    \item [(13)] trigger full rollout or rollback
-\end{description}
+\begin{verbatim}
+(1) push new version
+(2) inform about new version
+(3) fetch code
+(4) build
+(5) push container image(s)
+(6) run tests
+(7) deploy message
+(8) fetch code
+(9) modify resource definitions
+(10) apply to production cluster
+(11) pull container image(s)
+(12) send metrics
+(13) trigger full rollout or rollback
+\end{verbatim}
 
 \subsection{Continuous Integration is a Requirement}
 
@@ -377,6 +377,18 @@ figures. And we are going through all the parts of the figure.
   \caption[nprtflow]{Detailed Deployer Architecture and Steps.}
   \label{fig:deployer_architecture}
 \end{figure}
+
+\begin{verbatim}
+(1) deploy request
+(2) loadbalance request to pod and authenticate
+(3) validate availability of container image(s)
+(4) fetch resource definitions from version control
+    system
+(5) modify resource definitions (image version and
+    environment)
+(6) apply resource definitions to kubernetes API
+(7) eventually report errors
+\end{verbatim}
 
 As mentioned earlier, deployer is a webserver, which runs in kubernetes itself and is
 stateless. The production cluster in in the figure is the same kubernetes cluster the app
