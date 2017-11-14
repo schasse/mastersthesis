@@ -34,7 +34,7 @@ becoming more and more responsible for running the software, they built.
 In the following outlines the structure of the thesis. We discuss every chapter briefly
 and talk about its contents.
 
-In the first chapter we will walk through the foundations. The chapter provides references
+In the first chapter we will go through the foundations. The chapter provides references
 the practices and technologies, which are crucial to understand the thesis. The references
 are properly selected to understand the details in case those are not known. In summary
 those practices and technologies are kubernetes, continuous delivery, continuous
@@ -66,6 +66,13 @@ to further improvements and how the technique can be extended to have further up
 delivery pipelines.
 
 \chapter{Background}
+
+continuous integration system
+container image
+automated testing: unit tests, feature tests etc.
+infrastructure as code
+kubernetes resources
+software reliability
 
 We explain firmly how the typical three tier webapp is implemented in kubernetes. For more
 details refer to the references given in the foundations chapter. With kubernetes we
@@ -321,8 +328,6 @@ that there must not be instances of the new version anymore. The production syst
 takes care of deleting instances in the new version. Since instances of the stable version
 are already running in the production cluster, the production cluster does not touch the
 other instances.
-
-\section{Design Decisions and Advantages}
 
 \section{Summary}
 
