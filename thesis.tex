@@ -99,6 +99,9 @@ vcentering
 
 \include{pieces/main}
 
-\printbibliography
+\printbibheading
+\printbibliography[keyword={background},title={Background},heading=subbibliography]
+\printbibliography[keyword={technologies,title={Technologies},heading=subbibliography}]
+\printbibliography[keyword={related},title={Related Work},heading=subbibliography]
 
 \end{document}
