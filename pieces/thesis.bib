@@ -38,7 +38,7 @@
   keywords = {background}
 }
 
-@misc {continuous_integration,
+@misc {ci_fowler,
   author = {Martin Fowler},
   title = {Continuous Integration},
   howpublished = {\url{https://martinfowler.com/articles/continuousIntegration.html}},
@@ -99,26 +99,103 @@
   keywords = {related}
 }
 
-@book {continuous_delivery,
+@book {cd_humble,
   title = {Continuous Delivery: reliable software releases through build, test, and deployment automation},
   author = {Jez Humble and David Farley},
   year = {2010},
-  publisher = {Addison-Wesley}
+  publisher = {Addison-Wesley},
+  keywords = {background}
 }
 
-@book {continuous_delivery2,
+@inbook {cd_humble_pipeline,
+  title = {Continuous Delivery: reliable software releases through build, test, and deployment automation},
+  chapter = {The Deployment Pipeline},
+  pages = {103--140},
+  author = {Jez Humble and David Farley},
+  year = {2010},
+  publisher = {Addison-Wesley},
+  keywords = {background}
+}
+
+@inbook {cd_humble_config,
+  title = {Continuous Delivery: reliable software releases through build, test, and deployment automation},
+  chapter = {Configuration Management},
+  pages = {31--54},
+  author = {Jez Humble and David Farley},
+  year = {2010},
+  publisher = {Addison-Wesley},
+  keywords = {background}
+}
+
+@inbook {cd_humble_deploy,
+  title = {Continuous Delivery: reliable software releases through build, test, and deployment automation},
+  chapter = {Deploying and Releasing Applications},
+  pages = {249--274},
+  author = {Jez Humble and David Farley},
+  year = {2010},
+  publisher = {Addison-Wesley},
+  keywords = {background}
+}
+
+@book {cd_wolff,
   title = {Continuous Delivery: der pragmatische Einstieg},
   author = {Eberhard Wolff},
   year = {2016},
   edition = {2.},
-  publisher = {dpunkt.verlag}
+  publisher = {dpunkt.verlag},
+  keywords = {background}
 }
 
-@book {site_reliability,
+@inbook {cd_wolff_devops,
+  title = {Continuous Delivery: der pragmatische Einstieg},
+  chapter = {Continuous Delivery und DevOps},
+  pages = {235--246},
+  author = {Eberhard Wolff},
+  year = {2016},
+  edition = {2.},
+  publisher = {dpunkt.verlag},
+  keywords = {background}
+}
+
+@book {sre,
   title = {Site Reliability Engineering: how google runs production systems},
-  author = {Betsy Beyer and Chris Jones and Jennifer Petoff and Niall Richard Murphy},
+  editor = {Betsy Beyer and Chris Jones and Jennifer Petoff and Niall Richard Murphy},
   year  = {2016},
-  publisher = {O'Reilly}
+  publisher = {O'Reilly},
+  keywords = {background}
+}
+
+@inbook {sre_intro,
+  title = {Site Reliability Engineering: how google runs production systems},
+  chapter = {Introduction},
+  pages = {3--12},
+  author = {Benjamin Treynor Sloss},
+  editor = {Betsy Beyer},
+  year  = {2016},
+  publisher = {O'Reilly},
+  keywords = {background}
+}
+
+@inbook {sre_monitoring,
+  title = {Site Reliability Engineering: how google runs production systems},
+  chapter = {Monitoring Distributed Systems},
+  pages = {55--66},
+  author = {Rob Ewaschuk},
+  editor = {Betsy Beyer},
+  year  = {2016},
+  publisher = {O'Reilly},
+  keywords = {background}
+}
+
+@inbook {sre_automation,
+  title = {Site Reliability Engineering: how google runs production systems},
+  chapter = {The Evolution of Automation at Google},
+  pages = {67--84},
+  author = {Niall Murphy and John Looney and Michael Kacirek},
+  editor = {Betsy Beyer},
+  year  = {2016},
+  publisher = {O'Reilly},
+  keywords = {background}
 }
 
 @article {borg_kubernetes,
@@ -127,7 +204,8 @@
   year  = {2016},
   journal = {ACM Queue},
   pages = {70--93},
-  volume  = {14}
+  volume  = {14},
+  keywords = {background}
 }
 
 @inproceedings {borg,
@@ -135,6 +213,7 @@
   author  = {Abhishek Verma and Luis Pedrosa and Madhukar R. Korupolu and David Oppenheimer and Eric Tune and John Wilkes},
   year  = {2015},
   booktitle = {Proceedings of the European Conference on Computer Systems (EuroSys)},
+  keywords = {background}
 }
 
 @book {devops,
@@ -142,6 +221,27 @@
   author = {Len Bass and Ingo Weber and Liming Zhu},
   year = {2015},
   publisher = {Addison-Wesley},
+  keywords = {background}
+}
+
+@inbook {devops_definition,
+  title = {DevOps: a software architect's perspective},
+  chapter = {What Is DevOps?},
+  pages = {3--26},
+  author = {Len Bass and Ingo Weber and Liming Zhu},
+  year = {2015},
+  publisher = {Addison-Wesley},
+  keywords = {background}
+}
+
+@inbook {devops_monitoring,
+  title = {DevOps: a software architect's perspective},
+  chapter = {Monitoring},
+  pages = {127--154},
+  author = {Len Bass and Ingo Weber and Liming Zhu},
+  year = {2015},
+  publisher = {Addison-Wesley},
+  keywords = {background}
 }
 
 @book {infra_as_code,
@@ -149,4 +249,25 @@
   author = {Kief Morris},
   year = {2016},
   publisher = {O'Reilly},
+  keywords = {background}
+}
+
+@inbook {infra_as_code_platforms,
+  title = {Infrastructure as code : managing servers in the cloud},
+  chapter = {Dynamic Infrastructure Platforms},
+  pages = {TODO},
+  author = {Kief Morris},
+  year = {2016},
+  publisher = {O'Reilly},
+  keywords = {background}
+}
+
+@inbook {infra_as_code_se_practices,
+  title = {Infrastructure as code : managing servers in the cloud},
+  chapter = {Software Engineering Practices for Infrastructure},
+  pages = {179--194},
+  author = {Kief Morris},
+  year = {2016},
+  publisher = {O'Reilly},
+  keywords = {background}
 }
