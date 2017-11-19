@@ -884,17 +884,65 @@ can define graphs from those metrics, which the user interface displays. Moreove
 define rules in the alarm system, which monitor the metrics in the timeseriesdatabase.
 In case the metrics violate any rule, the monitoring system sends a notification.
 
-The monitoring system provides a tool, which is simply called monitor. And those monitors
-continuously evaluate metrics by given rules. So when we have the metrics in the
-timeseriesdatabase, the monitors draw continuously graphs from those timeseriesdatabase
-metrics. As an example we have a graph for our errorate. In the example we have first have
-a graph for the stable version's errorate. The errorate is very low as you expect it. The
-other graph is the graph of the canary version and this graph has some higher errorates.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.0 \textwidth]{metric_comparison}
+  \caption[metric_comparison]{Comparing the stable version with the canary version.}
+  \label{fig:3tierwebapp}
+\end{figure}
 
-Next we define a composite graph. That would be the graph of the canary version and then
-subtract the graph of the stable version. So if the resulting graph goes over the
-threshold of 10 errors per second, a alarm is triggered. The monitoring sends the an alert
-to deployer, which is a deploy command with the commit hash of the stable version.
+Let's have a closer look on those rules. The figure shows the example of a rule on the
+latency. The red continuous line is the latency of the stable version. The yellow
+continuous line is the latency of the canary version. The graph compares them side by
+side. Then we have a threshold, which is the red dotted line. The threshold depends on the
+latency of the stable version and is in our figure always 50ms higher. In case the latency
+of the canary goes above the threshold, the graph would violate the rule and trigger an
+alarm. The alarm would trigger a webhook, which would roll back the canary instance.
+
+Next we have a look at the metrics, we want to monitor:
+
+\paragraph{Latency} of successful requests. This is a performance metric. And the
+monitoring rule should identify serious regressions. To achieve that, we use median or
+other percentiles so that outliers do not trigger a rollback, but only serious
+regressions do.
+
+\paragraph{Utilization} refers to the metrics CPU and Memory consumption. We can have the
+same aggregation window and aggregation method like we have it with Latency.
+
+\paragraph{Errors} We simply count errors. Best is an application, where no errors
+occur. Then we can trigger a rollback of the canary instance in case it raises an
+error. Nevertheless most applications are not free of errors. On account to this, we
+rollback in case the canary raises a new error, which the application never has raised.
+
+Throughput is not a metric we define a rule on. The version of the canary does not have
+any influence on throughput. The production environment determines throughput. Throughput
+is relevant for the parameters of the other metrics, though.
+
+\subsection{Metric Parameters for Latency and Utilization Metrics}
+
+The ratio of stable and canary instances as well as the throughput affect the size of the
+\emph{aggregation window}. What would we do in case we had a very low throughput of only 1
+request per minute and a ratio of 2 stable instances and 1 canary instance? If we had
+chosen a small window of 1 minute, we would have had either 1 request on the stable or 1
+request on the canary instance. That would not be a good comparison. Instead we choose a
+rather big window of 120 minutes. Then we would have 80 requests on the stable instance
+and 40 on the canary instance. This is a definitely better comparison. Consequently the
+lower the throughput and the lower the stable canary ratio is, the bigger needs the window
+to be.
+
+The distribution of different throughputs and different latencies over all the routes of
+the application affects which \emph{percentile} to use. I make an example: If we had one
+single route which has a very high throughput and a very low latency compared to all other
+routes, then we would not choose the median. Instead we would choose the 95th percentile
+to well represent the routes with a high latency.
+
+The range of the different throughputs and the different latencies also affects the
+\emph{threshold}. If we had a bigger range of throughputs and latencies, we would need to
+choose a higher threshold. However we can affect the volatility of the metrics by choosing
+a bigger aggregation window. This allows as to lower the throughput.
+
+We see that the higher the throughput is and the distribution is more evenly, the better
+will the regression testing work.
 
 The monitoring system we were using in our evaluation, was datadog. But there is also the
 opens source monitoring system prometheus, which provides very similar features. Also
