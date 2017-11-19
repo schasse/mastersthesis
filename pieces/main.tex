@@ -301,6 +301,23 @@ concepts of most of the technologies.
 
 \end{itemize}
 
+
+\section{Software Dependencies}
+
+Here I would like to mention in short the dependencies, which I used to implement
+deployer. Deployer is implemented in ruby\cite{ruby} and since it is a webserver, sinatra\cite{sinatra} is it's
+framework. Deployer uses git\cite{git} and subversion\cite{svn} to communicate with the either git or subversion as the
+control version system. Moreover deployer has a plugin which sends messages to bugsnag\cite{bugsnag} and
+slack\cite{slack}, to inform the developer in case it identifies a problem. Deployer uses kubectl to
+interact with kubernetes\cite{kubernetes} master. Deployer itself is containerized with docker\cite{docker} and its
+natural hosting solution would be kubernetes. We published deployer on github\cite{deployer} under
+GPL-3.0, a free software license.
+
+The monitoring system, which we used in our evaluation, is datadog\cite{datadog}, a commercial
+service. Nevertheless prometheus\cite{prometheus} is also a suitable open source solution as monitoring
+system. The continuous integration systems we use for the evaluation are codeship\cite{codeship} and jenkins\cite{jenkins}. As an image repo, we use docker hub\cite{dockerhub}.
+
+
 \section{Typical 3 Tier Webapp in Kubernetes}
 
 I'll explain how you would implement a typical 3 tier webapp in kubernetes as it helps a
@@ -565,21 +582,6 @@ deployer you can automatically deploy another version of an application, which r
 parallel.
 
 
-\section{Technologies}
-
-Initially we want to mention in short the technologies we used to implement
-deployer. Deployer is implemented in ruby and since it is a webserver, sinatra is it's
-framework. Deployer uses git and svn to communicate with the either git or svn as the
-control version system. Moreover deployer has a plugin which sends messages to bugsnag and
-slack, to inform the developer in case it identifies a problem. Deployer uses kubectl to
-interact with kubernetes master. Deployer itself is containerized with docker and its
-natural hosting solution would be kubernetes. We published deployer on github under
-GPL-3.0, a free software license.
-
-The monitoring system, which we used in our evaluation, is datadog, a commercial
-service. Nevertheless prometheus is also a suitable open source solution as monitoring
-system.
-
 \section{Deployer Architecture}
 
 Similar to the previous chapter, we demonstrate the implementation with the help of some
@@ -618,6 +620,59 @@ about 10 seconds. This is just an orientation. Nevertheless this mostly depends 
 size of the repository and the download rate from the version control system. A request to
 deployer is blocking and waits for the deployment process to complete. Certainly we do not
 need a queuing system here and can scale deployer to the concurrent deploys we need.
+
+
+\section{interface}
+
+Requests to deployer are very simple. We can use curl request or any other http client and
+execute it for instance from our continuous integration system. Another way to interact
+with deployer is to use the depctl command line interface.
+
+Depctl command line interface wraps http calls and assists developers with automatic
+completion of the repository to deploy and completion of the version to deploy. With
+depctl developers can easily skip steps of the whole nonfunctional production regression
+testing flow. For instance they can skip the tests, which would run on the continuous
+integration system. This makes development more fluently and developer friendly.
+
+In the following we will go through the interface of deployer. Deployer provides different
+endpoints: ls, show, tags, deploy, canary and version.
+
+The \emph{ls} or index endpoint returns the configured services and the show endpoint for a
+specific service shows the current configuration for that service.
+
+The \emph{tags} endpoint shows
+the available tags for that service. Deployer queries the docker image registry for all
+available tags for all images in a service and returns them to the client.
+
+You need to call \emph{deploy} and \emph{canary} on a specific repository and you
+need to provide either a version reference, a tag or both. The request updates a service, so
+this is why we are using a http put call. An example curl request would be
+
+The \emph{version}
+endpoint simply returns the deployer version.
+
+\begin{table}[!htbp]
+  \begin{tabular}{ l|l|l }
+    Endpoint & \texttt{depctl} command & Parameters \\
+    \hline \hline
+    \textbf{GET /} & ls & \\
+    \textbf{GET /SERVICE} & show & \\
+    \textbf{GET /SERVICE/tags} & tags & \\
+    \textbf{PUT /SERVICE/deploy} & deploy & commit, tag \\
+    \textbf{PUT /SERVICE/canary} & canary & commit, tag \\
+    \textbf{GET /version} & version & \\
+    \multicolumn{3}{l}{} % empty line
+  \end{tabular}
+
+  Examples:
+
+\begin{verbatim}
+ curl --data commit=025838f \
+    https://auth_token:secret@deployer.company.com/gapfish/deploy
+
+ depctl deploy
+\end{verbatim}
+\end{table}
 
 \section{Logic and Flow of a Deploy}
 
@@ -821,59 +876,7 @@ collection, the monitoring agent can pick up the label from the labeled pod. And
 second group of metrics collection the instrumentation code of the application picks up
 the label from environment variables, which have been set by deployer as either stable or
 canary.
-
-\section{interface}
-Requests to deployer are very simple. We can use curl request or any other http client and
-execute it for instance from our continuous integration system. Another way to interact
-with deployer is to use the depctl command line interface.
-
-Depctl command line interface wraps http calls and assists developers with automatic
-completion of the repository to deploy and completion of the version to deploy. With
-depctl developers can easily skip steps of the whole nonfunctional production regression
-testing flow. For instance they can skip the tests, which would run on the continuous
-integration system. This makes development more fluently and developer friendly.
-
-In the following we will go through the interface of deployer. Deployer provides different
-endpoints: ls, show, tags, deploy, canary and version.
-
-The \emph{ls} or index endpoint returns the configured services and the show endpoint for a
-specific service shows the current configuration for that service.
-
-The \emph{tags} endpoint shows
-the available tags for that service. Deployer queries the docker image registry for all
-available tags for all images in a service and returns them to the client.
-
-You need to call \emph{deploy} and \emph{canary} on a specific repository and you
-need to provide either a version reference, a tag or both. The request updates a service, so
-this is why we are using a http put call. An example curl request would be
-
-The \emph{version}
-endpoint simply returns the deployer version.
-
-\begin{table}[!htbp]
-  \begin{tabular}{ l|l|l }
-    Endpoint & \texttt{depctl} command & Parameters \\
-    \hline \hline
-    \textbf{GET /} & ls & \\
-    \textbf{GET /SERVICE} & show & \\
-    \textbf{GET /SERVICE/tags} & tags & \\
-    \textbf{PUT /SERVICE/deploy} & deploy & commit, tag \\
-    \textbf{PUT /SERVICE/canary} & canary & commit, tag \\
-    \textbf{GET /version} & version & \\
-    \multicolumn{3}{l}{} % empty line
-  \end{tabular}
-
-  Examples:
-
-\begin{verbatim}
- curl --data commit=025838f \
-    https://auth_token:secret@deployer.company.com/gapfish/deploy
-
- depctl deploy
-\end{verbatim}
-\end{table}
-
-\section{Metrics Comparison}
+\subsection{Metrics Comparison}
 
 Another part of nonfunctional production regression testing is the comparison within the
 monitoring system.
