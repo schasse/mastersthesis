@@ -429,10 +429,10 @@ system may inform the responsible developer. If the tests are successful in all 
 stages, the continuous integration system will send the deploy signal to the deployer.
 
 It makes sense to deploy only specific versions and not every commit. The practice which
-is pretty common, is that you develop new features in a seperate branch. For those version
-it is common to not send a deploy signal even though the branch build and tests are
-successful. Usually after there has been a review and a decision to deploy the changes to
-production, even though it is a very small change. But when the decision is made and
+is pretty common, is that you develop new features in a seperate branch. For those
+versions you usually don not send a deploy signal even though the branch build and tests
+are successful. Usually after there has been a review and a decision to deploy the changes
+to production, even though it is a very small change. But when the decision is made and
 merged into a specified branch, for instance the master branch, this version will go to
 production.
 
@@ -555,28 +555,6 @@ that there must not be instances of the new version anymore. The production syst
 takes care of deleting instances in the new version. Since instances of the stable version
 are already running in the production cluster, the production cluster does not touch the
 other instances.
-
-\section{Summary}
-
-We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of nonfunctional production regression testing. We can extend the continuous
-delivery pipeline in a natural way and support developers not only until the deploy,
-furthermore we automated a part of the developer's job during run time. The pipeline is
-now advanced in a way, that we can change application code and test it without the
-supervision of the developers at a very low risk. The change goes through the whole
-pipeline including tests in a testing environment, an automated deploy and tests in the
-production environment. If the nonfunctional production regression test and automated
-deploy is successful, developers will be completely free of work. Potential changes of
-bots would be robust enough to be able to act fully automated and unsupervised. However we
-still test the changes they make and can be sure to not have a regression in our
-production system.
-
-Finally we want to summarize, what we examined so far: The whole process of nonfunctional
-production regression testing is fully automatable, every step is determined and traceable
-throughout and even reproducible until the deploy on the basis of the version
-reference. We save time not only by automization, but also by not having to write load and
-integration tests with edge cases, which occur in production. And ultimately the amount of
-work and time saved comes at a low risk.
 
 \chapter{In Practice}
 
@@ -922,23 +900,6 @@ The monitoring system we were using in our evaluation, was datadog. But there is
 opens source monitoring system prometheus, which provides very similar features. Also
 google has a similar monitoring system in there internal infrastructure.
 
-\section{summary}
-
-Finally in this chapter, we summarize what we have discussed so far. We went through the
-infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
-deployer has simple interface, with the two most important commands deploy and canary. We
-went through a canary deploy and saw that deployer validates the given arguments and how
-it notifies developers if an error occurs. We discussed how and what modificactions
-deployer does to the kubernetes resources. We demonstrated the different test metrics and
-how the production system sends those metrics to the test system. We went briefly through
-the deployer interface and which commands are all provided. We had a look on the
-monitoring system and the tests itself and how we rollback the canary in case the test
-fails.
-
-Another nice thing to mention about deployer, is that it deploys itself, which fits to the
-declarative model and recursion. That means we develop deployer itself with the continuous
-deployment flow and can apply nonfunctional production regression testing to deployer.
-
 \chapter{Evaluation}
 
 We have different possibilities to compare those version. One possibility is, that we
@@ -1061,6 +1022,46 @@ service which we cause by testing the new version.
 
 \chapter{Conclusion}
 \section{Resume}
+
+We illustrated that we are able to automate the whole testing procedure, which is the
+advantage of nonfunctional production regression testing. We can extend the continuous
+delivery pipeline in a natural way and support developers not only until the deploy,
+furthermore we automated a part of the developer's job during run time. The pipeline is
+now advanced in a way, that we can change application code and test it without the
+supervision of the developers at a very low risk. The change goes through the whole
+pipeline including tests in a testing environment, an automated deploy and tests in the
+production environment. If the nonfunctional production regression test and automated
+deploy is successful, developers will be completely free of work. Potential changes of
+bots would be robust enough to be able to act fully automated and unsupervised. However we
+still test the changes they make and can be sure to not have a regression in our
+production system.
+
+Finally we want to summarize, what we examined so far: The whole process of nonfunctional
+production regression testing is fully automatable, every step is determined and traceable
+throughout and even reproducible until the deploy on the basis of the version
+reference. We save time not only by automization, but also by not having to write load and
+integration tests with edge cases, which occur in production. And ultimately the amount of
+work and time saved comes at a low risk.
+
+
+
+Finally in this chapter, we summarize what we have discussed so far. We went through the
+infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
+deployer has simple interface, with the two most important commands deploy and canary. We
+went through a canary deploy and saw that deployer validates the given arguments and how
+it notifies developers if an error occurs. We discussed how and what modificactions
+deployer does to the kubernetes resources. We demonstrated the different test metrics and
+how the production system sends those metrics to the test system. We went briefly through
+the deployer interface and which commands are all provided. We had a look on the
+monitoring system and the tests itself and how we rollback the canary in case the test
+fails.
+
+Another nice thing to mention about deployer, is that it deploys itself, which fits to the
+declarative model and recursion. That means we develop deployer itself with the continuous
+deployment flow and can apply nonfunctional production regression testing to deployer.
+
+
+
 \section{Outlook and future work}
 
 % \part{Foundations}
