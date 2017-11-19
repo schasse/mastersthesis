@@ -305,17 +305,21 @@ concepts of most of the technologies.
 \section{Software Dependencies}
 
 Here I would like to mention in short the dependencies, which I used to implement
-deployer. Deployer is implemented in ruby\cite{ruby} and since it is a webserver, sinatra\cite{sinatra} is it's
-framework. Deployer uses git\cite{git} and subversion\cite{svn} to communicate with the either git or subversion as the
-control version system. Moreover deployer has a plugin which sends messages to bugsnag\cite{bugsnag} and
-slack\cite{slack}, to inform the developer in case it identifies a problem. Deployer uses kubectl to
-interact with kubernetes\cite{kubernetes} master. Deployer itself is containerized with docker\cite{docker} and its
-natural hosting solution would be kubernetes. We published deployer on github\cite{deployer} under
+deployer. Deployer is implemented in ruby\cite{ruby} and since it is a webserver,
+sinatra\cite{sinatra} is it's framework. Deployer uses git\cite{git} and
+subversion\cite{svn} to communicate with the either git or subversion as the control
+version system. Moreover deployer has a plugin which sends messages to
+bugsnag\cite{bugsnag} and slack\cite{slack}, to inform the developer in case it identifies
+a problem. Deployer uses kubectl to interact with kubernetes\cite{kubernetes}
+master. Deployer itself is containerized with docker\cite{docker} and its natural hosting
+solution would be kubernetes. We published deployer on github\cite{deployer} under
 GPL-3.0, a free software license.
 
-The monitoring system, which we used in our evaluation, is datadog\cite{datadog}, a commercial
-service. Nevertheless prometheus\cite{prometheus} is also a suitable open source solution as monitoring
-system. The continuous integration systems we use for the evaluation are codeship\cite{codeship} and jenkins\cite{jenkins}. As an image repo, we use docker hub\cite{dockerhub}.
+The monitoring system, which we used in our evaluation, is datadog\cite{datadog}, a
+commercial 2service. Nevertheless prometheus\cite{prometheus} is also a suitable open
+source solution as monitoring system. The continuous integration systems we use for the
+evaluation are codeship\cite{codeship} and jenkins\cite{jenkins}. As an image repo, we use
+docker hub\cite{dockerhub}.
 
 
 \section{Typical 3 Tier Webapp in Kubernetes}
