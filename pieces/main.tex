@@ -60,6 +60,86 @@ delivery pipelines.
 
 \chapter{Problem Definition}
 
+\section{Operations and maintenance is a lot of work}
+
+Running software in production and maintaining the software is a lot of work. Software
+companies do not only develop a software product, but they also have to operate the
+product. The agile and continuous practices focus primarily the software
+development. Those practices altered software development to become deliver features
+quicker into production. Focusing on development only has a major drawback. Companies
+easily disregard the operation of the software product in production. Fitzgerald asses
+that the focus of current research is primarily on the delivery process. And Fowler
+argues velocity kills agility #TODO.
+
+The DevOps approach and the microservice culture create practices to solve this
+issue. They basically try to solve the conflict between development and operations. On the
+one hand the aim to change the software product quickly and on the other hand to provide a
+stable and reliable software product of high quality. The CTO of amazon said ''You build
+it, you run it`, which creates the awareness of the teams that they not only have to
+develop and deliver features, but they are also responsible to operate their work in
+production. This is because operation is an essential part of a successful software
+product.
+
+What does it mean to operate and maintain a software product in production? It is all the
+work related to the software product in production. It includes the configuration of the
+servers. It includes monitoring of performance, errors and security issues. And in case
+there are any issues, to react to those issues, for instance to make the software product
+scale or to apply security patches.
+
+If we do not maintain the software products properly more issues arise, such as bugs,
+performance problems and security vulnerabilities. We conclude that if we disregard the
+amount of maintenance and operations work, the quality of the software product suffers.
+-> we need help to focus on maintenance
+
+\section{There are comp}
+
+The open source communities change and release their software continuously. Sometimes
+those changes consist of new feature, often times just refactorings and every now and then
+security patches. This results in releases and new versions.
+
+In the web, there is rarely a software product, which does not depend on open source
+software. The most web servers run linux and there are many popular open source
+frameworks, which make up the basis of the running software products.
+
+Companies like RedHat and Ubuntu provide enterprise support to the open source
+project. Those companies bundle open source projects, care about the bugs and security
+issues and provide tools to upgrade from one version to another easily. As a result other
+companies can outsource this work. The company saves operations and maintenance work and
+is able provide a better quality of their software product.
+
+A big problem is that it is not always easy to upgrade from one version to
+another. Refactorings result in breaking changes and the depending software needs to adapt
+to those changes. As a result software such as windows xp is still out in the wild. Due to
+the fact that companies are not able to adapt to those major changes. But the very same
+applies to open source frameworks such as django or ruby on rails.
+
+-> automate the upgrade
+-> continuously adapt to those changes.
+
+One reason for the introduction of microservices is the flexibility to update only a
+specific part of software product. With a microservices architecture we are able to update
+a single service without having to upgrade the whole product at once. We can choose the
+microservice for the update because it is more important. Or we can update one
+microservice by another without the major problem of upgrading the whole software product
+at once.
+
+Consequently this means we need to update more often and the work of updates itself is
+more.
+
+The software written by the development team needs to be maintained as well. As we
+illustrated previously, different issues occur in production. For instance performance and
+scaling issues or simply bugs. The developers need to refactor the software without
+changing the actual
+
+11:56
+
+
+
+A software product ages quickly.
+
+
+
+
 \section{The Continuous Delivery Pipeline consists of commitment, continuous integration
 and deployment}
 \section{Software Deployment approaches evolved from manual to automated}
