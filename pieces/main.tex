@@ -69,7 +69,7 @@ development. Those practices altered software development to become deliver feat
 quicker into production. Focusing on development only has a major drawback. Companies
 easily disregard the operation of the software product in production. Fitzgerald asses
 that the focus of current research is primarily on the delivery process. And Fowler
-argues velocity kills agility #TODO.
+argues velocity kills agility TODO.
 
 The DevOps approach and the microservice culture create practices to solve this
 issue. They basically try to solve the conflict between development and operations. On the
@@ -107,6 +107,10 @@ issues and provide tools to upgrade from one version to another easily. As a res
 companies can outsource this work. The company saves operations and maintenance work and
 is able provide a better quality of their software product.
 
+If we do not do maintenance properly, it results in a risk of security
+vulnerabilities. Those can be very harmful to the owner of the software product. On
+account to that, maintaining a software product comes with responsibility.
+
 A big problem is that it is not always easy to upgrade from one version to
 another. Refactorings result in breaking changes and the depending software needs to adapt
 to those changes. As a result software such as windows xp is still out in the wild. Due to
@@ -129,15 +133,87 @@ more.
 The software written by the development team needs to be maintained as well. As we
 illustrated previously, different issues occur in production. For instance performance and
 scaling issues or simply bugs. The developers need to refactor the software without
-changing the actual
+changing the actual functionality. They make nonfunctional changes. At facebook TODO
+those invisible changes are more than 50\% of the total changes.
 
-11:56
+There are several things you can do to keep up the amount of work. Facebook TODO for
+example hired more developers. This is expensive though. A much cheaper solution is
+automation. We cannot automate all of the maintenance work, but some of it.
 
+Software products have a high amount of dependencies. This totally makes sense, because
+when programming a software you do not want to recreate everything. On the one hand the
+dependencies of software are different abstraction levels, such as a processor, a
+programming language and for instance a programming framework. On the other hand the
+dependencies are modules which encapsulate a certain functionality, which are very common
+for applications, for instance authentication of a user. The abstraction as well as the
+reusable software modules makes it easier and faster for developers to reach their
+goals. And we conclude due to those facts that dependencies are becoming more.
+
+With containerization comes a big change for dependencies. Containerization is a further
+step of isolation. The operating system is not only able to isolate cpu and memory for
+every process. Now with containerization the operating system can also isolate the disk,
+which means it can isolate the installed dependencies for every process. This is the
+supporting technology for microservices, which as we previously described have the
+advantage to be flexible when it comes to updating dependencies.
+
+With containerization it goes even one step further. Typically a containerized ecosystem
+is immutable. So if there is a change, rather than changing the running container we
+create a new container based on an updated image and kill the old container. And when all
+image versions are saved, we can rollback easily to the old version. Hence updates will be
+less risky. Morris describes this in infrastructure as phoenix replacement TODO and in
+kubernetes, we speak of rolling updates.
+
+But again we need to update multiple microservice or containerized processes instead of
+one base operating system, which results in more maintenance work. Immutability takes out
+some of the risks. Combining those two arguments, there is an obvious need of an automated
+process for updating containerized processes.
+
+There is a shift of the responsibility of dependencies towards developers. In the past
+operation teams have been responsible of the dependencies, which have been installed on
+the operating systems. There are teams, which operate the hardware and software to provide
+the virtual machine infrastructure. There is a clear isolation between the dependencies of
+the virtual machine infrastructure and the virtual machines. So the virtual machine
+infrastructure teams need to only maintain this infrastructure, but they can provide a
+service to run almost any software and they do not need to maintain it. So this is a shift
+of maintenance responsibility from the infrastructure operation team to its users, mostly
+developers.
+
+TODO There are other practices, which enable production testing. For example A/B testing,
+where you compare two different versions in production. Or canary releasing, with which
+you change only a few replicated parts of production product to simply reduce risk. There
+is also shadow releasing, where the users are not affected by the change which goes into
+production. Netflix tests its services with the simian army in production to detect
+unforeseen events in a controlled environment.
+
+It is true that those practices help to deliver changes faster to production and help to
+detect issues at low risk. Nevertheless the monitoring and reacting to errors requires
+manual work. Those practices evolved from continuous delivery. Mostly the focus lies on
+reducing the risk of a change in production and test the quality of change in a lean
+fashion.
+
+There is a lack of automatable practices for maintaining a software product. Continuous
+delivery brought up good automatable practices to continuously deliver changes and
+features into production. It has the lack of good practices though to maintain a software
+product.
+
+The focus of DevOps is a preferably short time between the change of the software and
+delivering it to production and ensure a high quality TODO. So the quality aspect means
+that DevOps focuses on operating a software product in production. This is obvious for the
+as it includes monitoring practices. But as I mentioned, there is lack though of
+\emph{automatable} practices for operating and maintaining the software product in
+production.
+
+The contribution of this masterthesis is a practice, which can fully be automated for
+maintaining a software product. It extends the continuous delivery and continuous
+deployment pipeline as those go until release and not further. Nonfunctional production
+regression testing extends the pipeline to the production environment, where we typically
+need to operate and maintain a system. The thesis suggests a practice to deploy a change
+to production, monitor the change at low risk and in case there is a regression
+automatically roll back. The thesis provides an exemplary implementation of this practice
+and evaluates the practice in a nonproduction test as well as in production.
 
 
 A software product ages quickly.
-
-
 
 
 \section{The Continuous Delivery Pipeline consists of commitment, continuous integration
