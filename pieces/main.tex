@@ -64,66 +64,69 @@ delivery pipelines.
 \section{Maintenance responsibility shifts}
 
 % devops/microservices aproach successful development and operation
-The DevOps TODO approach and the microservice culture TODO create practices to solve this
-issue. They basically try to solve the conflict between development and operations. On the
-one hand the aim to change the software product quickly and on the other hand to provide a
-stable and reliable software product of high quality. The CTO of amazon said ''You build
-it, you run it` TODO, which creates the awareness of the teams to not only be responsible
-for development and deliver features whereas they are also responsible to operate their
-product in production. This is because operation is an essential part of a successful
-software product.
+The DevOps TODO approach and the microservice culture TODO create practices to solve the
+issues of the conflicting tension\cite{sre_intro} between a development and operation
+team. On the one hand the aim to change the software product quickly and on the other hand
+to provide a stable and reliable software product of high quality. The CTO of amazon said
+''You build it, you run it` TODO, which creates the awareness of the teams to not only be
+responsible for the development and deliver features whereas they are also responsible to
+operate their product in production. This is because operation is an essential part of a
+successful software product. One team is consequently responsible of the development,
+operation and maintenance their own code.
 
 % responsibility of deps shifts from ops to dev
-In acount of the dependencies there is a responsibility shift towards developers. In the
-past, development teams delivered code and depended on the installed dependencies.
-Operation teams have been responsible of maintaining those dependencies. Virtualization
-made a change. Operation teams operating a virtual infrastructure operate and maintain the
+Furthermore the responsibility of software dependencies shifts. In the past, development
+teams delivered code and depended on installed software dependencies. Operation teams have
+been responsible of maintaining those dependencies. Virtualization made a
+change. Operation teams operating a virtual infrastructure operate and maintain the
 hardware and software of this infrastructure. They do not maintain the specific
-dependencies code developed by the development team. The development team can choose which
-dependencies they want to have. Accordingly there is a clear isolation between the
-dependencies of the virtual machine infrastructure and the development
-team.
+dependencies of the code, which the development team develops. The development team can
+choose which dependencies they want to have. Accordingly there is a clear isolation
+between the dependencies of the virtual machine infrastructure and the development team.
 
 % contra arg vms operated by ops team
 You could argue that virtual machines have still the same functionality like bare metal
 servers and need to be maintained in the same way by the same operation
-teams. Nevertheless it becomes easier to maintain a dynamic virtual infrastructure
-compared to a bare metal infrastructure. And the easier it becomes, the more it enables
-developers to operate their software product themselves. Containerization techniques even
-potentiates the ease of managing dependencies. So the responsibility of the dependencies
-of a software shifts resultantly from the operation team to the development team.
+teams. Nevertheless it becomes easier to maintain dynamic virtual
+infrastructure\cite{infra_as_code_platforms} compared to bare metal infrastructure. And
+the easier it becomes, the more it enables developers to operate their software product
+themselves.
+
+Containerization manifests the shift of the responsibility. It is a further step of
+isolation. The operating system is able to isolate cpu and memory for every process. Yet
+with containerization the operating system can also isolate the disk between processes,
+which means it can isolate the installed dependencies for every process. Containerization
+techniques even potentiate the ease of managing dependencies. So the responsibility of the
+software dependencies shifts resultantly towards the team, which builds and runs the
+software product.
 
 
 \section{Lack of focus on maintenance}
 
-% (maintenance is a lot of work and) is easily disregarded in favor of velocity
-Running software in production and maintaining the software is a lot of work. Software
-companies do not only develop a software product, but they also have to operate the
-software product. Agile and continuous practices focus primarily software
-development. Those practices altered software development to deliver features faster into
-production. Fitzgerald asses that the focus of current research is primarily on the
-delivery process. And Fowler argues velocity kills agility TODO. Focusing on development
-velocity only has a major drawback. Companies easily disregard the operation of the
-software product in production.
+% is risky
+If we did not do maintenance properly, there is a risk of depreciating the quality of the
+software product. For instance there can be security vulnerabilities. Those can be very
+harmful to the company of the software product. If we do not maintain the software
+products properly more issues arise, such as bugs or performance problems. On account to
+that, maintaining a software product comes with responsibility. If we disregard
+maintenance and operations work, the quality of the software product suffers.
 
 % operate and maintaining software means: config, monitoring, incident management
 What does it mean to operate and maintain a software product in production? It is all the
-work related to running the software product in production. It includes the configuration
-of the servers. It includes monitoring of performance, errors and security issues. And it
+work related to running the software product. It includes the configuration of the
+servers. It includes monitoring of performance, errors and security issues. And it
 includes the handling of incidents. For example there are any issues, you would need to
 react to those issues and to make the software product for instance scale or apply
 security patches.
 
-% is risky
-If we do not do maintenance properly, it results in a risk of security
-vulnerabilities. Those can be very harmful to the owner of the software product. On
-account to that, maintaining a software product comes with responsibility.
-
-% ops work is important becuase it involves risk.
-If we do not maintain the software products properly more issues arise, such as bugs,
-performance problems and security vulnerabilities. We conclude that if we disregard the
-amount of maintenance and operations work, the quality of the software product suffers.
--> we need help to focus on maintenance
+% (maintenance is a lot of work and) is easily disregarded in favor of velocity
+Agile and continuous practices focus primarily on software development. Those practices
+altered software development to deliver features faster into production. Fitzgerald asses
+that the focus of current research is primarily on the delivery process. And Fowler argues
+velocity kills agility TODO. Focusing on development velocity only has a major
+drawback. Operating software in production and maintaining it needs to be done properly to
+ensure the quality of a software product. Companies easily disregard the importance of
+operation and maintenance of the software product.
 
 
 \section{Underestimated amount of maintenance work}
@@ -132,18 +135,18 @@ amount of maintenance and operations work, the quality of the software product s
 The software written by the development team needs to be maintained as well. As we
 illustrated previously, different issues occur in production. For instance performance and
 scaling issues or simply bugs. The developers need to refactor the software without
-changing the actual functionality. They make nonfunctional changes. At facebook TODO
-those invisible changes are more than 50\% of the total changes.
+changing the actual functionality. Those changes are mostly invisible or do not alter any
+function visible to users. At facebook TODO those invisible changes are more than 50\% of
+the total changes.
 
 % dependencies are becoming more
-Software products have a high amount of dependencies. This totally makes sense, because
-when programming a software you do not want to recreate everything. On the one hand the
-dependencies of software are different abstraction levels, such as a processor, a
-programming language and for instance a programming framework. On the other hand the
-dependencies are modules which encapsulate a certain functionality, which are very common
-for applications, for instance authentication of a user. The abstraction as well as the
-reusable software modules make it easier and faster for developers to reach their
-goals. We conclude due to those facts that dependencies are becoming more.
+Moreover Software products have a high amount of dependencies. This totally makes sense,
+because when programming a software you do not want to do it from scratch. Firstly the
+dependencies are different abstraction levels, such as a processor, a programming language
+and for instance a programming framework. And secondly the dependencies are modules which
+encapsulate a certain functionality. Those are very common functionalities for
+applications, for instance authentication of a user. The abstraction as well as the
+reusable software modules make it easier and faster for developers to reach their goals.
 
 % many versions in open source
 The open source communities change and release their software continuously. Sometimes
@@ -156,11 +159,12 @@ software. The most web servers run linux and there are many popular open source
 frameworks, which make up the basis of the running software products.
 
 % RedHat/Ubuntu companies provide bundling and update service
-Companies like RedHat or Ubuntu provide enterprise support to open source projects. Those
-companies bundle those open source projects, care about the bugs and security issues and
-provide tools to upgrade from one version to another easily. As a result companies with a
-software product can outsource this work. Those company saves operations and maintenance
-work and is able provide a better quality of their software product.
+Companies like RedHat or Ubuntu provide enterprise support to those open source
+projects. Those companies bundle those open source projects, care about the bugs and
+security issues and provide tools to upgrade from one version to another easily. As a
+result companies with a software product can outsource the maintenance work of the
+dependencies. There is still the need though, to integrate those changes to the own
+software product.
 
 % hard to upgrade at once
 One problem is that it is not always easy to upgrade from one version to
@@ -169,59 +173,6 @@ to those changes. As a result software such as windows xp is still out in the wi
 the fact that companies are not able to adapt to those major changes at once. However the
 very same applies to open source frameworks such as django or ruby on rails.
 
--> continuously adapt to those changes.
-
-
-\section{Disregard of automation for maintenance work}
-
-% practices exist which connect dev and ops
-You could argue that those DevOps practices already exist and connect development and
-operations of a software product. However the focus lies mostly on testing the quality of
-a change in a lean fashion and to reduce risk of a change in production. It is true that
-those practices help to deliver changes faster to production and help to detect issues at
-low risk. Nevertheless monitoring and reacting to errors requires manual work.
-
-% another time practices exist, lack of (need to rewrite)
-The focus of DevOps is a preferably short time between the change of the software and
-delivering it to production and ensure a high quality TODO. So the quality aspect means
-that DevOps focuses on operating a software product in production. This is obvious as it
-includes monitoring practices. But as I mentioned, there is lack though of
-\emph{automatable} practices for operating and maintaining the software product in
-production.
-
-% testing in production is already done
-TODO There are other practices, which enable production testing. For example A/B testing,
-where you compare two different versions in production. Or canary releasing, with which
-you change only a few replicated parts of the production environment to reduce risk. There
-is also shadow releasing, where users are not affected by the change, which goes into
-production. Netflix tests its services with the simian army in production to detect
-unforeseen events in a controlled environment.
-
-% containerization takes out risk for updates
-Containerization takes out the risk of updating the isolated dependencies of a
-process. Morris describes phoenix replacement in immutable infrastructure TODO. Kubernetes
-has the approach of rolling updates, which implement the same practices. A containerized
-ecosystem is typically immutable. Rather than changing a running container, we would
-create a new container based on an updated image including the changes to deploy. After
-the new container was started, we can kill the old container. Usually an image repository
-holds every built container image version. Those saved images allow us to easily rollback
-to a previous version. Hence updates are less risky in a containerized immutable
-infrastructure.
-
-% containerization supports microservice approach
-With containerization comes a big change for dependencies. Containerization is a further
-step of isolation. The operating system is able to isolate cpu and memory for every
-process. Yet with containerization the operating system can also isolate the disk between
-processes, which means it can isolate the installed dependencies for every process. This
-is the supporting technology for microservices, which as we previously described have the
-advantage to be flexible when it comes to updating dependencies.
-
-% more updates less risk -> automation
-But again we need to update multiple microservice or containerized processes instead of
-one base operating system, which results in more maintenance work. Immutability takes out
-some of the risks. Combining those two arguments, there is an obvious need of an automated
-process for updating containerized processes.
-
 % microservices create ability to continuously upgrade one part by another
 % it is much work though
 One reason for the introduction of microservice is the flexibility to update only a small
@@ -229,19 +180,59 @@ specific part of the whole software product. With a microservice architecture we
 to update a single service without having to upgrade the whole product at once. We can
 choose the microservice for the update because it is more important. Or we can update one
 microservice by another without the major problem of upgrading the whole software product
-at once. Consequently this means we need to update more often and the work of updates
-itself is more.
+at once. Consequently this means we need to update more often and the amount work of
+updates itself is more.
 
 % compensation by automation instead of more humans
 There are several things you can do to keep up with the amount of work. Facebook TODO for
-example hired more developers. This is expensive though. A much cheaper solution is
-automation. We cannot automate all of the maintenance work, but some of it.
+example hires more developers. This is expensive though. A much cheaper solution is
+automation. We should automate some of the maintenance work.
+
+\section{Disregard of automation for maintenance work}
+
+% practices exist which connect dev and ops
+You could argue that DevOps practices already exist and connect development and operations
+including maintenance of a software product. However the focus lies mostly on testing the
+quality of a change in a lean fashion and to reduce risk of a change in production TODO
+(devops defintion). It is true that those practices help to deliver changes faster to
+production and help to detect issues at low risk. Nevertheless monitoring and reacting to
+errors requires manual work.
+
+% testing in production is already done
+TODO There exist practices, which already enable production testing. For example A/B
+testing, where you compare two different versions in production. Or canary releasing, with
+which you change only a few replicated parts of the production environment to reduce
+risk. There is also shadow releasing, where users are not affected by the change, which
+goes into production. Netflix tests its services with the simian army in production to
+detect unforeseen events in a controlled environment.
+
+% containerization takes out risk for updates
+Containerization takes out the risk of updating a service. Morris describes phoenix
+replacement in immutable infrastructure TODO. Kubernetes has the approach of rolling
+updates, which implement the same practices. A containerized ecosystem is typically
+immutable. Rather than changing a running container, we would create a new container based
+on an updated image including the changes to deploy. After the new container was started,
+we can kill the old container. Usually an image repository holds every built container
+image version. Those saved images allow us to easily rollback to a previous version. Hence
+updates are less risky in a containerized immutable infrastructure.
+
+TODO (author) illustrates the value of automation~\cite{sre_automation}. Software
+reliability engineers automate tasks to firstly save the valuable human resources and
+secondly take risk out of the tasks because of human errors. This is a good approach and
+focuses the quality of the software product.
+
+Immutability takes out some of the risks and automation brings value. Combining those two
+arguments, there is an obvious need of an automated process for updating services.
 
 % cd provides good automation, but has lack of maintenance focus
 There is a lack of truly automatable practices for maintaining a software
 product. Continuous delivery brought up good automatable practices to continuously deliver
 changes and features into production. It has the lack of good practices though to maintain
 a software product.
+
+Continuous delivery does not focus on the maintenance work and the DevOps approach does
+not focus on automating the maintenance work as previously examined. We conclude that
+there is a need for practices, which continuously support and automate maintenance work.
 
 \section{Contribution of this thesis}
 
