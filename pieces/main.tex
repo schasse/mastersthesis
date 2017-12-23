@@ -1,26 +1,26 @@
 \chapter{Introduction}
 \section{Introduction}
 
-Many people talk about DevOps~\cite{devops_definition} as well as there are multiple
-definitions and interpretations of the term DevOps. DevOps is referred as a philosophy, a
+DevOps~\cite{devops_definition} is a often discussed topic and there are multiple
+definitions and interpretations of the term DevOps. DevOps is referred to a philosophy, a
 culture, practices and specific tools. For my research, I will focus on two different
 aspects of the term DevOps:
 
-The first one is the perspective of operation teams. Operation teams traditionally modeled
-infrastructure by installing physical hardware and by manually installing software
+The first aspect is the perspective of operation teams. Operation teams traditionally
+modeled infrastructure by installing physical hardware and by manually installing software
 components. With the rise of virtual machines and the cloud, it became possible to model
 infrastructure in software~\cite{infra_as_code_platforms}. Modelling via software enables
-operation teams to use tools and practices as seen in software engineering. Infrastructure
+operation teams to use tools and practices used in software engineering. Infrastructure
 code is version controlled, tested and can be automatically deployed.
 
-The other aspect of DevOps is the perspective of developer teams. Previously developer
+The other aspect of DevOps is the perspective of developer teams. Previously, developer
 teams were only responsible for developing new features. Software engineering practices
 got established and proven. One of those practices is the continuous delivery
-pipeline~\cite{cd_humble_pipeline}. The last step of the continuous delivery pipeline is the
-deployment. Formerly operation teams were responsible for deploying new features. The
-deployment as last step of the continuous delivery pipeline shifts a responsibility from
-operation to development. This shows that developer teams are becoming more and more
-responsible for running the software, they built.
+pipeline~\cite{cd_humble_pipeline}. The last step of the continuous delivery pipeline is
+the deployment. Formerly operation teams were responsible for deploying new features. The
+deployment as the last step of the continuous delivery pipeline shifts a responsibility
+from operation to development. This shows that developer teams are becoming more and more
+responsible for running the software they built.
 
 \section{Thesis outline}
 
@@ -60,17 +60,8 @@ delivery pipelines.
 
 \chapter{Problem Definition}
 
-\section{Operations and maintenance is a lot of work}
 
-% (maintainance is a lot of work and) is easily disregarded in favor of velocity
-Running software in production and maintaining the software is a lot of work. Software
-companies do not only develop a software product, but they also have to operate the
-software product. Agile and continuous practices focus primarily software
-development. Those practices altered software development to deliver features faster into
-production. Fitzgerald asses that the focus of current research is primarily on the
-delivery process. And Fowler argues velocity kills agility TODO. Focusing on development
-velocity only has a major drawback. Companies easily disregard the operation of the
-software product in production.
+\section{Maintenance responsibility shifts}
 
 % devops/microservices aproach successful development and operation
 The DevOps TODO approach and the microservice culture TODO create practices to solve this
@@ -81,112 +72,6 @@ it, you run it` TODO, which creates the awareness of the teams to not only be re
 for development and deliver features whereas they are also responsible to operate their
 product in production. This is because operation is an essential part of a successful
 software product.
-
-% operate and maintaining software means: config, monitoring, incident management
-What does it mean to operate and maintain a software product in production? It is all the
-work related to running the software product in production. It includes the configuration
-of the servers. It includes monitoring of performance, errors and security issues. And it
-includes the handling of incidents. For example there are any issues, you would need to
-react to those issues and to make the software product for instance scale or apply
-security patches.
-
-% ops work is important becuase it involves risk.
-If we do not maintain the software products properly more issues arise, such as bugs,
-performance problems and security vulnerabilities. We conclude that if we disregard the
-amount of maintenance and operations work, the quality of the software product suffers.
--> we need help to focus on maintenance
-
-\section{There are comp}
-
-% many versions in open source
-The open source communities change and release their software continuously. Sometimes
-those changes consist of new feature, often times just refactorings and every now and then
-security patches. This results in releases and new versions.
-
-% almost every software product relies on open source
-In the web, there is rarely a software product, which does not depend on open source
-software. The most web servers run linux and there are many popular open source
-frameworks, which make up the basis of the running software products.
-
-% RedHat/Ubuntu companies provide bundling and update service
-Companies like RedHat or Ubuntu provide enterprise support to open source projects. Those
-companies bundle those open source projects, care about the bugs and security issues and
-provide tools to upgrade from one version to another easily. As a result companies with a
-software product can outsource this work. Those company saves operations and maintenance
-work and is able provide a better quality of their software product.
-
-% is risky (see above?)
-If we do not do maintenance properly, it results in a risk of security
-vulnerabilities. Those can be very harmful to the owner of the software product. On
-account to that, maintaining a software product comes with responsibility.
-
-% hard to upgrade at once
-One problem is that it is not always easy to upgrade from one version to
-another. Refactorings result in breaking changes and the depending software needs to adapt
-to those changes. As a result software such as windows xp is still out in the wild. Due to
-the fact that companies are not able to adapt to those major changes at once. However the
-very same applies to open source frameworks such as django or ruby on rails.
-
--> continuously adapt to those changes.
--> automate the upgrade
-
-
-% microservices create ability to continuously upgrade one part by another
-% it is much work though
-One reason for the introduction of microservice is the flexibility to update only a small
-specific part of the whole software product. With a microservice architecture we are able
-to update a single service without having to upgrade the whole product at once. We can
-choose the microservice for the update because it is more important. Or we can update one
-microservice by another without the major problem of upgrading the whole software product
-at once. Consequently this means we need to update more often and the work of updates
-itself is more.
-
-% maintenance of the written code itself is a major source of changes
-The software written by the development team needs to be maintained as well. As we
-illustrated previously, different issues occur in production. For instance performance and
-scaling issues or simply bugs. The developers need to refactor the software without
-changing the actual functionality. They make nonfunctional changes. At facebook TODO
-those invisible changes are more than 50\% of the total changes.
-
-% compensation by automation instead of more humans
-There are several things you can do to keep up the amount of work. Facebook TODO for
-example hired more developers. This is expensive though. A much cheaper solution is
-automation. We cannot automate all of the maintenance work, but some of it.
-
-% dependencies are becoming more
-Software products have a high amount of dependencies. This totally makes sense, because
-when programming a software you do not want to recreate everything. On the one hand the
-dependencies of software are different abstraction levels, such as a processor, a
-programming language and for instance a programming framework. On the other hand the
-dependencies are modules which encapsulate a certain functionality, which are very common
-for applications, for instance authentication of a user. The abstraction as well as the
-reusable software modules make it easier and faster for developers to reach their
-goals. We conclude due to those facts that dependencies are becoming more.
-
-% containerization supports microservice approach
-With containerization comes a big change for dependencies. Containerization is a further
-step of isolation. The operating system is able to isolate cpu and memory for every
-process. Yet with containerization the operating system can also isolate the disk between
-processes, which means it can isolate the installed dependencies for every process. This
-is the supporting technology for microservices, which as we previously described have the
-advantage to be flexible when it comes to updating dependencies.
-
-% containerization takes out risk for updates
-Containerization takes out the risk of updating the isolated dependencies of a
-process. Morris describes phoenix replacement in immutable infrastructure TODO. Kubernetes
-has the approach of rolling updates, which implement the same practices. A containerized
-ecosystem is typically immutable. Rather than changing a running container, we would
-create a new container based on an updated image including the changes to deploy. After
-the new container was started, we can kill the old container. Usually an image repository
-holds every built container image version. Those saved images allow us to easily rollback
-to a previous version. Hence updates are less risky in a containerized immutable
-infrastructure.
-
-% more updates less risk -> automation
-But again we need to update multiple microservice or containerized processes instead of
-one base operating system, which results in more maintenance work. Immutability takes out
-some of the risks. Combining those two arguments, there is an obvious need of an automated
-process for updating containerized processes.
 
 % responsibility of deps shifts from ops to dev
 In acount of the dependencies there is a responsibility shift towards developers. In the
@@ -208,13 +93,86 @@ developers to operate their software product themselves. Containerization techni
 potentiates the ease of managing dependencies. So the responsibility of the dependencies
 of a software shifts resultantly from the operation team to the development team.
 
-% testing in production is already done
-TODO There are other practices, which enable production testing. For example A/B testing,
-where you compare two different versions in production. Or canary releasing, with which
-you change only a few replicated parts of the production environment to reduce risk. There
-is also shadow releasing, where users are not affected by the change, which goes into
-production. Netflix tests its services with the simian army in production to detect
-unforeseen events in a controlled environment.
+
+\section{Lack of focus on maintenance}
+
+% (maintenance is a lot of work and) is easily disregarded in favor of velocity
+Running software in production and maintaining the software is a lot of work. Software
+companies do not only develop a software product, but they also have to operate the
+software product. Agile and continuous practices focus primarily software
+development. Those practices altered software development to deliver features faster into
+production. Fitzgerald asses that the focus of current research is primarily on the
+delivery process. And Fowler argues velocity kills agility TODO. Focusing on development
+velocity only has a major drawback. Companies easily disregard the operation of the
+software product in production.
+
+% operate and maintaining software means: config, monitoring, incident management
+What does it mean to operate and maintain a software product in production? It is all the
+work related to running the software product in production. It includes the configuration
+of the servers. It includes monitoring of performance, errors and security issues. And it
+includes the handling of incidents. For example there are any issues, you would need to
+react to those issues and to make the software product for instance scale or apply
+security patches.
+
+% is risky
+If we do not do maintenance properly, it results in a risk of security
+vulnerabilities. Those can be very harmful to the owner of the software product. On
+account to that, maintaining a software product comes with responsibility.
+
+% ops work is important becuase it involves risk.
+If we do not maintain the software products properly more issues arise, such as bugs,
+performance problems and security vulnerabilities. We conclude that if we disregard the
+amount of maintenance and operations work, the quality of the software product suffers.
+-> we need help to focus on maintenance
+
+
+\section{Underestimated amount of maintenance work}
+
+% maintenance of the written code itself is a major source of changes
+The software written by the development team needs to be maintained as well. As we
+illustrated previously, different issues occur in production. For instance performance and
+scaling issues or simply bugs. The developers need to refactor the software without
+changing the actual functionality. They make nonfunctional changes. At facebook TODO
+those invisible changes are more than 50\% of the total changes.
+
+% dependencies are becoming more
+Software products have a high amount of dependencies. This totally makes sense, because
+when programming a software you do not want to recreate everything. On the one hand the
+dependencies of software are different abstraction levels, such as a processor, a
+programming language and for instance a programming framework. On the other hand the
+dependencies are modules which encapsulate a certain functionality, which are very common
+for applications, for instance authentication of a user. The abstraction as well as the
+reusable software modules make it easier and faster for developers to reach their
+goals. We conclude due to those facts that dependencies are becoming more.
+
+% many versions in open source
+The open source communities change and release their software continuously. Sometimes
+those changes consist of new feature, often times just refactorings and every now and then
+security patches. This results in releases and new versions.
+
+% almost every software product relies on open source
+In the web, there is rarely a software product, which does not depend on open source
+software. The most web servers run linux and there are many popular open source
+frameworks, which make up the basis of the running software products.
+
+% RedHat/Ubuntu companies provide bundling and update service
+Companies like RedHat or Ubuntu provide enterprise support to open source projects. Those
+companies bundle those open source projects, care about the bugs and security issues and
+provide tools to upgrade from one version to another easily. As a result companies with a
+software product can outsource this work. Those company saves operations and maintenance
+work and is able provide a better quality of their software product.
+
+% hard to upgrade at once
+One problem is that it is not always easy to upgrade from one version to
+another. Refactorings result in breaking changes and the depending software needs to adapt
+to those changes. As a result software such as windows xp is still out in the wild. Due to
+the fact that companies are not able to adapt to those major changes at once. However the
+very same applies to open source frameworks such as django or ruby on rails.
+
+-> continuously adapt to those changes.
+
+
+\section{Disregard of automation for maintenance work}
 
 % practices exist which connect dev and ops
 You could argue that those DevOps practices already exist and connect development and
@@ -222,12 +180,6 @@ operations of a software product. However the focus lies mostly on testing the q
 a change in a lean fashion and to reduce risk of a change in production. It is true that
 those practices help to deliver changes faster to production and help to detect issues at
 low risk. Nevertheless monitoring and reacting to errors requires manual work.
-
-% cd provides good automation, but has lack of maintenance focus
-There is a lack of truly automatable practices for maintaining a software
-product. Continuous delivery brought up good automatable practices to continuously deliver
-changes and features into production. It has the lack of good practices though to maintain
-a software product.
 
 % another time practices exist, lack of (need to rewrite)
 The focus of DevOps is a preferably short time between the change of the software and
@@ -237,7 +189,68 @@ includes monitoring practices. But as I mentioned, there is lack though of
 \emph{automatable} practices for operating and maintaining the software product in
 production.
 
-% contribution of the masterthesis
+% testing in production is already done
+TODO There are other practices, which enable production testing. For example A/B testing,
+where you compare two different versions in production. Or canary releasing, with which
+you change only a few replicated parts of the production environment to reduce risk. There
+is also shadow releasing, where users are not affected by the change, which goes into
+production. Netflix tests its services with the simian army in production to detect
+unforeseen events in a controlled environment.
+
+% containerization takes out risk for updates
+Containerization takes out the risk of updating the isolated dependencies of a
+process. Morris describes phoenix replacement in immutable infrastructure TODO. Kubernetes
+has the approach of rolling updates, which implement the same practices. A containerized
+ecosystem is typically immutable. Rather than changing a running container, we would
+create a new container based on an updated image including the changes to deploy. After
+the new container was started, we can kill the old container. Usually an image repository
+holds every built container image version. Those saved images allow us to easily rollback
+to a previous version. Hence updates are less risky in a containerized immutable
+infrastructure.
+
+% containerization supports microservice approach
+With containerization comes a big change for dependencies. Containerization is a further
+step of isolation. The operating system is able to isolate cpu and memory for every
+process. Yet with containerization the operating system can also isolate the disk between
+processes, which means it can isolate the installed dependencies for every process. This
+is the supporting technology for microservices, which as we previously described have the
+advantage to be flexible when it comes to updating dependencies.
+
+% more updates less risk -> automation
+But again we need to update multiple microservice or containerized processes instead of
+one base operating system, which results in more maintenance work. Immutability takes out
+some of the risks. Combining those two arguments, there is an obvious need of an automated
+process for updating containerized processes.
+
+% microservices create ability to continuously upgrade one part by another
+% it is much work though
+One reason for the introduction of microservice is the flexibility to update only a small
+specific part of the whole software product. With a microservice architecture we are able
+to update a single service without having to upgrade the whole product at once. We can
+choose the microservice for the update because it is more important. Or we can update one
+microservice by another without the major problem of upgrading the whole software product
+at once. Consequently this means we need to update more often and the work of updates
+itself is more.
+
+% compensation by automation instead of more humans
+There are several things you can do to keep up with the amount of work. Facebook TODO for
+example hired more developers. This is expensive though. A much cheaper solution is
+automation. We cannot automate all of the maintenance work, but some of it.
+
+% cd provides good automation, but has lack of maintenance focus
+There is a lack of truly automatable practices for maintaining a software
+product. Continuous delivery brought up good automatable practices to continuously deliver
+changes and features into production. It has the lack of good practices though to maintain
+a software product.
+
+\section{Contribution of this thesis}
+
+In my masterthesis I want to optimize the software engineering practices in order to
+empower developers in their bigger responsibilities. I want to focus on the process of
+deployment and enhance the continuous delivery pipeline. To achieve this, I want to
+examine operation practices like monitoring and incident management. And then extend the
+deployment process by three consecutive steps.
+
 The contribution of this masterthesis is a practice, which can fully be automated for
 maintaining a software product. It extends the continuous delivery and continuous
 deployment pipeline as those go until release and no further. Nonfunctional production
@@ -247,181 +260,6 @@ production, monitor the change at low risk and in case of a regression automatic
 back. The thesis provides an exemplary implementation of this practice and evaluates the
 practice in a nonproduction test as well as in a production environment of a software
 product.
-
-\section{The Continuous Delivery Pipeline consists of commitment, continuous integration
-and deployment}
-\section{Software Deployment approaches evolved from manual to automated}
-\subsection{Blue-Green Deployment allows Zero Downtime releases}
-
-The approach of blue green deployment involves two environments. One is the environment
-which serves production traffic, the other environment is in standby. You deploy to the
-other environment the new version. You then switch routing from the environment, which
-runs the old version, to the environment with the new version.
-
-This has the major disadvantage that it is a waste of resources. Just one environment
-doing work with serving production traffic as the other environment is just idling. Even
-if you use the idling environment as a staging it would be oversized and still wasting
-resources.
-
-\subsection{Automation leads to resource saving Phoenix Deployment and Rolling
-Deployments}
-
-In times of dynamic resource allocation, automation and virtual machines, it became easy
-to automatically spawn new servers. In for a deploy of a new version you would not
-change the servers, but automatically create new ones with the version to deploy, then
-switch the traffic from the old servers to the new servers, and in the end just destroy
-the old servers. This procedure is called phoenix replacement.
-
-\subsection{Canaries test releases with a small amount of traffic}
-
-
-Canary releasing is a way to test new versions of the application in production. But
-testing in production is risky, because when there is an error which leads to a defect
-or failure the users will get affected. And this costs money in any way.
-
-There comes canary releasing into play. A single canary can't do much harm and it's not
-a big catastrophe if the small canary is malicious. Let me explain it at the example of
-a typically scaled web application. Usually you do not have just a single web server,
-but multiple servers. So when releasing in the canary style, you change just a small
-proportion of the twenty webservers to the new version. Now two versions of the
-webservers are running at the same time.
-
-Usually you want exactly the same version of webservers in production with the exact
-same configuration. This makes systems easier to debug in case of an error. The maximum
-count of different versions during canary releasing is two. But why go for two different
-versions in production with the canary releasing technique, when it makes debugging in
-general harder.
-
-It's because with canary releasing you can achieve different goals. The first one is
-truly when an error occurs. Just because less users are affected by the error. The
-majority of webservers is still in the old version, so just a small portion of all the
-users have a poor experience with the erroneous small canary version fraction.
-
-In case of success, when everything works as expected, it is proven that there is less
-risk of errors, even under real production conditions.
-
-
-\subsection{continuous deployment is not continuous delivery}
-
-\section{Operators turned into Site Reliability Engineers}
-
-Companies, which run software on their servers, usually have a specialized operations
-team. A team of developers programs the software and after the team is finished, the
-software is handed to another team, which runs the software and keeps it running. Those
-teams are usually referred as operations teams. So what are their duties and
-responsibilities exactly?
-
-At first the already developed software needs to be deployed on an
-infrastructure. Therefore the operations team must provide an
-infrastructure. Infrastructure generally consists of hardware like racks, servers and
-networking devices. But in most cases, software depends on other software components and
-services, which are for example programming languages, dns or databases. Software
-usually changes. Most importantly there are security patches, but also software updates
-with new features are mandatory to install. Hence the operations team is responsible for
-installing, configuring and updating hardware and software components.
-
-To provide a certain quality of service, infrastructure as well as the software must be
-maintained. That means identifying any problems and moreover fixing the identified
-problems. To identify problems in the first place, there must be any kind of monitoring. A
-good monitoring system\cite{devops_monitoring} finds failures and resulting faults,
-recognizes performance problems, usual workloads and it detects intruders. More obvious
-problems can be detected early, even before the problem leads to failures. For example a
-disk will soon be full or utilization of resources like cpu, ram, network or disk i/o is
-too high. Other failures can not be detected in advance and lead to a defective system.
-
-In case monitoring identifies a problem, the operations team needs to take care of the
-problem. Operations teams need to be on call and manage incidents. A new Incident must
-be rated how severe it is. In advance detected problems potentially leading to failures
-like a disk going to be full in few days, must not be handled immediately. Other
-incidents like an unavailable database service can be business critical and must be
-fixed as rapidly as possible. But often the cause of a failure is not obvious and the
-system must be debugged with specific tools. Critical failures mostly affect users, so
-another part of incident management is to inform the affected parties.
-
-Google states that the traditional approach of an operations team\footnote{Google actually
-  calls it the sysadmins approach} is not efficient. It is expensive, it does not scale
-very well and it creates tension in interests\cite{sre_intro}.
-
-A growing system means there will be more hardware, more software components and a more
-complex configuration. More people are needed to install, monitor and maintain the
-infrastructure and services. The traditional operations team approach has the
-disadvantage, that it does not scale very well and produces more costs, the bigger the
-system becomes. Another disadvantage is conflicting interests of the developer team and
-operation team. Operations teams are payed to create stability and provide a certain
-quality of service. But change is the biggest source of
-failure\cite[p.10]{sre_intro}. That's why operations teams work under the motto of 'Never
-change a running system'. On the other hand, a good service changes to the needs of its
-users. Developers get paid to deliver as much features as possible, so they want frequent
-change. Those are conflicting interests and they harm the whole product. For Google it's
-clear, that the different assumptions and tension in interests of operations and developer
-teams produce a lot of hidden costs.
-
-\section{Site Reliability Engineers maintain systems like software engineers}
-
-Operations teams developed a lot of practices to both integrate the fundamentally
-conflicting interests of change and stability, but also scale the operations team
-approach. This reduces obvious and hidden costs and makes the whole work more
-efficient. A lot of those practices became possible, because the infrastructure turned
-from pure hardware into a dynamic software defined infrastructure. Google refers to this
-approach as the site reliability engineering approach. It is operations how an software
-engineer would do it.
-
-New technologies made it possible to define all infrastructure in code. One of the first
-who provided an dynamic infrastructure is amazon with ec2. The technology of
-virtualization made provisioning and configuration to software tasks instead of hardware
-tasks. This is what it made automate-able. Also Docker made it easier to package
-software and to deploy and configure the services\cite{infra_as_code_platforms}.
-
-With the possibility to automate the tasks an operations team has to do, there will come
-many benefits. The obvious value is that is scalabillity. When a task is automated and
-can be done by a machine, it is very cheap and easy to execute the task a lot more
-often. But there is a much bigger advance, which automation gives. When a task is
-automated it is a well defined process, which will consistently performed, where a human
-can easily make a mistake by manually executing the task. It can also be extended,
-measured and done at inconvenient times for humans\cite{sre_automation}.
-
-The before one off tasks of provisioning, deploying and configuring have now well
-defined practices and processes. Those tasks are now reproducible because the definition
-or configuration of the infrastructure can now be stored in a version control
-system. And with automate-able deployment processes like zero downtime releases, phoenix
-deployment or rolling updates, those processes can be done continuously.
-
-Operations teams have collected great knowledge on monitoring. What are the key
-indicators for monitoring a system. What does a good monitoring infrastructure
-provide. Those questions I am going to examine in detail in the upcoming sections. But
-very important is that monitoring can notify a human or even better trigger automated
-tasks, that humans do not need to be involved at all, when a problem occurs.
-
-Also incident management can partly be automated. Distributed systems like databases
-have nowadays automatic failovers. Issues which have been serious, major incidents
-before and a humans had to manually intervene can, are now automatically triggered and
-the systems heal themselves. Disaster recovery is now easily done, because you can
-automatically reprovision the whole infrastructure as mentioned before.
-
-With those practices it means that in the end this means that the conflicting interests
-of change and stability can nowadays be more and more integrated.
-
-\section{Post Release Testing extends the Continuous Delivery Pipeline to support
-maintaining a system}
-
-The three main steps in the continuous delivery pipeline are: commitment to version
-control, continuous integration and release. After releasing, the new version will be
-operated. This includes monitoring, logging, security aspects and incident
-management\cite{sre_monitoring}. To enable developers to take more responsible in running
-the software, it is necessary to extend the practices of the continuous delivery pipeline.
-
-In my masterthesis I want to optimize the software engineering practices in order to
-empower developers in their bigger responsibilities. I want to focus on the process of
-deployment and enhance the continuous delivery pipeline. To achieve this, I want to
-examine operation practices like monitoring and incident management. And then extend the
-deployment process by three consecutive steps.
-
-The first step is to completely automate deployments of software features and achieve
-continuous deployment. The next step is to sensibly monitor new releases to give
-automatically feedback. Third and lastly, identify incidents to automatically trigger
-rollbacks to self-heal the software system. I'm going to call these last two steps
-continuous post release testing.
-
 
 \chapter{Background}
 
