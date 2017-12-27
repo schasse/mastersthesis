@@ -2,7 +2,7 @@
 \section{Automation to support maintenance work}
 
 % TODO: microservices case study von klems
-Devops~\cite{devops_definition} and Microservices~\cite{microservices_fowler} are
+Devops~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
 practices or even cultures, which break down the silos between the development and
 operations teams and their conflicting goals. For instance Amazon~\cite{build_run} and
 Facebook~\cite{dev_at_fb} successfully use those practices to build and run their software
@@ -70,19 +70,20 @@ delivery pipelines.
 
 \chapter{Problem Definition}
 
-
 \section{Maintenance responsibility shifts}
 
 % devops/microservices aproach successful development and operation
-The DevOps TODO approach and the microservice culture TODO create practices to solve the
-issues of the conflicting tension\cite{sre_intro} between a development and operation
-team. On the one hand the aim is to change the software product quickly and on the other
-hand to provide a stable and reliable software product of high quality. The CTO of amazon
-said ''You build it, you run it` TODO, which creates the awareness of the teams to not
-only be responsible for the development and deliver features whereas they are also
-responsible to operate their product in production. This is because operation is an
-essential part of a successful software product. One team is consequently responsible of
-the development, operation and maintenance of their own code.
+The DevOps~\cite{devops_definition} approach and the
+microservice~\cite{microservices_fowler} culture create practices to solve the issues of
+the conflicting tension~\cite{sre_intro} between a development and operation team. On the
+one hand the aim is to change the software product quickly and on the other hand to
+provide a stable and reliable software product of high quality. Vogels, the chief
+technology officer of amazon, said ''You build it, you run it`~\cite{build_run}, which
+represents the awareness of a teams to not only be responsible for the development and
+deliver features whereas they are also responsible to operate their product in
+production. This is because operation is an essential part of a successful software
+product. One team is consequently responsible of the development, operation and
+maintenance of their own code.
 
 % responsibility of deps shifts from ops to dev
 Furthermore the responsibility of software dependencies shifts. In the past, development
@@ -98,7 +99,7 @@ between the dependencies of the virtual machine infrastructure and the developme
 You could argue that virtual machines have still the same functionality like bare metal
 servers and need to be maintained in the same way by the same operation
 teams. Nevertheless it becomes easier to maintain dynamic virtual
-infrastructure\cite{infra_as_code_platforms} in comparison to bare metal
+infrastructure~\cite{infra_as_code_platforms} in comparison to bare metal
 infrastructure. And the easier it becomes, the more it enables developers to operate their
 software product themselves.
 
@@ -130,13 +131,14 @@ react to those issues and to make the software product for instance scale or app
 security patches.
 
 % (maintenance is a lot of work and) is easily disregarded in favor of velocity
-Agile and continuous practices focus primarily on software development. Those practices
-altered software development to deliver features faster into production. Fitzgerald asses
-that the focus of current research is primarily on the delivery process. And Fowler argues
-velocity kills agility TODO. Focusing on development velocity only has a major
-drawback. Operating software in production and maintaining it needs to be done properly to
-ensure the quality of a software product. Companies easily disregard the importance of
-operation and maintenance of the software product.
+Agile and continuous practices focus primarily on feature development. Those practices
+altered software development to deliver features faster into production. Highsmith argues
+velocity kills agility~\cite{velocity_kills}. Also Fitzgerald observes the issue of a ''
+misplaced focus on speed rather than continuity`~\cite{continuous_fitzgerald}. Focusing on
+development velocity only has a major drawback. Operating software in production and
+maintaining it needs to be done properly to ensure the quality of a software
+product. Companies easily disregard the importance of operation and maintenance of the
+software product.
 
 
 \section{Underestimated amount of maintenance work}
@@ -146,8 +148,8 @@ The software written by the development team needs to be maintained as well. As 
 illustrated previously, different issues occur in production. For instance performance and
 scaling issues or simply bugs. The developers need to refactor the software without
 changing the actual functionality. Those changes are mostly invisible or do not alter any
-function visible to users. At facebook TODO those invisible changes are more than 50\% of
-the total changes.
+function visible to users. At Facebook~\cite{dev_at_fb} those invisible changes are more
+than 50\% of the total changes.
 
 % dependencies are becoming more
 Moreover Software products have a high amount of dependencies. This totally makes sense,
@@ -186,47 +188,49 @@ very same applies to open source frameworks such as django or ruby on rails.
 % microservices create ability to continuously upgrade one part by another
 % it is much work though
 One reason for the introduction of microservice is the flexibility to update only a small
-specific part of the whole software product. With a microservice architecture we are able
-to update a single service without having to upgrade the whole product at once. We can
-choose the microservice for the update because it is more important. Or we can update one
-microservice by another without the major problem of upgrading the whole software product
-at once. Consequently this means we need to update more often and the amount work of
-updates itself is more.
+specific part of the whole software product~\cite{microservices_fowler}. With a
+microservice architecture we are able to update a single service without having to upgrade
+the whole product at once. We can choose the microservice for the update because it is
+more important. Or we can update one microservice by another without the major problem of
+upgrading the whole software product at once. Consequently this means we need to update
+more often and the amount work of updates itself is more.
 
 % compensation by automation instead of more humans
-There are several things you can do to keep up with the amount of work. Facebook TODO for
-example hires more developers. This is expensive though. A much cheaper solution is
-automation. We should automate some of the maintenance work.
+There are several things you can do to keep up with the amount of
+work. Facebook~\cite{dev_at_fb} for example hires more developers. This is expensive
+though. A much cheaper solution is automation. We should automate some of the maintenance
+work.
 
 \section{Disregard of automation for maintenance work}
 
 % practices exist which connect dev and ops
 You could argue that DevOps practices already exist and connect development and operations
 including maintenance of a software product. However the focus lies mostly on testing the
-quality of a change in a lean fashion and to reduce risk of a change in production TODO
-(devops defintion). It is true that those practices help to deliver changes faster to
-production and help to detect issues at low risk. Nevertheless monitoring and reacting to
-errors requires manual work.
+quality of a change in a lean fashion and to reduce risk of a change in
+production~\cite{devops_definition}. It is true that those practices help to deliver
+changes faster to production and help to detect issues at low risk. Nevertheless
+monitoring and reacting to errors requires manual work.
 
 % testing in production is already done
-TODO There exist practices, which already enable production testing. For example A/B
-testing, where you compare two different versions in production. Or canary releasing, with
-which you change only a few replicated parts of the production environment to reduce
-risk. There is also shadow releasing, where users are not affected by the change, which
-goes into production. Netflix tests its services with the simian army in production to
-detect unforeseen events in a controlled environment.
+There exist practices, which already enable production testing~\cite{dev_at_fb}. For
+example A/B testing, where you compare two different versions in production. Or canary
+releasing, with which you change only a few replicated parts of the production environment
+to reduce risk. There is also shadow releasing, where users are not affected by the
+change, which goes into production. Netflix tests its services with the simian army in
+production to detect unforeseen events in a controlled environment~\cite{antifragile_org}.
 
 % containerization takes out risk for updates
 Containerization takes out the risk of updating a service. Morris describes phoenix
-replacement in immutable infrastructure TODO. Kubernetes has the approach of rolling
-updates, which implement the same practices. A containerized ecosystem is typically
-immutable. Rather than changing a running container, we would create a new container based
-on an updated image including the changes to deploy. After the new container was started,
-we can kill the old container. Usually an image repository holds every built container
-image version. Those saved images allow us to easily rollback to a previous version. Hence
-updates are less risky in a containerized immutable infrastructure.
+replacement in immutable infrastructure~\cite{infra_as_code_phoenix}. Kubernetes has the
+approach of rolling updates, which implement the same practices. A containerized ecosystem
+is typically immutable. Rather than changing a running container, we would create a new
+container based on an updated image including the changes to deploy. After the new
+container was started, we can kill the old container. Usually an image repository holds
+every built container image version. Those saved images allow us to easily rollback to a
+previous version. Hence updates are less risky in a containerized immutable
+infrastructure.
 
-TODO (author) illustrates the value of automation~\cite{sre_automation}. Software
+Murphy et al. illustrate the value of automation~\cite{sre_automation}. Software
 reliability engineers automate tasks to firstly save the valuable human resources and
 secondly take risk out of the tasks because of human errors. This is a good approach and
 focuses the quality of the software product.
@@ -299,7 +303,7 @@ concepts of most of the technologies.
     system}~\cite{devops_monitoring}.
 
 \item I presume the reader to know the concepts of dynamic infrastructures and
-  infrastructures defined as code\cite{infra_as_code_platforms}. Morris explains how to
+  infrastructures defined as code~\cite{infra_as_code_platforms}. Morris explains how to
   common software engineering practices for
   infrastructure~\cite{infra_as_code_se_practices}.
 
@@ -316,7 +320,7 @@ concepts of most of the technologies.
 \item The next references are practical introductions to the concepts of the technologies,
   which I extensively use in this masterthesis. It is necessary to know what docker
   \emph{image} and \emph{containers}
-  are~\cite{docker_orientation}\cite{docker_orientation2}.
+  are~\cite{docker_orientation}~\cite{docker_orientation2}.
 
 \item It helps to have an idea of the architecture of kubernetes. Beda gives a good
   overview~\cite{kubernetes_architecture2}.
@@ -332,21 +336,21 @@ concepts of most of the technologies.
 \section{Software Dependencies}
 
 Here I would like to mention in short the dependencies, which I used to implement
-deployer. Deployer is implemented in ruby\cite{ruby} and since it is a webserver,
-sinatra\cite{sinatra} is it's framework. Deployer uses git\cite{git} and
-subversion\cite{svn} to communicate with the either git or subversion as the control
+deployer. Deployer is implemented in ruby~\cite{ruby} and since it is a webserver,
+sinatra~\cite{sinatra} is it's framework. Deployer uses git~\cite{git} and
+subversion~\cite{svn} to communicate with the either git or subversion as the control
 version system. Moreover deployer has a plugin which sends messages to
-bugsnag\cite{bugsnag} and slack\cite{slack}, to inform the developer in case it identifies
-a problem. Deployer uses kubectl to interact with kubernetes\cite{kubernetes}
-master. Deployer itself is containerized with docker\cite{docker} and its natural hosting
-solution would be kubernetes. We published deployer on github\cite{deployer} under
+bugsnag~\cite{bugsnag} and slack~\cite{slack}, to inform the developer in case it identifies
+a problem. Deployer uses kubectl to interact with kubernetes~\cite{kubernetes}
+master. Deployer itself is containerized with docker~\cite{docker} and its natural hosting
+solution would be kubernetes. We published deployer on github~\cite{deployer} under
 GPL-3.0, a free software license.
 
-The monitoring system, which we used in our evaluation, is datadog\cite{datadog}, a
-commercial 2service. Nevertheless prometheus\cite{prometheus} is also a suitable open
+The monitoring system, which we used in our evaluation, is datadog~\cite{datadog}, a
+commercial 2service. Nevertheless prometheus~\cite{prometheus} is also a suitable open
 source solution as monitoring system. The continuous integration systems we use for the
-evaluation are codeship\cite{codeship} and jenkins\cite{jenkins}. As an image repo, we use
-docker hub\cite{dockerhub}.
+evaluation are codeship~\cite{codeship} and jenkins~\cite{jenkins}. As an image repo, we use
+docker hub~\cite{dockerhub}.
 
 
 \section{Typical 3 Tier Webapp in Kubernetes}
@@ -1028,8 +1032,8 @@ means we cannot test new feature like in an A/B test. Instead we can test perfor
 improvements, refactoring or updates.
 
 They call this technique canary releasing. Again, you change would only change a part of
-the production system, the canary instead of the whole. Devops TODO examines this
-technique in more detail.
+the production system, the canary instead of the whole. Devops~\cite{cd_humble_deploy}
+examines this technique in more detail.
 % TODO: difference to canary testing
 
 Assuming we would want to test features in production, the current implementation of the
