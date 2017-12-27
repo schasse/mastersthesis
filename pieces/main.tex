@@ -614,18 +614,6 @@ figures. And we are going through all the parts of the figure.
   \label{fig:deployer_architecture}
 \end{figure}
 
-\begin{verbatim}
-(1) deploy request
-(2) loadbalance request to pod and authenticate
-(3) validate availability of container image(s)
-(4) fetch resource definitions from version control
-    system
-(5) modify resource definitions (image version and
-    environment)
-(6) apply resource definitions to kubernetes API
-(7) eventually report errors
-\end{verbatim}
-
 As mentioned earlier, deployer is a webserver, which runs in kubernetes itself and is
 stateless. The production cluster in in the figure is the same kubernetes cluster the app
 runs in, which we want to test via nonfunctional production regression testing. The yellow
