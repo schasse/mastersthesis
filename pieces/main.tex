@@ -1,26 +1,36 @@
 \chapter{Introduction}
-\section{Introduction}
+\section{Automation to support maintenance work}
 
-DevOps~\cite{devops_definition} is a often discussed topic and there are multiple
-definitions and interpretations of the term DevOps. DevOps is referred to a philosophy, a
-culture, practices and specific tools. For my research, I will focus on two different
-aspects of the term DevOps:
+% TODO: microservices case study von klems
+Devops~\cite{devops_definition} and Microservices~\cite{microservices_fowler} are
+practices or even cultures, which break down the silos between the development and
+operations teams and their conflicting goals. For instance Amazon~\cite{build_run} and
+Facebook~\cite{dev_at_fb} successfully use those practices to build and run their software
+products.
 
-The first aspect is the perspective of operation teams. Operation teams traditionally
-modeled infrastructure by installing physical hardware and by manually installing software
-components. With the rise of virtual machines and the cloud, it became possible to model
-infrastructure in software~\cite{infra_as_code_platforms}. Modelling via software enables
-operation teams to use tools and practices used in software engineering. Infrastructure
-code is version controlled, tested and can be automatically deployed.
+However the responsibility of the maintenance of a software product changed. A single team
+is responsible for both: their own code and the dependencies they are using and relying
+on. The own code needs to be maintained, for instance with nonfunctional changes
+concerning performance, scalability or bug fixes. Code written by others needs to be
+maintained as well via updating to new versions and adapting to those.
 
-The other aspect of DevOps is the perspective of developer teams. Previously, developer
-teams were only responsible for developing new features. Software engineering practices
-got established and proven. One of those practices is the continuous delivery
-pipeline~\cite{cd_humble_pipeline}. The last step of the continuous delivery pipeline is
-the deployment. Formerly operation teams were responsible for deploying new features. The
-deployment as the last step of the continuous delivery pipeline shifts a responsibility
-from operation to development. This shows that developer teams are becoming more and more
-responsible for running the software they built.
+DevOps practices interconnect operations including those maintenance necessities with
+development work. Nevertheless there is room for improvement in terms of continuous
+automatable processes regarding maintenance. The continuous delivery
+pipeline~\cite{cd_humble_pipeline} is such an continuous automatable process. But it
+supports only until deployment whereas maintenance involves more than just the delivery.
+
+Instead of scaling up employee counts, Google faces workforce problems with
+automation~\cite{sre_automation}. They recognized that automation does not only save
+valuable programmer time, furthermore it adds reliability to the process. Google explains
+how valuable automation is and illustrates it successfully with their site reliability
+engineering approach~\cite{sre_intro}.
+
+This thesis proposes with nonfunctional production regression testing a practice, which
+faces the difficulties of maintenance. It is designed for teams, which have the
+responsibility of developing and operating their own code as well as code
+dependencies. Nonfunctional production regression testing extends the continuous delivery
+pipeline and automates continuous testing of nonfunctional changes in production.
 
 \section{Thesis outline}
 
@@ -66,19 +76,19 @@ delivery pipelines.
 % devops/microservices aproach successful development and operation
 The DevOps TODO approach and the microservice culture TODO create practices to solve the
 issues of the conflicting tension\cite{sre_intro} between a development and operation
-team. On the one hand the aim to change the software product quickly and on the other hand
-to provide a stable and reliable software product of high quality. The CTO of amazon said
-''You build it, you run it` TODO, which creates the awareness of the teams to not only be
-responsible for the development and deliver features whereas they are also responsible to
-operate their product in production. This is because operation is an essential part of a
-successful software product. One team is consequently responsible of the development,
-operation and maintenance their own code.
+team. On the one hand the aim is to change the software product quickly and on the other
+hand to provide a stable and reliable software product of high quality. The CTO of amazon
+said ''You build it, you run it` TODO, which creates the awareness of the teams to not
+only be responsible for the development and deliver features whereas they are also
+responsible to operate their product in production. This is because operation is an
+essential part of a successful software product. One team is consequently responsible of
+the development, operation and maintenance of their own code.
 
 % responsibility of deps shifts from ops to dev
 Furthermore the responsibility of software dependencies shifts. In the past, development
 teams delivered code and depended on installed software dependencies. Operation teams have
 been responsible of maintaining those dependencies. Virtualization made a
-change. Operation teams operating a virtual infrastructure operate and maintain the
+change. Teams operating a virtual infrastructure, operate and maintain the
 hardware and software of this infrastructure. They do not maintain the specific
 dependencies of the code, which the development team develops. The development team can
 choose which dependencies they want to have. Accordingly there is a clear isolation
@@ -88,9 +98,9 @@ between the dependencies of the virtual machine infrastructure and the developme
 You could argue that virtual machines have still the same functionality like bare metal
 servers and need to be maintained in the same way by the same operation
 teams. Nevertheless it becomes easier to maintain dynamic virtual
-infrastructure\cite{infra_as_code_platforms} compared to bare metal infrastructure. And
-the easier it becomes, the more it enables developers to operate their software product
-themselves.
+infrastructure\cite{infra_as_code_platforms} in comparison to bare metal
+infrastructure. And the easier it becomes, the more it enables developers to operate their
+software product themselves.
 
 Containerization manifests the shift of the responsibility. It is a further step of
 isolation. The operating system is able to isolate cpu and memory for every process. Yet
@@ -104,7 +114,7 @@ software product.
 \section{Lack of focus on maintenance}
 
 % is risky
-If we did not do maintenance properly, there is a risk of depreciating the quality of the
+If we did not do maintenance properly, there is a risk of decreasing the quality of the
 software product. For instance there can be security vulnerabilities. Those can be very
 harmful to the company of the software product. If we do not maintain the software
 products properly more issues arise, such as bugs or performance problems. On account to
