@@ -410,7 +410,7 @@ operations teams.
 \section{Pipeline Overview}
 
 \begin{figure}[htbp]
-  \includegraphics[width=0.97\textheight,angle=90]{nprt_overview}
+  \includegraphics[width=0.97\textwidth]{nprt_overview}
   \caption[nprtflow]{Overview of the NPRT flow.}
   \label{fig:nprt_flow}
 \end{figure}
@@ -418,22 +418,6 @@ operations teams.
 To understand the testing approach in a whole, it is necessary to show a complete overview
 of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures this
 overview. In the following we will go through the steps of the pipeline and discuss them.
-
-\begin{verbatim}
-(1) push new version
-(2) inform about new version
-(3) fetch code
-(4) build
-(5) push container image(s)
-(6) run tests
-(7) deploy message
-(8) fetch code
-(9) modify resource definitions
-(10) apply to production cluster
-(11) pull container image(s)
-(12) send metrics
-(13) trigger full rollout or rollback
-\end{verbatim}
 
 \subsection{Continuous Integration is a Requirement}
 
@@ -443,19 +427,20 @@ integrate them in the whole picture. It will illustrate important design charact
 for the new testing approach.
 
 First the developer changes some code on his local machine and creates a new version. He
-then pushes the new version to the version control system as shown in (1).
+then pushes the new version to the version control system as shown in~(1).
 
-After the push of the new version, the second step is a message (2) to the continuous
+After the push of the new version, the second step is a message~(2) to the continuous
 integration system. This message holds the reference of the new version and the continuous
-integration server pulls the new version from the version control system (3). Now the
-continuous integration system has three major jobs. Firstly it starts a build process
-(4)(5), secondly it runs the tests (6) and the thirdly gives the deploy signal (7).
+integration server pulls the new version from the version control system. Now the
+continuous integration system has three major jobs. Firstly it starts a build
+process~(3)(4), secondly it runs the tests~(5) and the thirdly gives the deploy
+signal~(6).
 
-In step (4), namely the build, the continuous integration system typically compiles
+In step~(3), namely the build, the continuous integration system typically compiles
 binaries, renders assets and may create further artifacts. For our purposes it is
 especially necessary to build at least one or multiple container images. The continuous
-integration system then pushes the ready built container image to an image repository in
-(5). Later the image repository serves the built images.
+integration system then pushes the ready built container image to an image repository
+in~(4). Later the image repository serves the built images.
 
 One import thing is that we need to associate every built container image with a specific
 version. Therefore we use the version reference, which was created by the version control
@@ -468,12 +453,12 @@ know what the version is about at first sight. The continuous integration system
 that extra name from the branch name. This tag, consisting out of the version and extra
 name, will follow us through the whole pipeline as readable and unique reference.
 
-The second continuous integration step is to run the tests. This is shown as step (6) in
+The second continuous integration step is to run the tests. This is shown as step~(5) in
 figure \ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such
 as unit, feature and smoke tests. Yet we do net need to recall all the details of
 automated testing at this point.
 
-The last step of the continuous integration system is to send a deploy signal, step (7) in
+The last step of the continuous integration system is to send a deploy signal, step~(6) in
 the figure. But it depends on the results of the tests, whether to send that deploy signal
 or not. The tests can be successful or fail. If the tests fail, the continuous integration
 system does not send a deploy message, the pipeline stops and the continuous integration
@@ -526,32 +511,32 @@ version from the version control system as well as the deployer. (2 different th
 application code, 2 infrastructure code. But good to have them both in a single
 repository, to have the relation.
 
-Deployer receives the deploy signal from the continuous integration system (7). It again
+Deployer receives the deploy signal from the continuous integration system~(6). It again
 includes the version reference. Now deployer executes three major steps: firstly pull
-infrastructure code (8), secondly modify the infrastructure code (9) and thirdly send the
-infrastructure code to the production cluster (10).
+infrastructure code~(7), secondly modify the infrastructure code~(8) and thirdly send the
+infrastructure code to the production cluster~(9).
 
-So in the first step deployer pulls the code from the version control system (8). The
+So in the first step deployer pulls the code from the version control system~(7). The
 version control system also holds the files, which describe our infrastructure. We want to
 version control the infrastructure definitions of in order to be able to relate the
 version of the infrastructure to the version of the code and the version of the
 artifacts. In kubernetes those infrastructure definitions are made up of different
 resources, which were already mentioned in the background chapter.
 
-In the second step deployer modifies those infrastructure (9) defintions in a way, that
+In the second step deployer modifies those infrastructure~(8) defintions in a way, that
 the production system uses the related container image. The running container needs to be
 aware of the its version. The modifications of deployer achieve that as well. The latter
 is important to later tag the metrics with running version.
 
 The third step of deployer is to apply the modified infrastructure definitions to the
-production cluster, which is shown in the figure as step (10). We note that two things are
+production cluster, which is shown in the figure as step~(9). We note that two things are
 changed: infrastructure changes as well as application code changes.
 
 The production cluster receives the modified infrastructure definitions. The production
 changes the cluster state according to the definitions. Most important is that two
 versions in parallel are in the cluster. The production cluster fetches the container
-image in step (11) from the image repository. The image, which the continuous integration
-system built in step (4). The production cluster is aware of the specific image identified
+image in step~(10) from the image repository. The image, which the continuous integration
+system built in step~(3). The production cluster is aware of the specific image identified
 by the tag, which we described before.
 
 \subsection{Metrics Collection and Comparison}
@@ -569,7 +554,7 @@ utilization.
 We are interested in the monitoring data of specific versions. Consequently the production
 cluster label the metrics with the specific version. This is important, since we want to
 compare the metrics of the different version.  The production cluster sends those labeled
-metrics to the monitoring system (11).
+metrics to the monitoring system~(10).
 
 The monitoring system stores all the metrics of the two different versions in a
 timeseriesdatabase. The monitoring system evaluates those metrics by drawing different
@@ -596,13 +581,13 @@ production system proceeds and stops and starts the running instances accordingl
 
 The other scenario is that the new version turns out to be a regression compared to the
 stable version. In that case we want to rollback the new version. Our monitoring system
-identifies the regression and it sends a message to deployer, as shown in step (13) in the
+identifies the regression and it sends a message to deployer, as shown in step~(12) in the
 figure. Accordingly our test for regression is failed.
 
 Deployer receives the rollback message and sends a deploy to the production system. Just
 to be precise, it is actually a deploy message with the commit hash of the stable version,
 which the monitoring system is aware about because of the metrics it monitors. Deployer
-now modifies the infrastructure definitions similar to step (9). The important thing is
+now modifies the infrastructure definitions similar to step~(8). The important thing is
 that there must not be instances of the new version anymore. The production system itself
 takes care of deleting instances in the new version. Since instances of the stable version
 are already running in the production cluster, the production cluster does not touch the
