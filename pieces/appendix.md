@@ -1,57 +1,96 @@
 # Test Measures
-## DIN/apache
-### deploy
-| 1. execution | deploy (6)           | 2017-12-29 10:45:47 |
-| 1. execution | apply to cluster (9) | 2017-12-29 10:45:58 | 11
-| 1. execution | running in cluster   | 2017-12-29 10:45:59 | 1
+## Speed
 
-| 2. execution | deploy (6)           | 2017-12-29 10:46:30 |
-| 2. execution | apply to cluster (9) | 2017-12-29 10:46:38 | 8
-| 2. execution | running in cluster   | 2017-12-29 10:46:39 | 1
+### rollback (gapfish)
+| trigger rollback (12) | 2017-12-13 16:16:51 | 24
+| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
+| running in cluster    | 2017-12-13 16:18:25 |
 
-| 3. execution | deploy (6)           | 2017-12-29 10:47:02 |
-| 3. execution | apply to cluster (9) | 2017-12-29 10:47:11 | 9
-| 3. execution | running in cluster   | 2017-12-29 10:47:12 | 1
+| trigger rollback (12) | 2017-12-13 16:16:51 | 24
+| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
+| running in cluster    | 2017-12-13 16:18:25 |
 
-### rollback
-| 1. execution | running canary (11)   | 2018-01-04 15:42:20 |
-| 1. execution | trigger rollback (12) | 2018-01-04 15:44:29 | 129
-| 1. execution | apply to cluster (9)  | 2018-01-04 15:44:33 | 4
-| 1. execution | running in cluster    | 2018-01-04 15:44:34 | 1
+| trigger rollback (12) | 2017-12-13 16:16:51 | 24
+| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
+| running in cluster    | 2017-12-13 16:18:25 |
 
-| 2. execution | running canary (11)   | 2018-01-04 16:07:19 |
-| 2. execution | trigger rollback (12) | 2018-01-04 16:10:24 | 185
-| 2. execution | apply to cluster (9)  | 2018-01-04 16:10:27 | 3
-| 2. execution | running in cluster    | 2018-01-04 16:10:28 | 1
+| nr | step                        |
+|----+-----------------------------|
+|  1 | push new version            |
+|  2 | ci pulls code               |
+|  3 | build                       |
+|  4 | save container image(s)     |
+|  5 | run tests                   |
+|  6 | deploy                      |
+|  7 | pull infrastructure code    |
+|  8 | modify resource definitions |
+|  9 | apply to production cluster |
+| 10 | pull container image(s)     |
+| 11 | send metrics                |
+| 12 | trigger rollback            |
 
-| 3. execution | running canary (11)   | 2018-01-04 16:12:59 |
-| 3. execution | trigger rollback (12) | 2018-01-04 16:19:39 | 400
-| 3. execution | apply to cluster (9)  | 2018-01-04 16:19:42 | 3
-| 3. execution | running in cluster    | 2018-01-04 16:19:43 | 1
+
+deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
 
 
-## Gapfish/rails app
-### deploy
-| 1. execution | new version push (1)      | 2017-12-29 15:12:37 | 4
-| 1. execution | build (3)                 | 2017-12-29 15:12:41 | 348
-| 1. execution | save container images (4) | 2017-12-29 15:18:29 | 90
-| 1. execution | deploy (6)                | 2017-12-29 15:19:59 | 38
-| 1. execution | apply to cluster (9)      | 2017-12-29 15:20:37 | 106
-| 1. execution | running in cluster        | 2017-12-29 15:22:23 |
-
-| 2. execution | new version push (1)      | 2017-12-29 15:23:13 | 7
-| 2. execution | build (3)                 | 2017-12-29 15:23:20 | 131
-| 2. execution | save container images (4) | 2017-12-29 15:25:31 | 51
-| 2. execution | deploy (6)                | 2017-12-29 15:26:22 | 22
-| 2. execution | apply to cluster (9)      | 2017-12-29 15:26:44 | 67
-| 2. execution | running in cluster        | 2017-12-29 15:27:51 |
-
-| 3. execution | new version push (1)      | 2017-12-29 15:28:25 | 4
-| 3. execution | build (3)                 | 2017-12-29 15:28:29 | 145
-| 3. execution | save container images (4) | 2017-12-29 15:30:54 | 26
-| 3. execution | deploy (6)                | 2017-12-29 15:31:20 | 69
-| 3. execution | apply to cluster (9)      | 2017-12-29 15:32:29 | 35
-| 3. execution | running in cluster        | 2017-12-29 15:33:04 |
+| plot       | exec |    steps | timestamp           | seconds |
+|------------+------+----------+---------------------+---------|
+|------------+------+----------+---------------------+---------|
+| deploy     |   1. |      6-8 | 2017-12-29 10:45:47 |      11 |
+| din        |      |        9 | 2017-12-29 10:45:58 |       1 |
+|            |      | runnning | 2017-12-29 10:45:59 |         |
+|            |   2. |      6-8 | 2017-12-29 10:46:30 |       8 |
+|            |      |        9 | 2017-12-29 10:46:38 |       1 |
+|            |      | runnning | 2017-12-29 10:46:39 |         |
+|            |   3. |      6-8 | 2017-12-29 10:47:02 |       9 |
+|            |      |        9 | 2017-12-29 10:47:11 |       1 |
+|            |      | runnning | 2017-12-29 10:47:12 |         |
+|------------+------+----------+---------------------+---------|
+| deploy     |   1. |      6-8 | 2017-12-29 15:19:59 |      38 |
+| gapfish    |      |        9 | 2017-12-29 15:20:37 |     106 |
+|            |      | runnning | 2017-12-29 15:22:23 |         |
+|            |   2. |      6-8 | 2017-12-29 15:26:22 |      22 |
+|            |      |        9 | 2017-12-29 15:26:44 |      67 |
+|            |      | runnning | 2017-12-29 15:27:51 |         |
+|            |   3. |      6-8 | 2017-12-29 15:31:20 |      30 |
+|            |      |        9 | 2017-12-29 15:31:50 |      70 |
+|            |      | runnning | 2017-12-29 15:33:00 |         |
+|------------+------+----------+---------------------+---------|
+| rollback   |   1. |   12,7-8 | 2018-01-04 15:44:29 |       4 |
+| din        |      |        9 | 2018-01-04 15:44:33 |       1 |
+|            |      | runnning | 2018-01-04 15:44:34 |         |
+|            |   2. |   12,7-8 | 2018-01-04 16:10:24 |       3 |
+|            |      |        9 | 2018-01-04 16:10:27 |       1 |
+|            |      | runnning | 2018-01-04 16:10:28 |         |
+|            |   3. |   12,7-8 | 2018-01-04 16:19:39 |       3 |
+|            |      |        9 | 2018-01-04 16:19:42 |       1 |
+|            |      | runnning | 2018-01-04 16:19:43 |         |
+|------------+------+----------+---------------------+---------|
+| metric     |   1. |       11 | 2018-01-04 15:42:20 |     129 |
+| comparison |      |       12 | 2018-01-04 15:44:29 |         |
+| din        |   2. |       11 | 2018-01-04 16:07:19 |     185 |
+|            |      |       12 | 2018-01-04 16:10:24 |         |
+|            |   3. |       11 | 2018-01-04 16:12:59 |     400 |
+|            |      |       12 | 2018-01-04 16:19:39 |         |
+|------------+------+----------+---------------------+---------|
+| whole      |   1. |      1-2 | 2017-12-29 15:12:37 |       4 |
+| pipeline   |      |        3 | 2017-12-29 15:12:41 |     348 |
+| gapfish    |      |        4 | 2017-12-29 15:18:29 |      90 |
+| (step 5    |      |      6-8 | 2017-12-29 15:19:59 |      38 |
+| skipped)   |      |        9 | 2017-12-29 15:20:37 |     106 |
+|            |      | runnning | 2017-12-29 15:22:23 |         |
+|            |   2. |      1-2 | 2017-12-29 15:23:13 |       7 |
+|            |      |        3 | 2017-12-29 15:23:20 |     131 |
+|            |      |        4 | 2017-12-29 15:25:31 |      51 |
+|            |      |      6-8 | 2017-12-29 15:26:22 |      22 |
+|            |      |        9 | 2017-12-29 15:26:44 |      67 |
+|            |      | runnning | 2017-12-29 15:27:51 |         |
+|            |   3. |      1-2 | 2017-12-29 15:28:25 |       4 |
+|            |      |        3 | 2017-12-29 15:28:29 |     145 |
+|            |      |        4 | 2017-12-29 15:30:54 |      26 |
+|            |      |      6-8 | 2017-12-29 15:31:20 |      69 |
+|            |      |        9 | 2017-12-29 15:32:29 |      35 |
+|            |      | runnning | 2017-12-29 15:33:04 |         |
 
 ## bad influeces:
 * image build time
