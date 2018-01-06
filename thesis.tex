@@ -15,6 +15,13 @@ vcentering
 \clubpenalty = 10000 % schliesst Schusterjungen aus
 \widowpenalty = 10000 % schliesst Hurenkinder aus
 
+\usepackage[
+  pdfborder = 0 0 0, %keine bunten Rahmen
+  bookmarksopen = true, %öffne bookmarks beim öffnen vom pdf
+  raiselinks %links auch für grafiken
+]{hyperref} %Hyperlinks im pdf
+
+
 \setsansfont{SourceCodePro-Bold}[
   Path=fonts/SourceCodePro/,
   BoldFont=SourceCodePro-Black
@@ -54,11 +61,10 @@ vcentering
 {1pc}
 {}
 
-\usepackage{showframe}
+% \usepackage{showframe}
 
 % TODO
 % * chapter/headings layout
-% * hyperrefs
 % * title page
 % * table of contents (pagenumering in roman? add list of figures? bibliography?)
 % * other special pages such as acknowledgement, dedication, copyright, bibliography etc.
