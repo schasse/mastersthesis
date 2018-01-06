@@ -961,6 +961,50 @@ google has a similar monitoring system in there internal infrastructure.
 
 \chapter{Evaluation}
 
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \includegraphics[width=\linewidth]{deploy_din}
+    \caption[DIN]{DIN}
+    \label{fig:deploy_din}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \includegraphics[width=\linewidth]{deploy_gapfish}
+    \caption[GapFish]{GapFish}
+    \label{fig:deploy_gapfish}
+  \end{subfigure}
+  \caption[Deploy]{Deploy}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \includegraphics[width=\linewidth]{rollback_din}
+    \caption[DIN]{DIN}
+    \label{fig:rollback_din}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \includegraphics[width=\linewidth]{rollback_gapfish}
+    \caption[GapFish]{GapFish}
+    \label{fig:rollback_gapfish}
+  \end{subfigure}
+  \caption[Deploy]{Rollback}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\linewidth]{metric_comparison.png}
+  \caption[Metric Comparison]{Metric Comparison}
+  \label{fig:metric_comparison}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{whole_pipeline}
+  \caption[Metric Comparison]{Whole Pipeline}
+  \label{fig:whole pipeline}
+\end{figure}
+
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
 production system with the metrics of the production system of the day before or even the
