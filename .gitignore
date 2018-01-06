@@ -292,3 +292,6 @@ Temporary Items
 
 # Visio autosave temporary files
 *.~vsdx
+
+# python notebooks
+.ipynb_checkpoints
