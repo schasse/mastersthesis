@@ -1,19 +1,3 @@
-# Test Measures
-## Speed
-
-### rollback (gapfish)
-| trigger rollback (12) | 2017-12-13 16:16:51 | 24
-| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
-| running in cluster    | 2017-12-13 16:18:25 |
-
-| trigger rollback (12) | 2017-12-13 16:16:51 | 24
-| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
-| running in cluster    | 2017-12-13 16:18:25 |
-
-| trigger rollback (12) | 2017-12-13 16:16:51 | 24
-| apply to cluster (9)  | 2017-12-13 16:17:15 | 70
-| running in cluster    | 2017-12-13 16:18:25 |
-
 | nr | step                        |
 |----+-----------------------------|
 |  1 | push new version            |
@@ -29,10 +13,6 @@
 | 11 | send metrics                |
 | 12 | trigger rollback            |
 
-
-deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
-
-
 | plot       | exec |    steps | timestamp           | seconds |
 |------------+------+----------+---------------------+---------|
 |------------+------+----------+---------------------+---------|
@@ -46,15 +26,15 @@ deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
 |            |      |        9 | 2017-12-29 10:47:11 |       1 |
 |            |      | runnning | 2017-12-29 10:47:12 |         |
 |------------+------+----------+---------------------+---------|
-| deploy     |   1. |      6-8 | 2017-12-29 15:19:59 |      38 |
-| gapfish    |      |        9 | 2017-12-29 15:20:37 |     106 |
-|            |      | runnning | 2017-12-29 15:22:23 |         |
-|            |   2. |      6-8 | 2017-12-29 15:26:22 |      22 |
-|            |      |        9 | 2017-12-29 15:26:44 |      67 |
-|            |      | runnning | 2017-12-29 15:27:51 |         |
-|            |   3. |      6-8 | 2017-12-29 15:31:20 |      30 |
-|            |      |        9 | 2017-12-29 15:31:50 |      70 |
-|            |      | runnning | 2017-12-29 15:33:00 |         |
+| deploy     |   1. |      6-8 | 2018-01-06 15:11:02 |      36 |
+| gapfish    |      |        9 | 2018-01-06 15:11:38 |      70 |
+|            |      | runnning | 2018-01-06 15:12:48 |         |
+|            |   2. |      6-8 | 2018-01-06 15:14:50 |      20 |
+|            |      |        9 | 2018-01-06 15:15:10 |      45 |
+|            |      | runnning | 2018-01-06 15:15:55 |         |
+|            |   3. |      6-8 | 2018-01-06 15:18:29 |      18 |
+|            |      |        9 | 2018-01-06 15:18:47 |      75 |
+|            |      | runnning | 2018-01-06 15:20:02 |         |
 |------------+------+----------+---------------------+---------|
 | rollback   |   1. |   12,7-8 | 2018-01-04 15:44:29 |       4 |
 | din        |      |        9 | 2018-01-04 15:44:33 |       1 |
@@ -66,6 +46,16 @@ deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
 |            |      |        9 | 2018-01-04 16:19:42 |       1 |
 |            |      | runnning | 2018-01-04 16:19:43 |         |
 |------------+------+----------+---------------------+---------|
+| rollback   |   1. |   12,7-8 | 2018-01-06 15:24:19 |      48 |
+| gapfish    |      |        9 | 2018-01-06 15:25:07 |      15 |
+|            |      | runnning | 2018-01-06 15:25:22 |         |
+|            |   2. |   12,7-8 | 2018-01-06 15:27:46 |      49 |
+|            |      |        9 | 2018-01-06 15:28:35 |      14 |
+|            |      | runnning | 2018-01-06 15:28:49 |         |
+|            |   3. |   12,7-8 | 2018-01-06 15:30:52 |      48 |
+|            |      |        9 | 2018-01-06T15:31:40 |      15 |
+|            |      | runnning | 2018-01-06 15:31:55 |         |
+|------------+------+----------+---------------------+---------|
 | metric     |   1. |       11 | 2018-01-04 15:42:20 |     129 |
 | comparison |      |       12 | 2018-01-04 15:44:29 |         |
 | din        |   2. |       11 | 2018-01-04 16:07:19 |     185 |
@@ -73,24 +63,24 @@ deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
 |            |   3. |       11 | 2018-01-04 16:12:59 |     400 |
 |            |      |       12 | 2018-01-04 16:19:39 |         |
 |------------+------+----------+---------------------+---------|
-| whole      |   1. |      1-2 | 2017-12-29 15:12:37 |       4 |
-| pipeline   |      |        3 | 2017-12-29 15:12:41 |     348 |
-| gapfish    |      |        4 | 2017-12-29 15:18:29 |      90 |
-| (step 5    |      |      6-8 | 2017-12-29 15:19:59 |      38 |
-| skipped)   |      |        9 | 2017-12-29 15:20:37 |     106 |
-|            |      | runnning | 2017-12-29 15:22:23 |         |
-|            |   2. |      1-2 | 2017-12-29 15:23:13 |       7 |
-|            |      |        3 | 2017-12-29 15:23:20 |     131 |
-|            |      |        4 | 2017-12-29 15:25:31 |      51 |
-|            |      |      6-8 | 2017-12-29 15:26:22 |      22 |
-|            |      |        9 | 2017-12-29 15:26:44 |      67 |
-|            |      | runnning | 2017-12-29 15:27:51 |         |
-|            |   3. |      1-2 | 2017-12-29 15:28:25 |       4 |
-|            |      |        3 | 2017-12-29 15:28:29 |     145 |
-|            |      |        4 | 2017-12-29 15:30:54 |      26 |
-|            |      |      6-8 | 2017-12-29 15:31:20 |      69 |
-|            |      |        9 | 2017-12-29 15:32:29 |      35 |
-|            |      | runnning | 2017-12-29 15:33:04 |         |
+| whole      |   1. |      1-2 | 2018-01-06 15:05:54 |       4 |
+| pipeline   |      |        3 | 2018-01-06 15:05:58 |     237 |
+| gapfish    |      |        4 | 2018-01-06 15:09:55 |      67 |
+| (build     |      |      6-8 | 2018-01-06 15:11:02 |      36 |
+| step (5)   |      |        9 | 2018-01-06 15:11:38 |      70 |
+| skipped)   |      | runnning | 2018-01-06 15:12:48 |         |
+|            |   2. |      1-2 | 2018-01-06 15:13:03 |       6 |
+|            |      |        3 | 2018-01-06 15:13:09 |      94 |
+|            |      |        4 | 2018-01-06 15:14:43 |       7 |
+|            |      |      6-8 | 2018-01-06 15:14:50 |      20 |
+|            |      |        9 | 2018-01-06 15:15:10 |      45 |
+|            |      | runnning | 2018-01-06 15:15:55 |         |
+|            |   3. |      1-2 | 2018-01-06 15:16:50 |       4 |
+|            |      |        3 | 2018-01-06 15:16:54 |      87 |
+|            |      |        4 | 2018-01-06 15:18:21 |       8 |
+|            |      |      6-8 | 2018-01-06 15:18:29 |      18 |
+|            |      |        9 | 2018-01-06 15:18:47 |      75 |
+|            |      | runnning | 2018-01-06 15:20:02 |         |
 
 ## bad influeces:
 * image build time
@@ -100,32 +90,3 @@ deploy(6)-pull infrastructure code(7)-modify resource definitions(8)
 * pod count (rolling update can be made in bigger batches)
 * repo size does not matter (cached)
 * image size (cached)
-
-# monitors
-
-## 200 diffs
-### raw
-```
-abs( 1 - ( avg:stage.apache.GET.200.count{*}.as_rate().rollup(sum, 30) / ( 2 * avg:stage.apache.canary.GET.200.count{*}.as_rate().rollup(sum, 30) ) ) )
-```
-### better readable
-```
-ratio = apache_GET_200_count.rollup(sum, 30) / (2 * apache_canary_GET_200.rollup(sum, 30) )
-threshold = 3
-abs(1 - ratio) > 3
-```
-
-
-## redirect diffs
-### raw
-```
-abs( 1 - ( ( avg:stage.apache.GET.301.count{*}.as_rate().rollup(sum, 360) + avg:stage.apache.GET.302.count{*}.as_rate().rollup(sum, 360) ) / ( 2 * ( avg:stage.apache.canary.GET.301.count{*}.as_rate().rollup(sum, 360) + avg:stage.apache.canary.GET.302.count{*}.as_rate().rollup(sum, 360) ) ) ) )
-```
-### better readable
-```
-permanent_redirects = apache_GET_301_count.rollup(sum, 360) + apache_GET_302_count.rollup(sum, 360)
-temporary_redirects = apache_canary_GET_301_count.rollup(sum, 360) + apache_canary_GET_302_count.rollup(sum, 360)
-ratio = permanent_redirects / (2 * temporary_redirects)
-threshold = 1.5
-abs(1 - ratio) > threshold
-```
