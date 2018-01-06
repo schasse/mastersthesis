@@ -12,6 +12,9 @@ vcentering
 \usepackage{fontspec}
 \usepackage{titlesec}
 
+\clubpenalty = 10000 % schliesst Schusterjungen aus
+\widowpenalty = 10000 % schliesst Hurenkinder aus
+
 \setsansfont{SourceCodePro-Bold}[
   Path=fonts/SourceCodePro/,
   BoldFont=SourceCodePro-Black
@@ -23,7 +26,11 @@ vcentering
   ItalicFont=Spectral-Italic,
   BoldItalicFont=Spectral-BoldItalic
 ]
-\setmonofont{SourceCodePro-Medium}[Path=fonts/SourceCodePro/]
+\setmonofont{SourceCodePro-Medium}[
+  Path=fonts/SourceCodePro/,
+  BoldFont=SourceCodePro-Bold,
+  Scale=MatchLowercase
+]
 
 \titleformat{\chapter}[block]
 {
@@ -67,14 +74,11 @@ vcentering
 % Color={0019D4}
 % ]{cour.ttf}
 
-% \usepackage{showframe}
+\usepackage{showframe}
 
 % TODO
-% * geometry
-% * fonts and colors (xelatex) \usepackage{lib/w-bookps}
 % * chapter/headings layout
 % * hyperrefs
-% * draft version (with date as watermark?)
 % * title page
 % * table of contents (pagenumering in roman? add list of figures? bibliography?)
 % * other special pages such as acknowledgement, dedication, copyright, bibliography etc.
@@ -98,6 +102,7 @@ vcentering
 \tableofcontents
 
 \include{pieces/main}
+\include{pieces/appendix}
 
 \printbibheading
 \printbibliography[keyword={background},title={Background},heading=subbibliography]
