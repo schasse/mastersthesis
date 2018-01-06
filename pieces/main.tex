@@ -1,5 +1,5 @@
 \chapter{Introduction}
-\section{Automation to support maintenance work}
+\section{Automation to Support Maintenance Work}
 
 % TODO: microservices case study von klems
 Devops~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
@@ -32,7 +32,7 @@ responsibility of developing and operating their own code as well as code
 dependencies. Nonfunctional production regression testing extends the continuous delivery
 pipeline and automates continuous testing of nonfunctional changes in production.
 
-\section{Thesis outline}
+\section{Thesis Outline}
 
 In the following outlines the structure of the thesis. We discuss every chapter briefly
 and talk about its contents.
@@ -70,7 +70,7 @@ delivery pipelines.
 
 \chapter{Problem Definition}
 
-\section{Maintenance responsibility shifts}
+\section{Maintenance Responsibility Shifts}
 
 % devops/microservices aproach successful development and operation
 The DevOps~\cite{devops_definition} approach and the
@@ -112,7 +112,7 @@ software dependencies shifts resultantly towards the team, which builds and runs
 software product.
 
 
-\section{Lack of focus on maintenance}
+\section{Lack of Focus on Maintenance}
 
 % is risky
 If we did not do maintenance properly, there is a risk of decreasing the quality of the
@@ -141,7 +141,7 @@ product. Companies easily disregard the importance of operation and maintenance 
 software product.
 
 
-\section{Underestimated amount of maintenance work}
+\section{Underestimated Amount of Maintenance Work}
 
 % maintenance of the written code itself is a major source of changes
 The software written by the development team needs to be maintained as well. As we
@@ -248,7 +248,7 @@ Continuous delivery does not focus on the maintenance work and the DevOps approa
 not focus on automating the maintenance work as previously examined. We conclude that
 there is a need for practices, which continuously support and automate maintenance work.
 
-\section{Contribution of this thesis}
+\section{Contribution of this Thesis}
 
 In my masterthesis I want to optimize the software engineering practices in order to
 empower developers in their bigger responsibilities. I want to focus on the process of
@@ -630,7 +630,7 @@ deployer is blocking and waits for the deployment process to complete. Certainly
 need a queuing system here and can scale deployer to the concurrent deploys we need.
 
 
-\section{interface}
+\section{Interface}
 
 Requests to deployer are very simple. We can use curl request or any other http client and
 execute it for instance from our continuous integration system. Another way to interact
@@ -726,7 +726,7 @@ manually. This makes the development flow more efficient. The version reference 
 sufficient to determine the version, so the clients usually provides the version reference
 only.
 
-\subsection{Fetching the Code and Caching it}
+\subsection{Fetching the Code and Caching It}
 
 After deployer validated the deploy request, it then fetches the code from the version
 control system (4). When there is git as the version control system, deployer uses commit
@@ -1121,7 +1121,7 @@ deployment flow and can apply nonfunctional production regression testing to dep
 
 
 
-\section{Outlook and future work}
+\section{Outlook and Future Work}
 
 % \part{Foundations}
 
