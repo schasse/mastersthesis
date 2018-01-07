@@ -1,22 +1,20 @@
 \addcontentsline{toc}{chapter}{\numberline{}Appendix}
 \chapter*{Appendix}
-\section*{Plot Data}
+\section*{Experiment Servers}
+This section describes the servers, on which I cunducted the experiments.
+\paragraph*{DIN}
+The kubernetes cluster at DIN was in version 1.7.1 and was installed on 4 VM instances
+provided by Atos. Each instance had 1 vCPU and 4GB memory. The installed operating system
+on each VM was Red Hat Enterprise Linux Server release 7.3.
+\paragraph*{GapFish}
+The staging kubernetes cluster at GapFish was in version 1.8.4 and had 8 worker
+instances. The instances were VMs hosted at Google. The machine types were n1-standard-2
+with 2 vCPUs and 7.5 GB memory. The operating system was Google's Container OS in version
+1.8.1-gke.1.
+\section*{Experiment}
+This section provides the raw data, which was collected in the experiments and used for
+the plots in the evaluation chapter.
 \begin{verbatim}
-| nr | step                        |
-|----+-----------------------------|
-|  1 | push new version            |
-|  2 | ci pulls code               |
-|  3 | build                       |
-|  4 | save container image(s)     |
-|  5 | run tests                   |
-|  6 | deploy                      |
-|  7 | pull infrastructure code    |
-|  8 | modify resource definitions |
-|  9 | apply to production cluster |
-| 10 | pull container image(s)     |
-| 11 | send metrics                |
-| 12 | trigger rollback            |
-
 | plot     | exec |   steps | timestamp           | secs |
 |----------+------+---------+---------------------+------|
 |----------+------+---------+---------------------+------|
@@ -85,6 +83,22 @@
 |          |      |     6-8 | 2018-01-06 15:18:29 |   18 |
 |          |      |       9 | 2018-01-06 15:18:47 |   75 |
 |          |      | running | 2018-01-06 15:20:02 |      |
+
+| nr | step                        |
+|----+-----------------------------|
+|  1 | push new version            |
+|  2 | ci pulls code               |
+|  3 | build                       |
+|  4 | save container image(s)     |
+|  5 | run tests                   |
+|  6 | deploy                      |
+|  7 | pull infrastructure code    |
+|  8 | modify resource definitions |
+|  9 | apply to production cluster |
+| 10 | pull container image(s)     |
+| 11 | send metrics                |
+| 12 | trigger rollback            |
+
 
 ## 200 diffs
 ### raw
