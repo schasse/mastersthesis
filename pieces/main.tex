@@ -699,37 +699,10 @@ not able to do everything to the kubernetes api consequently not everything to o
 production cluster. It is for instance not able to deploy other code than ours or read
 credentials from the production cluster.
 
-\subsection{Validations}
-
-After deployer authenticated a valid user, deployer starts the deploy procedure. At first
-deployer validates the arguments given by the client. The deploy request requires the
-service to deploy and a version of the service. The client needs to specify either the
-commit hash or the tag name or both. The tag would additionally include the branch name,
-which makes the reference more readable.
-
-Deployer initially validates the arguments of the request. To be specific, it checks if
-the service exists in the configuration. Furthermore deployer checks if the commit exists
-in the repository and deployer checks if a the tag, which references the version, exists
-for all the images, which are necessary in order to deploy the service. Deployer executes
-the latter validation by communicating with the docker registry (3). The client does in
-contrast not have any validations\footnote{We can use any http client such as simple curl
-or the more comfortable depctl.}. The reason for that is that we want to have a central
-definition for the validations.
-
-For simplicity and usability the client has the options to either
-\begin{itemize}
-    \item exclusively give a version reference
-    \item or exclusively give a tag
-\end{itemize}
-because it makes things a lot simpler when a developer needs to deploy
-manually. This makes the development flow more efficient. The version reference is totally
-sufficient to determine the version, so the clients usually provides the version reference
-only.
-
 \subsection{Fetching the Code and Caching It}
 
-After deployer validated the deploy request, it then fetches the code from the version
-control system (4). When there is git as the version control system, deployer uses commit
+After deployer authenticated a valid user, it then fetches the code from the version
+control system (3). When there is git as the version control system, deployer uses commit
 hashes and branches as version reference and to determine the code version. When there is
 subversion, deployer uses revision numbers instead. We implemented subversion, which is
 more of an ancient technology, to be able to do the evaluation with the DIN system.
@@ -766,12 +739,39 @@ methodology for every single service or microservice we would have a dedicated r
 The second methodology is the single monolithic repository, which contains multiple
 microservices.
 
-\subsection{Modifications of Resource Definitions}
+\subsection{Validations}
 
 After having the specific version reference of the repository fetched and checked out,
-deployer takes the resources and modifies them in a next step (5). Especially deployments
-and statefulsets are relevant to those modifications. In contrast to those resources,
-deployer does not modify all other resources, such as services.
+deployer starts the deploy procedure. At first deployer validates the arguments given by
+the client. The deploy request requires the service to deploy and a version of the
+service. The client needs to specify either the commit hash or the tag name or both. The
+tag would additionally include the branch name, which makes the reference more readable.
+
+Deployer initially validates the arguments of the request. To be specific, it checks if
+the service exists in the configuration. Furthermore deployer checks if the commit exists
+in the repository and deployer checks if a the tag, which references the version, exists
+for all the images, which are necessary in order to deploy the service. Deployer executes
+the latter validation by communicating with the docker registry (4). The client does in
+contrast not have any validations\footnote{We can use any http client such as simple curl
+  or the more comfortable depctl.}. The reason for that is that we want to have a central
+definition for the validations.
+
+For simplicity and usability the client has the options to either
+\begin{itemize}
+    \item exclusively give a version reference
+    \item or exclusively give a tag
+\end{itemize}
+because it makes things a lot simpler when a developer needs to deploy
+manually. This makes the development flow more efficient. The version reference is totally
+sufficient to determine the version, so the clients usually provides the version reference
+only.
+
+\subsection{Modifications of Resource Definitions}
+
+After deployer validated the deploy request, deployer takes the previously checked out
+resources and modifies them in a next step (5). Especially deployments and statefulsets
+are relevant to those modifications. In contrast to those resources, deployer does not
+modify all other resources, such as services.
 
 Deployer applies two main modifications: the image version and the environment. The latter
 is especially important for the metrics collection. Deployer modifies the environment, so
