@@ -201,7 +201,7 @@ work. Facebook~\cite{dev_at_fb} for example hires more developers. This is expen
 though. A much cheaper solution is automation. We should automate some of the maintenance
 work.
 
-\section{Disregard of automation for maintenance work}
+\section{Disregard of Automation for Maintenance Work}
 
 % practices exist which connect dev and ops
 You could argue that DevOps practices already exist and connect development and operations
@@ -961,20 +961,154 @@ google has a similar monitoring system in there internal infrastructure.
 
 \chapter{Evaluation}
 
+This chapter evaluates the nonfunctional production regression testing approach in two
+different aspects, experiments and a lessons learned section. Firstly the experiments aim
+to present an evaluation the approach's performance in the context of a whole delivery
+pipeline and how a sample metric comparison performs. The second part is a qualitative
+discussion of the lessons learned of an application use case, which was used in
+production.
+
+\section{Experiments}
+
+I had the opportunity to do experiments with two different production applications. The
+first one is an apache webserver, which is the middleware in front of a tomcat application
+server. This application serves DIN's the website\footnote{\url{https://www.beuth.de}}. In
+the case of DIN, I setup a version control system, a kubernetes cluster, with deployer,
+instrumentation and monitoring setup. Software engineers working for DIN helped to setup a
+container image registry. I also migrated the apache webserver to be able to run on
+kubernetes. The kubernetes resources for the apache webserver consisted of a service and a
+deployment with two pods.
+
+The second application is a ruby on rails application, which employees of GapFish utilize
+as backoffice tools for several panel
+platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
+  \url{https://www.spiegel-panel.de}}. As an employee of GapFish I previously migrated the
+ruby on rails application to kubernetes and utilized
+codeship\footnote{\url{https://codeship.com}} as continuous integration, docker
+hub\footnote{\url{https://hub.docker.com}} as container image registry and integrated
+datadog\footnote{\url{https://www.datadoghq.com}} as monitoring system. The application
+consists of a service and nine deployments. Eight of the deployments are different
+background workers each with one pod. And one deployment is for the ruby on rails
+application server with two pods.
+
+The experiments for the DIN apache application were conducted on virtual machines rented
+from Atos. The experiments for the GapFish application were conducted on virtual machines
+hosted at Google. You can read more about the specific details and the data used for the
+plots in the appendix.
+
+Each of the experiments has three consecutive executions with three different canary
+versions in the deploy and rollback experiments. The measurements had to be manually
+collected from all the different logs of the involved systems, that are a local http
+client, continuous integration system, deployer and kubernetes.
+
+\subsection{Deploy}
+
+The first experiment examines the performance of a deploy of a canaries. In account to
+that an http client triggered a deploy as described in previous
+chapters. Figures~\ref{fig:deploy_din} and \ref{fig:deploy_gapfish} show the duration
+between the deploy request (6) and the running canary. The blue part of the bar indicates
+the time of the deployer pulling the infrastructure code from the version control system,
+check of the version reference and image availability, modification of the resource
+definitions and application to the kuberentes cluster (6-8). The red part is the duration
+of kubernetes starting the canary (9-running).
+
 \begin{figure}[htbp]
+  \label{fig:deploy}
   \centering
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{deploy_din}
-    \caption[DIN]{DIN}
+    \caption[DIN]{DIN Apache Middleware}
     \label{fig:deploy_din}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{deploy_gapfish}
-    \caption[GapFish]{GapFish}
+    \caption[GapFish]{GapFish Rails Application Server}
     \label{fig:deploy_gapfish}
   \end{subfigure}
   \caption[Deploy]{Deploy}
 \end{figure}
+
+Figure~\ref{fig:deploy_din} shows that DIN's apache middleware takes between 9 and 12
+seconds with a median of 10 seconds. Deployer took in the third execution 9 seconds and
+the start of the canary was in every execution at 1 second.
+
+Figure~\ref{fig:deploy_gapfish} shows that GapFish's rails application server takes
+between 65 and 106 seconds with a median of 93 seconds. The time deployer took was 18
+seconds in median.
+
+In both experiments the second and third execution are faster than the first one. That is
+because deployer caches the code from the version control system and does only need to
+download the difference in the consecutive executions. The impact of the cache on DIN's
+apache webserver was not that big, because the repository size is comparably
+small. Whereas the cache could save almost half of the time at the GapFish rails
+application.
+
+The start of DIN's apache pods is with 1 second quite fast. This demonstrates the quick
+scheduling of kubernetes and quick startup of docker containers compared to virtual
+machines. The start of GapFish's application is between 45 and 75 seconds with median of
+70 seconds.
+
+Accordingly DIN's apache application deploy significantly faster. So deployer is able to
+handle multiple deployments as in the case of GapFish. The multiple requests to the
+kubernetes api slightly reduce the deploy duration though. An improvement would be a
+batched request. Deployer's cache works well for big repository sizes.
+
+It is important to pay attention with slow application startup durations, when looking for
+fast deployments. In the case of GapFish's rails applicatoin server, this makes the
+biggest impact.
+
+The variation of the second and third executions comes from the nature of the cloud
+environment and internet services. In particular the requests to the image container
+registry differ in the duration.
+
+\section{Deploy in Pipeline}
+
+This section shows a deploy in the full context of the continuous delivery pipeline. The
+steps start with the commit and push of a new version in the version control system, the
+build of the docker image(s), saving the recently built images in the image registry,
+time spend by deployer and the remaining startup of the canary pods. The testsuite runtime
+is not included in this diagram, so that focus lies on the systems this thesis integrated.
+
+At GapFish I could access all the involved system. This was not the case at DIN. That is
+why the experiment was conducted for the GapFish rails application only.
+
+The total time of the continuous delivery pipeline was between 172 and 414 seconds with a
+median of 192 seconds. Again the caching saves time in the second and the third
+execution. This time the continuous integration system and the image registry partly
+cache the layers of the images. They only have to build and send the differing parts of
+the container image.
+
+As a result we see the overall pipeline duration for a typical canary change at round
+about 3 minutes, including a build and deployment. The makes a continuous deployment of
+new canaries absolutely feasible.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{whole_pipeline}
+  \caption[Metric Comparison]{Whole Pipeline}
+  \label{fig:whole pipeline}
+\end{figure}
+
+\section{Rollback}
+
+In this section we take a the look at the rollback performance of deployer. The blue part
+of the bar again represents the time deployer is involved, that is from the rollback
+request including steps (7) and (8) until the kubernetes api responded. The red bar
+represent the remaining time the pods take to shut down.
+
+Figure~\ref{fig:rollback_din} shows the rollback duration of a DIN apache canary
+is between 4 and 5 seconds. The duration send in deployer is less than in the deploy case.
+That is mostly because it the delete request to the kubernetes api is faster.
+
+In the case of GapFish's rails application, we have longer rollback times. All three
+executions of the rollback were 63 seconds. This is due to slow shutdowns of the worker
+pods. The kubernetes partly waits for the shutdown process of the pods. That is why
+deployer spends most of the 48-49 seconds waiting for kubernetes api responses.
+
+Also for the rollback case, deployer performs better with DIN's apache system, because of
+less deployment resources and the fast apache application. Nevertheless the deploys as
+well as the rollbacks involve zero downtime. So it's acceptable to have a bit longer
+durations.
 
 \begin{figure}[htbp]
   \centering
@@ -991,6 +1125,19 @@ google has a similar monitoring system in there internal infrastructure.
   \caption[Deploy]{Rollback}
 \end{figure}
 
+\section{Metric comparison}
+
+The last experiment aims at the feasibility and a first assessment of a metric comparison
+and the time of a broken canary being in production. DIN provided one hour of production
+traffic of their website, which a
+goreplay\footnote{\url{https://github.com/buger/goreplay}} process recorded on production
+and replayed with the test setup.
+
+Due to the fact the test setup database state differs to the production database, the
+throughput of the requests with http 200 responses was at the low rate of 25 requests per
+minute. Requests of in production logged in users mostly had http 404 as responses. Those
+successful requests basically consisted of the publicly visible pages of the website.
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.5\linewidth]{metric_comparison.png}
@@ -998,12 +1145,19 @@ google has a similar monitoring system in there internal infrastructure.
   \label{fig:metric_comparison}
 \end{figure}
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{whole_pipeline}
-  \caption[Metric Comparison]{Whole Pipeline}
-  \label{fig:whole pipeline}
-\end{figure}
+\begin{verbatim}
+ratio = apache_GET_200_count.rollup(sum, 30) / (2 * apache_canary_GET_200.rollup(sum, 30))
+threshold = 3
+abs(1 - ratio) > 3
+\end{verbatim}
+
+\section{Lessons learned}
+
+The qualitative feedback in the lessons learned section comes mainly from use of
+nonfunctional production regression testing for the GapFish rails application in
+production.
+
+\section{bla}
 
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
