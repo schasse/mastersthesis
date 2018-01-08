@@ -1258,6 +1258,37 @@ at low risk as well. The combination of GemUpdater and nonfunctional production 
 testing lead to a continuous fully automated approach for dependency updates, which used
 to be an important, but tedious maintenance work.
 
+\section{Related Work}
+
+There are multiple publications, which use methods to test software production in
+production. Tang et. al. demonstrates how Facebook does gradual rollouts with
+gatekeeper~\cite{fb_config_management} and tests with high amounts of traffic. But not
+only canary or A/B tests are done in production. For example Falé proposes synthetic
+monitoring~\cite{synthmonitoring}, which aims at functional tests being made in
+production. This enables testing microservices in complex environments. Also Tseitlin
+describes how Netflix~\cite{antifragile_org} tests their systems with the simian army,
+which produce random defects in a controlled production environment. This practice lays
+open unknown issues, which can be fixed in order to gain better reliability.
+
+There are also countless open source tools, which help to implement continuous delivery
+similar. Vamp\footnote{\url{https://vamp.io}} has the ability to deploy applications to
+kubernetes automatically. Also spinnaker\footnote{\url{https://www.spinnaker.io/}} can
+deploy applications to cloud environments, with kuberentes being one of them. Spinnaker
+very recently released a feature to analyse canaries, just like for nonfunctional
+production regression testing needed. The difference to deployer is that vamp and
+spinnaker are very complex and exhaustive. They also require other databases. Whereas
+deployer is a very simple and lightweight tool with focus on a single purpose and consists
+of only one docker image. Nevertheless deployer can be integrated to several monitoring
+solutions by the simple http interface.
+
+Schermann et. al. developed bifrost~\cite{bifrost}, an open source tool similar to the
+previously mentioned gatekeeper at Facebook. It implements canary testing and other
+testing strategies as well. The approach is a complete different, though, to
+deployer. Bifrost is technically an automatically configurable middleware or
+loadbalancer. It does not provide any automation for the deploy itself. Deployer
+implements the deploy automation. It could be interesting to combine the two tools to have
+more testing strategies available.
+
 \section{bla}
 
 We have different possibilities to compare those version. One possibility is, that we
