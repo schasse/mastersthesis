@@ -1444,7 +1444,6 @@ integration tests with edge cases, which occur in production. And ultimately the
 work and time saved comes at a low risk.
 
 
-
 Finally in this chapter, we summarize what we have discussed so far. We went through the
 infrastructure of deployer, we saw, that deployer scales horizontally. We have seen that
 deployer has simple interface, with the two most important commands deploy and canary. We
@@ -1463,3 +1462,25 @@ deployment flow and can apply nonfunctional production regression testing to dep
 
 
 \section{Outlook and Future Work}
+
+Nonfunctional production regression testing is good approach to continuously automate the
+maintenance of a software product. Nevertheless there are possible improvements. A
+automatic approach such as GemUpdater works well. More automatic service of such kind are
+needed. One obvious use case is the automation of updating docker base images. A docker
+base image updater would help to maintain continuously update the operating systems and
+software, on which the applications docker images are based. Furthermore there is a
+similar need for update mechanism for other languages such as java or python, which come
+with their own dependency managers.
+
+I image a completely unsupervised update mechanism for updates. An engineer would
+resultantly only have to do manual work in case of a regression. Engineers would need to
+have more confidence in unsupervised deploys, though.
+
+Another aspect is the lack of good open source instrumentation. On the one hand good
+instrumentation exists. On the other hand the instrumentation is proprietary and it cannot
+be utilized outside of the proprietary ecosystem. We should invest more in more fine
+grained open source instrumentation for popular application frameworks and webservers.
+
+In order to be able to better maintain the metric comparisons, these would need to go into
+version control as well. With datadog it was not possible to version those tests,
+though. With other tools for instance prometheus this may be possible.
