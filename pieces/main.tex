@@ -1057,11 +1057,11 @@ It is important to pay attention with slow application startup durations, when l
 fast deployments. In the case of GapFish's rails applicatoin server, this makes the
 biggest impact.
 
-The variation of the second and third executions comes from the nature of the cloud
+The variation of the second and third executions come from the nature of the cloud
 environment and internet services. In particular the requests to the image container
 registry differ in the duration.
 
-\section{Deploy in Pipeline}
+\subsection{Deploy in Pipeline}
 
 This section shows a deploy in the full context of the continuous delivery pipeline. The
 steps start with the commit and push of a new version in the version control system, the
@@ -1071,6 +1071,13 @@ is not included in this diagram, so that focus lies on the systems this thesis i
 
 At GapFish I could access all the involved system. This was not the case at DIN. That is
 why the experiment was conducted for the GapFish rails application only.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{whole_pipeline}
+  \caption[Metric Comparison]{Whole Pipeline}
+  \label{fig:whole pipeline}
+\end{figure}
 
 The total time of the continuous delivery pipeline was between 172 and 414 seconds with a
 median of 192 seconds. Again the caching saves time in the second and the third
@@ -1082,14 +1089,7 @@ As a result we see the overall pipeline duration for a typical canary change at 
 about 3 minutes, including a build and deployment. The makes a continuous deployment of
 new canaries absolutely feasible.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{whole_pipeline}
-  \caption[Metric Comparison]{Whole Pipeline}
-  \label{fig:whole pipeline}
-\end{figure}
-
-\section{Rollback}
+\subsection{Rollback}
 
 In this section we take a the look at the rollback performance of deployer. The blue part
 of the bar again represents the time deployer is involved, that is from the rollback
@@ -1099,16 +1099,6 @@ represent the remaining time the pods take to shut down.
 Figure~\ref{fig:rollback_din} shows the rollback duration of a DIN apache canary
 is between 4 and 5 seconds. The duration send in deployer is less than in the deploy case.
 That is mostly because it the delete request to the kubernetes api is faster.
-
-In the case of GapFish's rails application, we have longer rollback times. All three
-executions of the rollback were 63 seconds. This is due to slow shutdowns of the worker
-pods. The kubernetes partly waits for the shutdown process of the pods. That is why
-deployer spends most of the 48-49 seconds waiting for kubernetes api responses.
-
-Also for the rollback case, deployer performs better with DIN's apache system, because of
-less deployment resources and the fast apache application. Nevertheless the deploys as
-well as the rollbacks involve zero downtime. So it's acceptable to have a bit longer
-durations.
 
 \begin{figure}[htbp]
   \centering
@@ -1125,11 +1115,21 @@ durations.
   \caption[Deploy]{Rollback}
 \end{figure}
 
-\section{Metric comparison}
+In the case of GapFish's rails application, we have longer rollback times. All three
+executions of the rollback were 63 seconds. This is due to slow shutdowns of the worker
+pods. The kubernetes partly waits for the shutdown process of the pods. That is why
+deployer spends most of the 48-49 seconds waiting for kubernetes api responses.
 
-The last experiment aims at the feasibility and a first assessment of a metric comparison
-and the time of a broken canary being in production. DIN provided one hour of production
-traffic of their website, which a
+Also for the rollback case, deployer performs better with DIN's apache system, because of
+less deployment resources and the fast apache application. Nevertheless the deploys as
+well as the rollbacks involve zero downtime. So it's acceptable to have a bit longer
+durations.
+
+\subsection{Metric Comparison}
+
+This last experiment aims at a first evaluation of the feasibility and a first assessment
+of a metric comparison and the time of a broken canary being in production. DIN provided
+one hour of production traffic of their website, which a
 goreplay\footnote{\url{https://github.com/buger/goreplay}} process recorded on production
 and replayed with the test setup.
 
@@ -1138,6 +1138,32 @@ throughput of the requests with http 200 responses was at the low rate of 25 req
 minute. Requests of in production logged in users mostly had http 404 as responses. Those
 successful requests basically consisted of the publicly visible pages of the website.
 
+At first I deployed a canary version with no changes compared to the stable version. The
+two version side by side calibrated the metric comparison. The first half of the
+production traffic determined the size of the aggregation window as well as the threshold
+of the comparison.
+
+After the calibration was done, the actual experiment starts. The experiment measures the
+time between a defect canary being started and the canary being rolled back. Each
+of the three executions had its own unique part of the second half hour production traffic.
+
+\begin{verbatim}
+ratio =
+  apache_GET_200_count.rollup(sum, 30) /
+  (2 * apache_canary_GET_200.rollup(sum, 30))
+threshold = 3
+abs(1 - ratio) > 3
+\end{verbatim}
+
+The test compares throughput of successful responses. The canary responses are weighted by
+the factor 2, because there was one canary pod and two stable pods. An aggregation window
+of 30 seconds and a threshold 3, which means the canary throughput had to differ 3 times
+as much as the one of the canary.
+
+Figure~\ref{fig:metric_comparison} shows that in each of the three executions the test has
+successfully detected the broken canary. The duration of the defect canary in production
+was between 129 and 400 seconds with a median of 185 seconds.
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.5\linewidth]{metric_comparison.png}
@@ -1145,17 +1171,92 @@ successful requests basically consisted of the publicly visible pages of the web
   \label{fig:metric_comparison}
 \end{figure}
 
-\begin{verbatim}
-ratio = apache_GET_200_count.rollup(sum, 30) / (2 * apache_canary_GET_200.rollup(sum, 30))
-threshold = 3
-abs(1 - ratio) > 3
-\end{verbatim}
+The experiment demonstrates that the automation of a regression test in production is
+feasible and completely automatable.
 
 \section{Lessons learned}
 
-The qualitative feedback in the lessons learned section comes mainly from use of
-nonfunctional production regression testing for the GapFish rails application in
-production.
+The GapFish ruby on rails application of the previous experiments as well as two other
+GapFish ruby services utilize the nonfunctional production regression testing approach in
+production. This section presents qualitative feedback, which comes mainly from use of
+nonfunctional production regression testing in production.
+
+On the one hand nonfunctional regression testing was used to test maintenance of own code,
+such as refactorings and performance improvements. On the other hand nonfunctional
+regression testing was also used to maintain dependencies. The previously developed
+GemUpdater\footnote{\url{https://github.com/schasse/gem_updater}} regularly and
+automatically opened pull requests with dependency updates. The canary was tested using
+error metrics, which I explain later on in more detail.
+
+\subsection{Quick Debuggable Deploys}
+
+Deploys of a round about 1.5 minutes conform the need of developers of sufficiently quick
+deploys. This is good compared to oftentimes long running test suites as it is the case with
+GapFish's rails application, which has a current median duration of 12.5 minutes. The time
+of a deploy is compared to that much faster and engineers do not get distracted and when
+they deploy manually.
+
+One benefit is the ability to track the version reference from commit to production the
+test in production throughout the whole pipeline. This makes it easy to debug versions,
+which run or used to be running in production. It is also possible to track the code
+change of stable and a canary version which used to be running side by side.
+
+It has been a good decision to version the kubernetes resources, which are basically
+infrastructure definitions as well. This made it possible to track also track the
+infrastructure changes.
+
+Due to the nature of containerized infrastructure and its immutability, rollbacks to
+specific versions are simple. The rolling update mechanism provides deploys and rollbacks
+without downtime. This fact lead to a certain confidence of the engineering team to deploy
+and rollback and the amount of deploys increased.
+
+\subsection{Engineers know the Product}
+
+The experiments already showed that a simple side by side comparison of the throughput can
+have good results for a test metric with production traffic. You could argue that
+production metrics can be hard to evaluate and in a test environment it is rather easy to
+achieve good results. The problem of overfitting in statistics is well known.
+
+When choosing the wrong metrics for the production regression tests of the ruby
+applications of GapFish, it would not have been feasible to deliver as good results as the
+first test showed. The problem lies in the granularity of the metrics. For example a total
+throughput or total error rate of a comprehensive application is misleading. GapFish's
+rails application serves not only humans, but provides also interfaces for other
+services. This leads on the one hand sparse usage\footnote{The users of the rails
+  application are only internal employees.} on routes for users and on the other hand
+machines machines utilized some routes extensively. The overall throughput was a poor fit.
+
+The much better choice for a metric was using the error aggregation of bugsnag. Bugsnag
+aggregates errors, that it shows specifically newly introduced errors. This has been the
+best metric for the regression tests.
+
+% Nevertheless the regression tests have to be maintained as well, just like a
+% testsuite. For this purpose it would be better to have the ability to version the
+% regression tests.
+
+In conclusion as a developer and engineer of the already have a good intuition on what is
+working and what not. This is another evidence for the benefits of the same team building
+and running a software product.
+
+\subsection{Continuous and Fully Automatable}
+
+Deployer connects the continuous integration system, kubernetes and the monitoring
+system. These systems create the ability to create a fully automatable delivery pipeline
+and a system for fully automated rollbacks. Those are the step stones for more
+possibilities.
+
+Nonfunctional production regression testing reduced the efforts of maintenance work on own
+code. The Engineers were able to test changes in production quickly and have a small
+feedback loop.
+
+The engineers working for DIN are still sceptical to have unsupervised deploys. But in the
+example of GapFish, the engineers became confident about the automation of the deployment
+and regression test in production and start to use unsupervised deploys and tests more often.
+
+The possibility of dependency update automation with GemUpdater turned out to save effort
+at low risk as well. The combination of GemUpdater and nonfunctional production regression
+testing lead to a continuous fully automated approach for dependency updates, which used
+to be an important, but tedious maintenance work.
 
 \section{bla}
 
