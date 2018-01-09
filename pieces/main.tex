@@ -35,16 +35,16 @@ pipeline and automates continuous testing of nonfunctional changes in production
 \section{Thesis Outline}
 
 \paragraph{\ref{chap:problem} \nameref{chap:problem}}
-Chapter~\ref{chap:problem} elaborates on the problem of the amount maintenance work and
+Chapter~\ref{chap:problem} elaborates on the problem of the amount of maintenance work and
 demonstrates how the thesis contributes to solve the issue.
 
 \paragraph{\ref{chap:background} \nameref{chap:background}}
 Chapter~\ref{chap:background} briefly summarizes the background and provides good
 references to the practices and technologies, which the thesis presumes. Furthermore, it
-shortly explains the major kubernetes resources on the example of 3 tier webapp.
+shortly explains the major kubernetes resources on the example of a 3 tier webapp.
 
 \paragraph{\ref{chap:macro} \nameref{chap:macro}}
-Chapter~\ref{chap:macro} describes conceptual macro view of nonfunctional production
+Chapter~\ref{chap:macro} describes the conceptual macro view of nonfunctional production
 regression testing. The text goes through all the steps of the pipeline and demonstrates
 the components and how they communicate with each other.
 
@@ -276,28 +276,6 @@ to enable the reader to glean more detailed descriptions of the prerequisite pra
 technologies. Those practices are well known in software engineering as well as the
 concepts of the most technologies.
 
-\section{Software Dependencies}
-
-This section shortly mentions the dependencies, which I used to implement Deployer and the
-other components of the pipeline.
-
-Deployer is implemented in ruby~\cite{ruby} and since it is a webserver,
-sinatra~\cite{sinatra} is its framework. Deployer uses git~\cite{git} and
-subversion~\cite{svn} to communicate with either git or subversion as the control version
-system. Moreover deployer has a plugin which sends messages to bugsnag~\cite{bugsnag} and
-slack~\cite{slack}, to inform the developer in case it identifies a problem. Deployer uses
-kubectl to interact with kubernetes~\cite{kubernetes} master. Deployer itself is
-containerized with docker~\cite{docker} and its natural hosting solution would be
-kubernetes. We published deployer on github~\cite{deployer} under GPL-3.0, a free software
-license.
-
-The monitoring system, which I used in the evaluation, is datadog~\cite{datadog}, a
-commercial service. Nevertheless prometheus~\cite{prometheus} is also a suitable open
-source solution as monitoring system. The continuous integration systems we use for the
-evaluation are codeship~\cite{codeship} and jenkins~\cite{jenkins}. As an image repo, we
-use docker hub~\cite{dockerhub}.
-
-
 \section{Typical 3 Tier Webapp in Kubernetes}
 
 I'll explain how you would implement a typical 3 tier webapp in kubernetes as it helps a
@@ -319,26 +297,57 @@ So the service receives a request from the client. It selects a pod via round ro
 proxies the request to the pod. The pod probably communicates with the database and sends
 the request back to the client, where the loadbalancer acts again as a proxy.
 
+\section{Software Dependencies}
+
+This section shortly mentions the dependencies, which I used to implement Deployer and the
+tools for other components of the pipeline.
+
+Deployer is implemented in ruby\footnote{\url{https://www.ruby-lang.org}} and since it is
+a webserver, sinatra\footnote{\url{http://sinatrarb.com}} is its framework. Deployer uses
+git\footnote{\url{https://git-scm.com}} and subversion\footnote{\url{https://git-scm.com}}
+to communicate with either git or subversion\footnote{\url{https://subversion.apache.org}}
+as the control version system. Moreover deployer has a plugin which sends messages to
+bugsnag\footnote{\url{https://www.bugsnag.com}} and
+slack\footnote{\url{https://slack.com}}, to inform the developer in case it identifies a
+problem. Deployer uses kubectl to interact with
+kubernetes\footnote{\url{https://kubernetes.io}, see also
+  \cite{kubernetes_architecture,kubernetes_architecture2}} master. Deployer itself is
+containerized with docker\footnote{\url{https://www.docker.com}} and its natural hosting
+solution would be kubernetes. We published deployer on
+github\footnote{\url{https://github.com/gapfish/deployer}} under GPL-3.0, a free software
+license.
+
+The previously developed GemUpdater\footnote{\url{https://github.com/schasse/gem_updater}}
+creates pull request with dependency updates.
+
+The monitoring system, which I used in the evaluation, is
+datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
+prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
+as monitoring system. The continuous integration systems we use for the evaluation are
+codeship\footnote{\url{https://codeship.com}} and
+jenkins\footnote{\url{https://codeship.com}}. As an image repo, we use docker
+hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
+served to make experiments with production traffic.
+
 \chapter{Approach}
 \label{chap:macro}
 
-\section{In Short}
+In nonfunctional production regression testing we automatically deploy a new version in
+the form of a canary. A monitoring system compares the metrics of the canary with the
+metrics of the current stable version side by side in production. The in production test
+verifies, if the nonfunctional metrics of the canary show a regression and eventually
+automatically rolls back the canary. This outlines nonfunctional production regression
+testing in few sentences. Nevertheless the following text will go through the term in more
+detail. The approach is a novelty and we name the approach in the context of this thesis.
 
-In nonfunctional production regression testing we compare a new version with the current
-stable version side by side in production. We test in production if the nonfunctional
-metrics show a regression. This is nonfunctional production regression testing in two
-sentences.  Nevertheless we will go through the term in more detail in the following. The
-approach is a novelty and we name the approach in the context of this thesis.
-
-Nonfunctional refers to the metrics, which we evaluate in a test. They are nonfunctional
-and as a consequence generically applicable to multiple applications. The next word,
-production, refers to the environment, because we monitor the production application and
-collect the metrics from it. Finally the word regression refers to the testing
-strategy. The test compares the metrics of the two different versions, a stable version
-and a new version. We are create a canary from the new version in the production
-environment. We test the canary version for a regression, concretely a decline of the
-monitored metrics. If the test identifies a regression, we roll back to the stable
-version.
+Nonfunctional refers to the change, which the tests evaluate. Nonfunctional changes are
+usually maintenance changes, for instance performance improvements or security
+updates. Production refers to the environment on account to the monitoring of the new
+version being in production. The term regression refers to the testing strategy. The test
+compares the metrics of the two differing versions, the stable version and the new
+version. The new version is instantiated in form of a canary. We test the canary version
+for a regression, concretely a decline of the monitored metrics. If the test identifies a
+regression, we roll back to the stable version.
 
 The approach provides some further features, which are not included in the term. Indeed
 the testing approach is completely automatable and you can continuously apply it to the
@@ -547,7 +556,6 @@ production regression testing with kubernetes. Deployer receives deploy messages
 kubernetes resources and applies those modified resources to the production cluster. With
 deployer you can automatically deploy another version of an application, which runs in
 parallel.
-
 
 \section{Deployer Architecture}
 
@@ -931,13 +939,11 @@ The second application is a ruby on rails application, which employees of GapFis
 as backoffice tools for several panel
 platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
   \url{https://www.spiegel-panel.de}}. As an employee of GapFish I previously migrated the
-ruby on rails application to kubernetes and utilized
-codeship\footnote{\url{https://codeship.com}} as continuous integration, docker
-hub\footnote{\url{https://hub.docker.com}} as container image registry and integrated
-datadog\footnote{\url{https://www.datadoghq.com}} as monitoring system. The application
-consists of a service and nine deployments. Eight of the deployments are different
-background workers each with one pod. And one deployment is for the ruby on rails
-application server with two pods.
+ruby on rails application to kubernetes and utilized codeship as continuous integration,
+docker hub as container image registry and integrated datadog as monitoring system. The
+application consists of a service and nine deployments. Eight of the deployments are
+different background workers each with one pod. And one deployment is for the ruby on
+rails application server with two pods.
 
 The experiments for the DIN apache application were conducted on virtual machines rented
 from Atos. The experiments for the GapFish application were conducted on virtual machines
@@ -1078,7 +1084,7 @@ durations.
 This last experiment aims at a first evaluation of the feasibility and a first assessment
 of a metric comparison and the time of a broken canary being in production. DIN provided
 one hour of production traffic of their website, which a
-goreplay\footnote{\url{https://github.com/buger/goreplay}} process recorded on production
+goreplay process recorded on production
 and replayed with the test setup.
 
 Due to the fact the test setup database state differs to the production database, the
@@ -1132,7 +1138,7 @@ nonfunctional production regression testing in production.
 On the one hand nonfunctional regression testing was used to test maintenance of own code,
 such as refactorings and performance improvements. On the other hand nonfunctional
 regression testing was also used to maintain dependencies. The previously developed
-GemUpdater\footnote{\url{https://github.com/schasse/gem_updater}} regularly and
+GemUpdater regularly and
 automatically opened pull requests with dependency updates. The canary was tested using
 error metrics, which I explain later on in more detail.
 
@@ -1248,7 +1254,8 @@ analyse errors of a distributed service in an A/B
 experiment~\cite{error_analysis_of_distr_system}. They provide guidelines for the design
 of error analysis models.
 
-\section{bla}
+\chapter{Conclusion}
+\label{chap:conclusion}
 
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
@@ -1368,10 +1375,7 @@ As a result we even lower the risk, because the potentially degraded version doe
 respond to real users. Ergo we do not have any risk of a degradation of our production
 service which we cause by testing the new version.
 
-\chapter{Conclusion}
-\label{chap:conclusion}
-
-\section{Resume}
+\section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
 advantage of nonfunctional production regression testing. We can extend the continuous

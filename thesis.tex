@@ -93,25 +93,29 @@ vcentering
 \include{pieces/glossary}
 
 \begin{document}
-
+\pagenumbering{Roman} % Große römische Seitenzahlen
 \include{pieces/title}
 % \include{pieces/copyright}
 % \include{pieces/dedication}
 % \include{pieces/abstract}
 
 \tableofcontents
-\glsaddall % add all terms to glossary
+
+\cleardoublepage
+\pagenumbering{arabic} % arabische Seitenzahlen
 
 \include{pieces/main}
+\glsaddall % add all terms to glossary
 \include{pieces/appendix}
 
 \addcontentsline{toc}{chapter}{\numberline{}Glossary}
 \printglossary[type=main,nonumberlist]
 
 \addcontentsline{toc}{chapter}{\numberline{}\bibname}
-\printbibheading
-\printbibliography[keyword={background},title={Background},heading=subbibliography]
-\printbibliography[keyword={technologies},title={Software},heading=subbibliography]
-\printbibliography[keyword={related},title={Related Work},heading=subbibliography]
+% \printbibheading
+% \printbibliography[keyword={background},title={Background},heading=subbibliography]
+% \printbibliography[keyword={technologies},title={Software},heading=subbibliography]
+% \printbibliography[keyword={related},title={Related Work},heading=subbibliography]
+\printbibliography
 
 \end{document}
