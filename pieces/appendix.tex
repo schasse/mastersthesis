@@ -98,17 +98,4 @@ the plots in the evaluation chapter.
 | 10 | pull container image(s)     |
 | 11 | send metrics                |
 | 12 | trigger rollback            |
-
-
-## 200 diffs
-### raw
-```
-abs( 1 - ( avg:stage.apache.GET.200.count{*}.as_rate().rollup(sum, 30) / ( 2 * avg:stage.apache.canary.GET.200.count{*}.as_rate().rollup(sum, 30) ) ) )
-```
-### better readable
-```
-ratio = apache_GET_200_count.rollup(sum, 30) / (2 * apache_canary_GET_200.rollup(sum, 30) )
-threshold = 3
-abs(1 - ratio) > 3
-```
 \end{verbatim}

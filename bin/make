@@ -2,5 +2,6 @@
 set -e # fail when a command exits non zero
 
 xelatex thesis.tex
+makeglossaries thesis
 bibtex8 -W thesis
 xelatex thesis.tex

@@ -1,0 +1,87 @@
+\newglossaryentry{vcs}{
+  name=Version Control System,
+  description={versions code repositories.
+    Examples are subversion or git.
+    Humble explains what is important in version control~\cite{cd_humble_config}}
+}
+\newglossaryentry{ci}{
+  name=Continuous Integration,
+  description={is a practice of continuously merging code to a
+    repository and automatically test it~\cite{ci_fowler}}
+}
+\newglossaryentry{devops}{
+  name=DevOps,
+  description={is a made up of developers and operations.
+    DevOps practices aim for a short time between commit and deploy,
+    still ensuring high quality~\cite{devops_definition}}
+}
+\newglossaryentry{cd}{
+  name=Continuous Delivery,
+  description={is a practice to continuously delivery changes to production.
+    Continuous Delivery is related to DevOps~\cite{cd_wolff_devops}}
+}
+\newglossaryentry{cdep}{
+  name=Continuous Deployment,
+  description={is an extension to Continuous Delivery. An automated deployment process
+    delivers most changes directly to production~\cite{cd_humble_deploy}}
+}
+\newglossaryentry{canary}{
+  name=Canary Releasing,
+  description={is a releasing practice to reduce risk. A canary serves as test instance
+    for a change in production~\cite{cd_humble_deploy}}
+}
+\newglossaryentry{zdp}{
+  name=Zero Downtime Deploys,
+  description={is a way of deploying changes without
+    downtime~\cite{cd_humble_deploy}. Rolling updates is an implementation}
+}
+\newglossaryentry{mon}{
+  name=Monitoring System,
+  description={collects information about a software product and monitors it for
+    defects. The thesis refers to modern monitoring system design as Ewaschuk and Bass
+    et.~al describe~\cite{sre_monitoring,devops_monitoring}}
+}
+\newglossaryentry{dynamic}{
+  name=Dynamic Infrastructure,
+  description={is software defined~\cite{infra_as_code_platforms,infra_as_code_se_practices}}
+}
+\newglossaryentry{immutable}{
+  name=Immutable Infrastructure,
+  description={In such an infrastructure nodes are destroyed and created in order to
+    change them}
+}
+\newglossaryentry{kubernetes}{
+  name=Kubernetes,
+  description={is a cluster management system, which Google's borg
+    heavily influenced~\cite{borg,borg_kubernetes}. Beda gives a good
+    overview of the architecture~\cite{kubernetes_architecture2}}
+}
+\newglossaryentry{container}{
+  name=Container,
+  description={is a running instance of a container image~\cite{docker_orientation,docker_orientation2}}
+}
+\newglossaryentry{image}{
+  name=Container Image,
+  description={is an immutable snapshot of a running container~\cite{docker_orientation,docker_orientation2}}
+}
+\newglossaryentry{pod}{
+  name=Pod,
+  description={is a kubernetes resource. It is a unit of multiple containers,
+    which are located on the same host to be able to share resources~\cite{pod}}
+}
+\newglossaryentry{service}{
+  name=Service,
+  description={is a kubernetes resource, which basically acts as a loadbalancer in front
+  of pods~\cite{service}}
+}
+\newglossaryentry{deployment}{
+  name=Deployment,
+  description={is a kubernetes resource, which ensures the existence of replicated
+    pods. Deployments are an evolution to replicationcontrollers, which have similar
+    features~\cite{replicationcontroller}}
+}
+\newglossaryentry{deploy}{
+  name=Deploy,
+  description={the thesis uses the term Deploy in order to differentiate the procedure
+    from the kubernetes resource, Deployment.}
+}

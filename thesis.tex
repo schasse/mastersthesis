@@ -71,7 +71,7 @@ vcentering
 % * other special pages such as acknowledgement, dedication, copyright, bibliography etc.
 % * edit formality levels (academic writing 45)
 % * urls and technologies in footnotes no ending slash (/)
-% * bibliography and citations (et al.)
+% * bibliography and citations (et~al.)
 % * single terms (deploys/deployment,developers/engineers)
 % * important terms (deployer, nonfunctional production regression testing, gemupdater)
 % * abkürzungen
@@ -88,6 +88,10 @@ vcentering
 \usepackage[style=numeric,backend=bibtex8]{biblatex}
 \bibliography{./pieces/thesis}
 
+\usepackage{glossaries}
+\makeglossaries
+\include{pieces/glossary}
+
 \begin{document}
 
 \include{pieces/title}
@@ -96,10 +100,15 @@ vcentering
 % \include{pieces/abstract}
 
 \tableofcontents
+\glsaddall % add all terms to glossary
 
 \include{pieces/main}
 \include{pieces/appendix}
 
+\addcontentsline{toc}{chapter}{\numberline{}Glossary}
+\printglossary[type=main,nonumberlist]
+
+\addcontentsline{toc}{chapter}{\numberline{}\bibname}
 \printbibheading
 \printbibliography[keyword={background},title={Background},heading=subbibliography]
 \printbibliography[keyword={technologies},title={Software},heading=subbibliography]

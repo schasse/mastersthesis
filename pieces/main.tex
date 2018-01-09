@@ -270,70 +270,15 @@ the production environment of an existing software product.
 
 \section{Prerequisite Practices and Technologies}
 
-Some background is required to understand the thesis. The glossar lists those most
+Some background is required to understand the thesis. The glossary lists those most
 important practices and technologies. Moreover it provides well chosen references in order
 to enable the reader to glean more detailed descriptions of the prerequisite practices and
 technologies. Those practices are well known in software engineering as well as the
-concepts of most of the technologies.
-
-\begin{itemize}
-
-\item At first common practices from software engineering. Initially
-  version control with a \emph{version control system}. Humble explains what is important in
-  version control~\cite{cd_humble_config}.
-
-\item Next the reader should know about continuous integration as Fowler
-  propagates~\cite{ci_fowler} and what a \emph{continuous
-    integration system} is.
-
-\item I refer to \emph{DevOps}, which Bass et.~al defines~\cite{devops_definition}.
-
-\item The reader should know what \emph{continuous delivery} is and how continuous
-  delivery relates to DevOps~\cite{cd_wolff_devops}.
-
-\item Important practices from continuous delivery are prerequisite: \emph{canary
-    releasing}, \emph{zero downtime deploys} and \emph{continuous deployments}, which
-  Humble illustrates~\cite{cd_humble_deploy}.
-
-\item I require the reader to have an idea of monitoring in a distributed system as
-  Ewaschuk describes in ``Site Reliability Engineering''~\cite{sre_monitoring} and how
-  Bass et.~al illustrates the design of a \emph{monitoring
-    system}~\cite{devops_monitoring}.
-
-\item I presume the reader to know the concepts of dynamic infrastructures and
-  infrastructures defined as code~\cite{infra_as_code_platforms}. Morris explains how to
-  common software engineering practices for
-  infrastructure~\cite{infra_as_code_se_practices}.
-
-\item The concepts of cluster management and how Google manages its clusters are
-  important~\cite{borg}. Hence those concepts heavily influenced the design of
-  \emph{kubernetes}~\cite{borg_kubernetes}.
-
-\end{itemize}
-
-\subsection{Technologies}
-
-\begin{itemize}
-
-\item The next references are practical introductions to the concepts of the technologies,
-  which I extensively use in this masterthesis. It is necessary to know what docker
-  \emph{image} and \emph{containers}
-  are~\cite{docker_orientation}~\cite{docker_orientation2}.
-
-\item It helps to have an idea of the architecture of kubernetes. Beda gives a good
-  overview~\cite{kubernetes_architecture2}.
-
-\item Absolutely relevant for the next chapters are the kubernetes resources. Before
-  reading chapter 4 and 5 the reader should know what \emph{pods}~\cite{pod},
-  \emph{deployments} (the new replicationcontroller)~\cite{replicationcontroller} and
-  \emph{services}~\cite{service} are.
-
-\end{itemize}
-
+concepts of the most technologies.
 
 \section{Software Dependencies}
 
-This section mentions shortly the dependencies, which I used to implement Deployer and the
+This section shortly mentions the dependencies, which I used to implement Deployer and the
 other components of the pipeline.
 
 Deployer is implemented in ruby~\cite{ruby} and since it is a webserver,
@@ -346,11 +291,11 @@ containerized with docker~\cite{docker} and its natural hosting solution would b
 kubernetes. We published deployer on github~\cite{deployer} under GPL-3.0, a free software
 license.
 
-The monitoring system, which we used in our evaluation, is datadog~\cite{datadog}, a
-commercial 2service. Nevertheless prometheus~\cite{prometheus} is also a suitable open
+The monitoring system, which I used in the evaluation, is datadog~\cite{datadog}, a
+commercial service. Nevertheless prometheus~\cite{prometheus} is also a suitable open
 source solution as monitoring system. The continuous integration systems we use for the
-evaluation are codeship~\cite{codeship} and jenkins~\cite{jenkins}. As an image repo, we use
-docker hub~\cite{dockerhub}.
+evaluation are codeship~\cite{codeship} and jenkins~\cite{jenkins}. As an image repo, we
+use docker hub~\cite{dockerhub}.
 
 
 \section{Typical 3 Tier Webapp in Kubernetes}
