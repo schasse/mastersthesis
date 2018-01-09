@@ -1,74 +1,72 @@
 \chapter{Introduction}
+\label{chap:intro}
 \section{Automation to Support Maintenance Work}
 
 % TODO: microservices case study von klems
 Devops~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
 practices or even cultures, which break down the silos between the development and
-operations teams and their conflicting goals. For instance Amazon~\cite{build_run} and
-Facebook~\cite{dev_at_fb} successfully use those practices to build and run their software
-products.
+operation teams and their conflicting goals. For instance Amazon and Facebook successfully
+use those practices to build and run their software products~\cite{build_run,dev_at_fb}.
 
 However the responsibility of the maintenance of a software product changed. A single team
 is responsible in two aspects: their own code and the dependencies they are using and
-relying on. The own code needs to be maintained, for instance with nonfunctional changes
-concerning performance, scalability or bug fixes. Code written by others needs to be
-maintained as well via updating to new versions and adapting to those.
+relying on. The need for maintenance of own code exists, for instance with nonfunctional
+changes concerning performance, scalability or bug fixes. Code written by others needs to
+be maintained as well via adapting and updating to new versions.
 
 DevOps practices interconnect operations including those maintenance necessities with
 development work. Nevertheless there is room for improvement in terms of continuous
 automatable processes regarding maintenance. The continuous delivery
-pipeline~\cite{cd_humble_pipeline} is such an continuous automatable practice. But it
+pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
 supports only until deployment whereas maintenance involves more than just the delivery.
 
-Instead of scaling up employee counts, Google faces workforce problems with
+Instead of employing more engineers, Google faces workforce problems with
 automation~\cite{sre_automation}. They recognized that automation does not only save
 valuable programmer time, furthermore it adds reliability to the process. Google explains
-how valuable automation is and illustrates it successfully with their site reliability
+how valuable automation is and successfully illustrates it with their site reliability
 engineering approach~\cite{sre_intro}.
 
 This thesis proposes with nonfunctional production regression testing a practice, which
-faces the difficulties of maintenance. It is designed for teams, which have the
+faces the amount of maintenance work. The practice is designed for teams, which have the
 responsibility of developing and operating their own code as well as code
 dependencies. Nonfunctional production regression testing extends the continuous delivery
 pipeline and automates continuous testing of nonfunctional changes in production.
 
 \section{Thesis Outline}
 
-In the following outlines the structure of the thesis. We discuss every chapter briefly
-and talk about its contents.
+\paragraph{\ref{chap:problem} \nameref{chap:problem}}
+Chapter~\ref{chap:problem} elaborates on the problem of the amount maintenance work and
+demonstrates how the thesis contributes to solve the issue.
 
-In the first chapter we will go through the foundations. The chapter provides references
-the practices and technologies, which are crucial to understand the thesis. The references
-are properly selected to understand the details in case those are not known. In summary
-those practices and technologies are kubernetes, continuous delivery, continuous
-deployment and techniques from infrastructure as code and site reliability engineering.
+\paragraph{\ref{chap:background} \nameref{chap:background}}
+Chapter~\ref{chap:background} briefly summarizes the background and provides good
+references to the practices and technologies, which the thesis presumes. Furthermore, it
+shortly explains the major kubernetes resources on the example of 3 tier webapp.
 
-The second chapter is a conceptual macro view to the method nonfunctional production
-regression testing. The text goes through components of the whole environment and
-discusses the most important concepts and how they communicate with each other. The
-explanation of the communication between the components clarifies how the pipeline embeds
-the methodologies of nonfunctional production regression testing and how those extend the
-pipeline.
+\paragraph{\ref{chap:macro} \nameref{chap:macro}}
+Chapter~\ref{chap:macro} describes conceptual macro view of nonfunctional production
+regression testing. The text goes through all the steps of the pipeline and demonstrates
+the components and how they communicate with each other.
 
-In the third chapter we will get to the concrete design of nonfunctional production
-regression testing. To enable nonfunctional production regression testing, I wrote the
-software deployer.  The chapter explains the details of the design concept and design
-decisions. After reading this chapter it is clear how to use the software deployer.
+\paragraph{\ref{chap:detail} \nameref{chap:detail}}
+Chapter~\ref{chap:detail} goes more into detail of the thesis contributions. It
+demonstrates the design of Deployer, the software I wrote in account to enable
+nonfunctional production regression testing in practice. The chapter also elaborates on
+the collection and comparison of the metrics.
 
-Chapter four is about the evaluation of the new approach. It evaluates the usage of
-deployer and the technique in two different companies. The first company is GapFish, a
-five year old startup, and the software department of DIN, a company established for a
-hundred years. We are going to evaluate positive outcomes, still problematic concerns and
-their improvements. Another part of the evaluation is the comparison to other techniques
-which other companies and groups developed and tested. We differentiate in their features,
-advantages and disadvantages.
+\paragraph{\ref{chap:eval} \nameref{chap:eval}}
+Chapter~\ref{chap:eval} evaluates nonfunctional production regression testing in three
+aspects. Firstly, it discusses the performance with the help of experiments. Secondly, it
+provides a qualitative evaluation of nonfunctional production regression testing. And
+lastly, it relates nonfunctional regression production testing with other practices, tools
+and sophisticated metric analysis.
 
-In the last chapter, the conclusion, the whole thesis is summarized and all the chapters
-are resumed. Important is the second part of the conclusion, in which we have an outlook
-to further improvements and how the technique can be extended to have further upgrades to
-delivery pipelines.
+\paragraph{\ref{chap:conclusion} \nameref{chap:conclusion}}
+Chapter~\ref{chap:conclusion} summarizes the thesis and suggests more automation
+opportunities and extensions to the implementation.
 
 \chapter{Problem Definition}
+\label{chap:problem}
 
 \section{Maintenance Responsibility Shifts}
 
@@ -78,22 +76,23 @@ microservice~\cite{microservices_fowler} culture create practices to solve the i
 the conflicting tension~\cite{sre_intro} between a development and operation team. On the
 one hand the aim is to change the software product quickly and on the other hand to
 provide a stable and reliable software product of high quality. Vogels, the chief
-technology officer of amazon, once said in an interview ''You build it, you run
-it`~\cite{build_run}, which represents the awareness of teams to not only be responsible
-for the development and deliver features whereas they are also responsible to operate
-their product in production. This is because operation is an essential part of a
-successful software product. One team is consequently responsible of the development,
-operation and maintenance of their own code.
+technology officer of amazon, once said in an interview ”You build it, you run
+it”~\cite{build_run}. This cite represents the awareness of teams to not only be
+responsible for the development and deliver features. Moreover the team is also
+responsible of operating their product in production, becuase operation is an essential
+part of a successful software product. One team is consequently responsible of the
+development, operation and maintenance of their own code.
 
 % responsibility of deps shifts from ops to dev
 Furthermore the responsibility of software dependencies shifts. In the past, development
-teams delivered code and depended on installed software dependencies. Operation teams have
-been responsible of maintaining those dependencies. Virtualization made a change. Teams
-operating a virtual infrastructure, operate and maintain the hardware and software of this
-infrastructure. They do not maintain the specific dependencies of the code, which the
-development team develops. The development team can choose which dependencies they want to
-use. Accordingly there is a clear isolation between the dependencies of the virtual
-machine infrastructure and the development team.
+teams delivered code and depended on the previously installed software
+dependencies. Operation teams were responsible of maintaining those installed
+dependencies. Virtualization made a change. Teams operating virtual infrastructure,
+operate and maintain the hardware and software of this infrastructure. They do not
+maintain the specific dependencies of the code, which the development team develops. The
+development team can choose which dependencies they want to use. Accordingly there is a
+clear isolation between the dependencies of the virtual machine infrastructure and the
+development team.
 
 % contra arg vms operated by ops team
 You could argue that virtual machines have still the same functionality like bare metal
@@ -103,7 +102,7 @@ infrastructure~\cite{infra_as_code_platforms} in comparison to bare metal
 infrastructure. And the easier it becomes, the more it enables developers to operate their
 software product themselves.
 
-Containerization manifests the shift of the responsibility. It is a further step of
+Containerization manifests the responsibility shift. It is a further step of
 isolation. The operating system is able to isolate cpu and memory for every process. Yet
 with containerization the operating system can also isolate the disk between processes,
 which means it can isolate the installed dependencies for every process. Containerization
@@ -133,9 +132,9 @@ security patches.
 % (maintenance is a lot of work and) is easily disregarded in favor of velocity
 Agile and continuous practices focus primarily on feature development. Those practices
 altered software development to deliver features faster into production. Highsmith argues
-velocity kills agility~\cite{velocity_kills}. Also Fitzgerald observes the issue of a ''
-misplaced focus on speed rather than continuity`~\cite{continuous_fitzgerald}. Focusing on
-development velocity only has a major drawback. Operating software in production and
+velocity kills agility~\cite{velocity_kills}. Also Fitzgerald observes the issue of a
+”misplaced focus on speed rather than continuity”~\cite{continuous_fitzgerald}. Focusing
+on development velocity only, has a major drawback. Operating software in production and
 maintaining it needs to be done properly to ensure the quality of a software
 product. Companies easily disregard the importance of operation and maintenance of the
 software product.
@@ -250,33 +249,32 @@ there is a need for practices, which continuously support and automate maintenan
 
 \section{Contribution of this Thesis}
 
-In my masterthesis I want to optimize the software engineering practices in order to
-empower developers in their bigger responsibilities. I want to focus on the process of
-deployment and enhance the continuous delivery pipeline. To achieve this, I want to
-examine operation practices like monitoring and incident management. And then extend the
-deployment process by three consecutive steps.
-
-The contribution of this masterthesis is a practice, which can fully be automated for
-maintaining a software product. It extends the continuous delivery and continuous
+The contribution of this masterthesis is a practice, which can fully be automated in order
+to maintain a software product. It extends the continuous delivery and continuous
 deployment pipeline as those go until release and no further. Nonfunctional production
 regression testing extends the pipeline to the production environment, where we need to
-operate and maintain a system. The thesis suggests a practice to deploy a change to
-quickly production, monitor the change at low risk and in case of a regression
-automatically roll back. The thesis provides an exemplary implementation of this practice
-and evaluates the practice in a nonproduction test as well as in a production environment
-of a software product.
+operate and maintain a system.
+
+The thesis suggests nonfunctional regression testing as a practice which consists of
+different techniques. Those technique cover three major steps. First, quickly deploy a
+change to production. Second, monitor the change, having it in production at low risk. And
+third in case of a regression automatically roll back.
+
+I implemented the tool, Deployer, in order to connect essential components of the
+practice, nonfunctional production regression testing. The thesis evaluates the
+performance of the tool as well as the the practice itself via experiments as well as in
+the production environment of an existing software product.
 
 \chapter{Background}
-
-Some background is required to understand the masterthesis. In the following I will not
-explain all the practices and technologies. Instead I will just list them and provide well
-chosen references to be able to glean description of the prerequisite practices and
-technologies. The practices are at least well known in software engineering as well as the
-concepts of most of the technologies.
+\label{chap:background}
 
 \section{Prerequisite Practices and Technologies}
 
-\subsection{Practices}
+Some background is required to understand the thesis. The glossar lists those most
+important practices and technologies. Moreover it provides well chosen references in order
+to enable the reader to glean more detailed descriptions of the prerequisite practices and
+technologies. Those practices are well known in software engineering as well as the
+concepts of most of the technologies.
 
 \begin{itemize}
 
@@ -335,16 +333,18 @@ concepts of most of the technologies.
 
 \section{Software Dependencies}
 
-Here I would like to mention in short the dependencies, which I used to implement
-deployer. Deployer is implemented in ruby~\cite{ruby} and since it is a webserver,
-sinatra~\cite{sinatra} is it's framework. Deployer uses git~\cite{git} and
-subversion~\cite{svn} to communicate with the either git or subversion as the control
-version system. Moreover deployer has a plugin which sends messages to
-bugsnag~\cite{bugsnag} and slack~\cite{slack}, to inform the developer in case it identifies
-a problem. Deployer uses kubectl to interact with kubernetes~\cite{kubernetes}
-master. Deployer itself is containerized with docker~\cite{docker} and its natural hosting
-solution would be kubernetes. We published deployer on github~\cite{deployer} under
-GPL-3.0, a free software license.
+This section mentions shortly the dependencies, which I used to implement Deployer and the
+other components of the pipeline.
+
+Deployer is implemented in ruby~\cite{ruby} and since it is a webserver,
+sinatra~\cite{sinatra} is its framework. Deployer uses git~\cite{git} and
+subversion~\cite{svn} to communicate with either git or subversion as the control version
+system. Moreover deployer has a plugin which sends messages to bugsnag~\cite{bugsnag} and
+slack~\cite{slack}, to inform the developer in case it identifies a problem. Deployer uses
+kubectl to interact with kubernetes~\cite{kubernetes} master. Deployer itself is
+containerized with docker~\cite{docker} and its natural hosting solution would be
+kubernetes. We published deployer on github~\cite{deployer} under GPL-3.0, a free software
+license.
 
 The monitoring system, which we used in our evaluation, is datadog~\cite{datadog}, a
 commercial 2service. Nevertheless prometheus~\cite{prometheus} is also a suitable open
@@ -375,6 +375,7 @@ proxies the request to the pod. The pod probably communicates with the database 
 the request back to the client, where the loadbalancer acts again as a proxy.
 
 \chapter{Approach}
+\label{chap:macro}
 
 \section{In Short}
 
@@ -594,6 +595,7 @@ are already running in the production cluster, the production cluster does not t
 other instances.
 
 \chapter{In Practice}
+\label{chap:detail}
 
 This chapter discusses deployer. We implemented deployer in order to realize nonfunctional
 production regression testing with kubernetes. Deployer receives deploy messages, modifies
@@ -960,6 +962,7 @@ opens source monitoring system prometheus, which provides very similar features.
 google has a similar monitoring system in there internal infrastructure.
 
 \chapter{Evaluation}
+\label{chap:eval}
 
 This chapter evaluates the nonfunctional production regression testing approach in two
 different aspects, experiments and a lessons learned section. Firstly the experiments aim
@@ -1421,6 +1424,8 @@ respond to real users. Ergo we do not have any risk of a degradation of our prod
 service which we cause by testing the new version.
 
 \chapter{Conclusion}
+\label{chap:conclusion}
+
 \section{Resume}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
