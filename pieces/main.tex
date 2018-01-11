@@ -377,13 +377,13 @@ integrate them in the whole picture. It will illustrate important design charact
 for the new testing approach.
 
 First the developer changes some code on his local machine and creates a new version. He
-then pushes the new version to the version control system as shown in~(1).
+then pushes the new version to the \gls{vcs} as shown in~(1).
 
 After the push of the new version, the second step is a message~(2) to the \gls{ci}
 system. This message holds the reference of the new version and the \gls{ci} server pulls
-the new version from the version control system. Now the \gls{ci} system has three major
-jobs. Firstly it starts a build process~(3)(4), secondly it runs the tests~(5) and the
-thirdly gives the deploy signal~(6).
+the new version from the \gls{vcs}. Now the \gls{ci} system has three major jobs. Firstly
+it starts a build process~(3)(4), secondly it runs the tests~(5) and the thirdly gives the
+deploy signal~(6).
 
 In step~(3), namely the build, the \gls{ci} system typically compiles binaries, renders
 assets and may create further artifacts. For our purposes it is especially necessary to
@@ -392,8 +392,7 @@ built container image to an image repository in~(4). Later the image repository 
 built images.
 
 One import thing is that we need to associate every built container image with a specific
-version. Therefore we use the version reference, which was created by the version control
-system. It is important to be able to trace the version through every step in the
+version. Therefore we use the version reference, which was created by the \gls{vcs}. It is important to be able to trace the version through every step in the
 pipeline. With this thought in mind, the \gls{ci} system tags the container image with the
 version reference and an extra name. Just to mention that the extra name is not absolutely
 necessary to definitely associate the container image with a version. But it turned out
@@ -453,21 +452,21 @@ to decide against that, because the deploy needs full access to the production s
 the \gls{ci} system is in our case outsourced to a third party company. We do not want to
 give other companies full access to another company. However this meant, that we had to
 implement some steps again, which a \gls{ci} server already implements. The \gls{ci}
-system pulls the version from the version control system as well as the deployer. (2
-different things: one application code, 2 infrastructure code. But good to have them both
-in a single repository, to have the relation.
+system pulls the version from the \gls{vcs} as well as the deployer. (2 different things:
+one application code, 2 infrastructure code. But good to have them both in a single
+repository, to have the relation.
 
 Deployer receives the deploy signal from the \gls{ci} system~(6). It again includes the
 version reference. Now deployer executes three major steps: firstly pull infrastructure
 code~(7), secondly modify the infrastructure code~(8) and thirdly send the infrastructure
 code to the production cluster~(9).
 
-So in the first step deployer pulls the code from the version control system~(7). The
-version control system also holds the files, which describe our infrastructure. We want to
-version control the infrastructure definitions of in order to be able to relate the
-version of the infrastructure to the version of the code and the version of the
-artifacts. In kubernetes those infrastructure definitions are made up of different
-resources, which were already mentioned in the background chapter.
+So in the first step deployer pulls the code from the \gls{vcs}~(7). The \gls{vcs} also
+holds the files, which describe our infrastructure. We want to version control the
+infrastructure definitions of in order to be able to relate the version of the
+infrastructure to the version of the code and the version of the artifacts. In kubernetes
+those infrastructure definitions are made up of different resources, which were already
+mentioned in the background chapter.
 
 In the second step deployer modifies those infrastructure~(8) defintions in a way, that
 the production system uses the related container image. The running container needs to be
