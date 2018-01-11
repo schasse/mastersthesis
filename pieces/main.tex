@@ -546,15 +546,18 @@ production cluster, the production cluster does not touch the running stable ins
 \chapter{Implementation of Deployer and Metric Comparison}
 \label{chap:detail}
 
-This chapter discusses deployer. We implemented deployer in order to realize \gls{nprt}
-with kubernetes. Deployer receives deploy messages, modifies kubernetes resources and
-applies those modified resources to the production cluster. With deployer you can
-automatically deploy another version of an application, which runs in parallel.
+I implemented Deployer and setup metrics collection and comparison in order to realize
+\gls{nprt} with kubernetes. Deployer receives a deploy messages, modifies kubernetes
+resource definitions and applies those modified resources to the production
+cluster. Deployer is able to automatically deploy a canary of a new version of an
+application, which runs in parallel to instances of the stable version. The kubernetes
+cluster is setup to collect the metrics from the instances of both versions. Datadog, the
+monitoring system compares the metrics and checks them for regressions.
 
 \section{Deployer Architecture}
 
-Similar to the previous chapter, we demonstrate the implementation with the help of some
-figures. And we are going through all the parts of the figure.
+Similar to the previous chapter, I demonstrate the implementation with the help of
+figures. The following sections will explain all the steps of the figure.
 
 \begin{figure}[htbp]
   \centering
@@ -563,50 +566,48 @@ figures. And we are going through all the parts of the figure.
   \label{fig:deployer_architecture}
 \end{figure}
 
-As mentioned earlier, deployer is a webserver, which runs in kubernetes itself and is
-stateless. The production cluster in in the figure is the same kubernetes cluster the app
-runs in, which we want to test via \gls{nprt}. The yellow box is a kubernetes service. The
-service is, as we already know, a loadbalancer and clients can reach deployer via an http
-interface. The figure shows us that deployer consists of multiple pods. The pods are
-replicated and identical in their behaviour. The pods are basically stateless, yet every
-pod has its own caching layer, which we will discuss in a later section. The statelessness
-leads to easy horizontal scaling of deployer. We can just add more pods if needed. Along
-the way, deployer uses approximately 50mb ram and very few cpu, so computing resources
-should not be a problem. A deploy takes about 10 seconds. This is just an
-orientation. Nevertheless this mostly depends on the size of the repository and the
-download rate from the version control system. A request to deployer is blocking and waits
-for the deployment process to complete. Certainly we do not need a queuing system here and
-can scale deployer to the concurrent deploys we need.
+As mentioned earlier, Deployer is a webserver, which runs in kubernetes itself and is
+stateless. The production cluster in the figure is the same kubernetes cluster the
+application to test runs in. The yellow box is a kubernetes service. The service is, as
+described in chapter~\ref{chap:background}, a loadbalancer. Clients can reach Deployer via
+an http interface. The figure shows that Deployer consists of multiple pods. These pods
+are replicated and are identical in their behaviour. The pods are basically stateless, yet
+every pod has its own caching layer, which the sections explain. The statelessness leads
+to easy horizontal scaling of Deployer. It is possible to add more pods if
+needed. Furthermore, Deployer uses approximately 50mb memory and few cpu, so computing
+resources are no problem. A request to Deployer is blocking and waits for the deploy
+process to complete. Obviously there is no queuing or worker system. Deployer can be
+horizontally scaled for more concurrent deploys.
 
 
-\section{Interface}
+\section{Deployer Interface}
 
-Requests to deployer are very simple. We can use curl request or any other http client and
-execute it for instance from our \gls{ci} system. Another way to interact with deployer is
-to use the depctl command line interface.
+Requests to deployer are very simple. Curl or any other http client serves as a client. In
+result Deployer can easily integrate with other systems for instance from a \gls{ci}
+system. Another way to interact with Deployer is to use the depctl command line interface.
 
-Depctl command line interface wraps http calls and assists developers with automatic
+The depctl command line interface wraps http calls and assists developers with automatic
 completion of the repository to deploy and completion of the version to deploy. With
-depctl developers can easily skip steps of the whole \gls{nprt} flow. For instance they
+depctl, developers can easily skip steps of the whole \gls{nprt} flow. For instance they
 can skip the tests, which would run on the \gls{ci} system. This makes development more
-fluently and developer friendly.
+fluent and developer friendly.
 
-In the following we will go through the interface of deployer. Deployer provides different
-endpoints: ls, show, tags, deploy, canary and version.
+The following will go through the interface of Deployer. Deployer provides different
+endpoints: ls, show, tags, deploy, canary and version. The following descriptions uses the
+term service in the meaning of a microservice.
 
-The \emph{ls} or index endpoint returns the configured services and the show endpoint for a
-specific service shows the current configuration for that service.
+The \emph{ls} or index endpoint returns the configured services and returns the endpoints
+for the service, which the configuration defines.
 
-The \emph{tags} endpoint shows
-the available tags for that service. Deployer queries the docker image registry for all
-available tags for all images in a service and returns them to the client.
+The \emph{tags} endpoint shows the available tags for that service. Deployer queries the
+docker image registry for all available tags for all images for a service and returns them
+to the client.
 
-You need to call \emph{deploy} and \emph{canary} on a specific repository and you
-need to provide either a version reference, a tag or both. The request updates a service, so
-this is why we are using a http put call. An example curl request would be
+\emph{Deploy} and \emph{canary} are the endpoints for either a regular or a canary
+deploy. The requests needs to provide either a version reference, a tag or both. The
+request updates the service, this is why the endpoint defines a http put.
 
-The \emph{version}
-endpoint simply returns the deployer version.
+The \emph{version} endpoint simply returns the Deployer version.
 
 \begin{table}[!htbp]
   \begin{tabular}{ l|l|l }
@@ -635,107 +636,104 @@ endpoint simply returns the deployer version.
 
 \subsection{Authorization}
 
-Next we want to go through the steps involved in the deployment process. Initially a
-client sends a http request to deployer (1). The service proxies the request to deployer
-(2). After that deployer needs to authenticate the client via http basic
-authentication. In other words, the client authenticates itself via a username and
-password. As we mentioned earlier, our \gls{ci} system is a software as a service
-solution, and one of the reasons why we could not implement a deploy logic inside the
-\gls{ci} system, were security concerns. The \gls{ci} system cannot have full production
-cluster access. In this case the token authorizes to only deploy a specific version from
-the repository. For us that means, that the client is not able to do everything to the
-kubernetes api consequently not everything to our whole production cluster. It is for
-instance not able to deploy other code than ours or read credentials from the production
-cluster.
+Next I want to go through the steps involved in the deploy process. Initially a client
+sends a http request to Deployer~\texttt{(1)}. The service resource proxies the request
+to Deployer~\texttt{(2)}. After that, Deployer needs to authenticate the client via http
+basic authentication. In other words, the client authenticates itself via a username and
+password. As I mentioned earlier, the \gls{ci} system is a software as a service solution,
+and one of the reasons why I implemented Deployer is the concern about security. The
+\gls{ci} system can not have full production cluster access. In the case of Deployer the
+auth token authorizes to only deploy a specific version from the repository. For us that
+means, that the \gls{ci} system is only able to deploy versions from the \gls{vcs}. The
+\gls{ci} system is for instance whether able to deploy other code than ours nor read
+credentials from the production cluster.
 
 \subsection{Fetching the Code and Caching It}
 
-After deployer authenticated a valid user, it then fetches the code from the version
-control system (3). When there is git as the version control system, deployer uses commit
-hashes and branches as version reference and to determine the code version. When there is
-subversion, deployer uses revision numbers instead. We implemented subversion, which is
-more of an ancient technology, to be able to do the evaluation with the \gls{din} system.
+After Deployer authenticated a valid client, it then fetches the code from the
+\gls{vcs}~\texttt{(3)}. If git is the \gls{vcs}, Deployer uses commit hashes and branches
+as version reference and to determine the code version. If subversion is the \gls{vcs},
+Deployer uses revision numbers instead. Deployer implements subversion, which is more of
+an ancient technology, to be able to do the evaluation with the \gls{din} system.
 
-As we know, the process of fetching a repository includes persistence and disk
-interaction. That is true. Deployer uses its volume just as a cache, though. The reason
-why there is a cache at all is of course performance. One of the bottlenecks of a deploy
-is to download the repository. If a repository is big, for instance because of images or
-it is a repository with a long history of commits, it lasts quite an amount of time to
-download it. If the download rate is additionally very low the duration is even
-longer. This leads to long running deployments and a bad development flow
-experience. Therefore deployer keeps the already downloaded repositories on its volume as
-a cache. The next time it deploys the same repository in a different version deployer only
-fetches the changes.
+It is obvious that the process of fetching a repository includes persistence and disk
+interaction. Deployer uses the volume just a cache, though. The reason for the existence
+of the cache is performance. One of the bottlenecks of a deploy is downloading the
+repository. If a repository is large, for instance because of pictures or a long history
+of commits, it lasts quite an amount of time to download it. If the download rate is
+additionally low the duration is even longer. This leads to long running deploys and a bad
+development flow experience. Therefore Deployer keeps the already downloaded repositories
+on its volume as a cache. The next time Deployer deploys the same repository in a
+different version and Deployer only fetches the changes.
 
-As a simplification, every pod has its own cache and lives as long as the pod. So every
-pod utilizes its own volume as a cache and there is no need for communication to an extra
-caching service. Since docker containers are immutable, every time kubernetes recreates a
-pod, kubernetes destroys the volume. Thus the cached data is not available anymore and in
-other words the cache is empty again.
+As a simplification, every pod has its own cache and lives as long as the pod. Thus every
+pod utilizes its own volume as a cache and the need for communication and an extra caching
+service does not exist. Since docker containers are immutable, every time kubernetes
+recreates a pod, kubernetes destroys the volume. Thus the cached data is not available
+anymore and in other words the cache is empty again.
 
-The version control system contains not only application code, moreover it contains the
-infrastructure code as well. In kubernetes especially these infrastructure definitions are
-different resource definitions. These resources are for instance deployments and
-statefulsets and so on. These resource definitions should be stored in the 'kubernetes'
-directory. This is a convention and deployer assumes that this as the location. If an
-application is not able to locate it in that directory or does not want to locate it there
-for any reason, the configuration of deployer provides an option to reconfigure this
-location.
+The version control system contains application code as well as the resource
+definitions. In kubernetes these resource definitions define the application
+infrastructure. Resources define for instance deployments, statefulsets and
+services. These resource definitions should be stored in the 'kubernetes' directory. This
+is a convention of Deployer and it assumes that the 'kubernetes' directory is the standard
+location. If application is unable to store the resource definitions in the 'kubernetes'
+directory, the configuration of deployer provides an option to reconfigure the location.
 
-The configuration of the kubernetes resource path enables two different methodologies in
-the microservice approach. The first one is the multiple repository methodology. In that
-methodology for every single service or microservice we would have a dedicated repository.
-The second methodology is the single monolithic repository, which contains multiple
-microservices.
+The configuration of the kubernetes resource directory enables two different methodologies
+of the microservice approach. The first one is the multiple repository methodology. In
+this methodology every single service or microservice receives a dedicated repository.
+The second methodology is the single monolithic repository. Such a repository contains
+multiple microservices.
 
 \subsection{Validations}
 
-After having the specific version reference of the repository fetched and checked out,
-deployer starts the deploy procedure. At first deployer validates the arguments given by
-the client. The deploy request requires the service to deploy and a version of the
-service. The client needs to specify either the commit hash or the tag name or both. The
-tag would additionally include the branch name, which makes the reference more readable.
+After Deployer fetched the specific version reference from the repository, Deployer starts
+the deploy procedure. At first Deployer validates the arguments, which the client
+sent. The deploy request requires the service and the version to deploy. The client
+defines the version by passing either the commit hash, the docker image tag or both. The
+tag includes the branch name, which makes the reference more readable.
 
-Deployer initially validates the arguments of the request. To be specific, it checks if
-the service exists in the configuration. Furthermore deployer checks if the commit exists
-in the repository and deployer checks if a the tag, which references the version, exists
-for all the images, which are necessary in order to deploy the service. Deployer executes
-the latter validation by communicating with the docker registry (4). The client does in
-contrast not have any validations\footnote{We can use any http client such as simple curl
-  or the more comfortable depctl.}. The reason for that is that we want to have a central
-definition for the validations.
+Deployer initially validates the arguments of the request. Deployer checks if the service
+exists in the configuration. Deployer checks if the commit hash exists in the repository
+and Deployer checks if the tag exists for all the images, which are necessary in order to
+deploy the service in the new version. Deployer receives the available tags for a docker
+images by communicating with the image repository~\texttt{(4)}.
 
-For simplicity and usability the client has the options to either
-\begin{itemize}
-    \item exclusively give a version reference
-    \item or exclusively give a tag
-\end{itemize}
-because it makes things a lot simpler when a developer needs to deploy
-manually. This makes the development flow more efficient. The version reference is totally
-sufficient to determine the version, so the clients usually provides the version reference
-only.
+For simplicity and usability the client sends usually only one argument, either the commit
+hash or the tag. One argument is completely sufficient to determine the version, so a
+client can provide either one of them. A developer for instance only has to pick the
+commit hash for a manually triggered deploy. This creates a more efficient development
+flow. Nevertheless Deployer validates in advance if the deploy of the version is feasible.
+
+The http client and depctl do not have any validations. Consequently, Deployer is the
+single point of defining validations.
 
 \subsection{Modifications of Resource Definitions}
 
-After deployer validated the deploy request, deployer takes the previously checked out
-resources and modifies them in a next step (5). Especially deployments and statefulsets
-are relevant to those modifications. In contrast to those resources, deployer does not
-modify all other resources, such as services.
+After Deployer validated the deploy request, Deployer takes the previously checked out
+resources and modifies them in the next step~\texttt{(5)}. Especially deployments and
+statefulsets are relevant to those modifications. In contrast to those resources, Deployer
+does not modify all other resources, such as services.
 
-Deployer applies two main modifications: the image version and the environment. The latter
-is especially important for the metrics collection. Deployer modifies the environment, so
-that the stable version and the canary version know about themselves as such. The running
-service can later read the version information from environment variables. The pods
-receive an according label, so that other applications, which may consume the kubernetes
-api, can also distuinguish between the stable and the canary version.
+Deployer applies two main modifications: the \emph{environment} and the image tag. The
+former is especially important for the metrics collection. Deployer modifies the
+environment in order to enable the instrumentation to differentiate between the stable
+version and the canary version. The running pods can later read the version information
+from the environment variables and are able adjust the instrumentation configuration to
+add the version information.
 
-The other important modification is the image version. The image tag specifies the version
-of the docker image. Deployer modifies the resource only when the image tag is
-unspecified. In case the deployment already specifies a tag, such as 'debian:wheezy',
-deployer does not change that tag. The reason is there may be containers, which the
-\gls{ci} system does not build and tag with the specific version reference. Commonly
-another party maintains these docker images. One example is an additional statsd container
-running as a sidecar in the application pod.
+The second important modification is the \emph{image tag}. The image tag specifies the
+container image. The specific container image is import as it holds the specific
+application version. Deployer picks the correct image tag belonging to the version
+reference from the \gls{vcs}.
+
+Deployer modifies the resource definitions only when the image tag is unspecified. In case
+a deployment resource already specifies an image tag, for instance version 0.8.0 for a
+statsd image. Deployer does not change the specified tag. The reason is that the \gls{ci}
+does not build images, which are maintained by somebody else. Such images doe not have a
+tag the specific version reference of the \gls{vcs}. One example is an additional statsd
+container running as a sidecar in the application pod.
 
 The other case would be that the tag is not specified in the kubernetes resource. Then
 deployer appends the tag to the container image according to reference the client provided.
