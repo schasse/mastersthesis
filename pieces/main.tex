@@ -26,11 +26,11 @@ valuable programmer time, furthermore it adds reliability to the process. Google
 how valuable automation is and successfully illustrates it with their site reliability
 engineering approach~\cite{sre_intro}.
 
-This thesis proposes with nonfunctional production regression testing a practice, which
-faces the amount of maintenance work. The practice is designed for teams, which have the
-responsibility of developing and operating their own code as well as code
-dependencies. Nonfunctional production regression testing extends the continuous delivery
-pipeline and automates continuous testing of nonfunctional changes in production.
+This thesis proposes with \gls{nprt} a practice, which faces the amount of maintenance
+work. The practice is designed for teams, which have the responsibility of developing and
+operating their own code as well as code dependencies. \gls{nprt} extends the
+\gls{cd} pipeline and automates continuous testing of nonfunctional changes in
+production.
 
 \section{Thesis Outline}
 
@@ -44,22 +44,20 @@ references to the practices and technologies, which the thesis presumes. Further
 shortly explains the major kubernetes resources on the example of a 3 tier webapp.
 
 \paragraph{\ref{chap:macro} \nameref{chap:macro}}
-Chapter~\ref{chap:macro} describes the conceptual macro view of nonfunctional production
-regression testing. The text goes through all the steps of the pipeline and demonstrates
-the components and how they communicate with each other.
+Chapter~\ref{chap:macro} describes the conceptual macro view of \gls{nprt}. The text goes
+through all the steps of the pipeline and demonstrates the components and how they
+communicate with each other.
 
 \paragraph{\ref{chap:detail} \nameref{chap:detail}}
 Chapter~\ref{chap:detail} goes more into detail of the thesis contributions. It
-demonstrates the design of Deployer, the software I wrote in account to enable
-nonfunctional production regression testing in practice. The chapter also elaborates on
-the collection and comparison of the metrics.
+demonstrates the design of Deployer, the software I wrote in account to enable \gls{nprt}
+in practice. The chapter also elaborates on the collection and comparison of the metrics.
 
 \paragraph{\ref{chap:eval} \nameref{chap:eval}}
-Chapter~\ref{chap:eval} evaluates nonfunctional production regression testing in three
-aspects. Firstly, it discusses the performance with the help of experiments. Secondly, it
-provides a qualitative evaluation of nonfunctional production regression testing. And
-lastly, it relates nonfunctional regression production testing to other practices, tools
-and sophisticated metric analysis.
+Chapter~\ref{chap:eval} evaluates \gls{nprt} in three aspects. Firstly, it discusses the
+performance with the help of experiments. Secondly, it provides a qualitative evaluation
+of \gls{nprt}. And lastly, it relates \gls{nprt} to other practices, tools and
+sophisticated metric analysis.
 
 \paragraph{\ref{chap:conclusion} \nameref{chap:conclusion}}
 Chapter~\ref{chap:conclusion} summarizes the thesis and suggests more automation
@@ -251,19 +249,18 @@ there is a need for practices, which continuously support and automate maintenan
 
 The contribution of this masterthesis is a practice, which can fully be automated in order
 to maintain a software product. It extends the continuous delivery and continuous
-deployment pipeline as those go until release and no further. Nonfunctional production
-regression testing extends the pipeline to the production environment, where we need to
-operate and maintain a system.
+deployment pipeline as those go until release and no further. \gls{nprt} extends the
+pipeline to the production environment, where we need to operate and maintain a system.
 
-The thesis suggests nonfunctional regression testing as a practice which consists of
-different techniques. Those technique cover three major steps. First, quickly deploy a
-change to production. Second, monitor the change, having it in production at low risk. And
-third in case of a regression automatically roll back.
+The thesis suggests \gls{nprt} as a practice which consists of different techniques. Those
+technique cover three major steps. First, quickly deploy a change to production. Second,
+monitor the change, having it in production at low risk. And third in case of a regression
+automatically roll back.
 
 I implemented the tool, Deployer, in order to connect essential components of the
-practice, nonfunctional production regression testing. The thesis evaluates the
-performance of the tool as well as the the practice itself via experiments as well as in
-the production environment of an existing software product.
+practice, \gls{nprt}. The thesis evaluates the performance of the tool as well as the the
+practice itself via experiments as well as in the production environment of an existing
+software product.
 
 \chapter{Background}
 \label{chap:background}
@@ -332,13 +329,13 @@ served to make experiments with production traffic.
 \chapter{Approach}
 \label{chap:macro}
 
-In nonfunctional production regression testing we automatically deploy a new version in
-the form of a canary. A monitoring system compares the metrics of the canary with the
-metrics of the current stable version side by side in production. The in production test
-verifies, if the nonfunctional metrics of the canary show a regression and eventually
-automatically rolls back the canary. This outlines nonfunctional production regression
-testing in few sentences. Nevertheless the following text will go through the term in more
-detail. The approach is a novelty and we name the approach in the context of this thesis.
+In \gls{nprt} we automatically deploy a new version in the form of a canary. A monitoring
+system compares the metrics of the canary with the metrics of the current stable version
+side by side in production. The in production test verifies, if the nonfunctional metrics
+of the canary show a regression and eventually automatically rolls back the canary. This
+outlines \gls{nprt} in few sentences. Nevertheless the following text will go through the
+term in more detail. The approach is a novelty and we name the approach in the context of
+this thesis.
 
 Nonfunctional refers to the change, which the tests evaluate. Nonfunctional changes are
 usually maintenance changes, for instance performance improvements or security
@@ -357,10 +354,9 @@ inform developers.
 This testing approach naturally evolves from common practices such as continuous
 integration, continuous delivery and continuous deployment and extends those
 practices. The already established practices support developers before and until the
-software deployment. In contrast to that, nonfunctional production regression testing,
-supports developers during and after the deployment. In other words it supports the
-developers to run applications in production, which formerly has been a business of
-operations teams.
+software deployment. In contrast to that, \gls{nprt}, supports developers during and after
+the deployment. In other words it supports the developers to run applications in
+production, which formerly has been a business of operations teams.
 
 \section{Pipeline Overview}
 
@@ -439,15 +435,14 @@ successful and it is a version which is planned to go to production.
 
 Until this point, as we already mentioned, it is continuous integration practice, which is
 commonly used in software development. We require it for our approach and again, it is
-important to nonfunctional production regression testing to associate and trace every step
-through the whole pipeline. For that purpose we need to especially tag the container
-images.
+important to \gls{nprt} to associate and trace every step through the whole pipeline. For
+that purpose we need to especially tag the container images.
 
 \subsection{Customizations of Continuous Deployment}
 
-Nonfunctional production regression testing is an approach, which we designed to be
-completely automatable. It is crucial to not only have continuous integration, but to have
-a customized continuous deployment process as well.
+\gls{nprt} is an approach, which we designed to be completely automatable. It is crucial
+to not only have continuous integration, but to have a customized continuous deployment
+process as well.
 
 The next component in the pipeline is the deployer. Deployer is a service, which realizes
 the customized parts of the continuous deployment practice. In the context of this thesis,
@@ -551,11 +546,10 @@ other instances.
 \chapter{In Practice}
 \label{chap:detail}
 
-This chapter discusses deployer. We implemented deployer in order to realize nonfunctional
-production regression testing with kubernetes. Deployer receives deploy messages, modifies
-kubernetes resources and applies those modified resources to the production cluster. With
-deployer you can automatically deploy another version of an application, which runs in
-parallel.
+This chapter discusses deployer. We implemented deployer in order to realize \gls{nprt}
+with kubernetes. Deployer receives deploy messages, modifies kubernetes resources and
+applies those modified resources to the production cluster. With deployer you can
+automatically deploy another version of an application, which runs in parallel.
 
 \section{Deployer Architecture}
 
@@ -571,18 +565,18 @@ figures. And we are going through all the parts of the figure.
 
 As mentioned earlier, deployer is a webserver, which runs in kubernetes itself and is
 stateless. The production cluster in in the figure is the same kubernetes cluster the app
-runs in, which we want to test via nonfunctional production regression testing. The yellow
-box is a kubernetes service. The service is, as we already know, a loadbalancer and
-clients can reach deployer via an http interface. The figure shows us that deployer
-consists of multiple pods. The pods are replicated and identical in their behaviour. The
-pods are basically stateless, yet every pod has its own caching layer, which we will
-discuss in a later section. The statelessness leads to easy horizontal scaling of
-deployer. We can just add more pods if needed. Along the way, deployer uses approximately
-50mb ram and very few cpu, so computing resources should not be a problem. A deploy takes
-about 10 seconds. This is just an orientation. Nevertheless this mostly depends on the
-size of the repository and the download rate from the version control system. A request to
-deployer is blocking and waits for the deployment process to complete. Certainly we do not
-need a queuing system here and can scale deployer to the concurrent deploys we need.
+runs in, which we want to test via \gls{nprt}. The yellow box is a kubernetes service. The
+service is, as we already know, a loadbalancer and clients can reach deployer via an http
+interface. The figure shows us that deployer consists of multiple pods. The pods are
+replicated and identical in their behaviour. The pods are basically stateless, yet every
+pod has its own caching layer, which we will discuss in a later section. The statelessness
+leads to easy horizontal scaling of deployer. We can just add more pods if needed. Along
+the way, deployer uses approximately 50mb ram and very few cpu, so computing resources
+should not be a problem. A deploy takes about 10 seconds. This is just an
+orientation. Nevertheless this mostly depends on the size of the repository and the
+download rate from the version control system. A request to deployer is blocking and waits
+for the deployment process to complete. Certainly we do not need a queuing system here and
+can scale deployer to the concurrent deploys we need.
 
 
 \section{Interface}
@@ -593,9 +587,9 @@ with deployer is to use the depctl command line interface.
 
 Depctl command line interface wraps http calls and assists developers with automatic
 completion of the repository to deploy and completion of the version to deploy. With
-depctl developers can easily skip steps of the whole nonfunctional production regression
-testing flow. For instance they can skip the tests, which would run on the continuous
-integration system. This makes development more fluently and developer friendly.
+depctl developers can easily skip steps of the whole \gls{nprt} flow. For instance they
+can skip the tests, which would run on the continuous integration system. This makes
+development more fluently and developer friendly.
 
 In the following we will go through the interface of deployer. Deployer provides different
 endpoints: ls, show, tags, deploy, canary and version.
@@ -841,8 +835,7 @@ the label from environment variables, which have been set by deployer as either 
 canary.
 \subsection{Metrics Comparison}
 
-Another part of nonfunctional production regression testing is the comparison within the
-monitoring system.
+Another part of \gls{nprt} is the comparison within the monitoring system.
 
 The monitoring system consists basically out of a timeseriesdatabase, a graphing user
 interface and an alarm system. The timeseriesdatabase persists the metrics. And the user
@@ -917,12 +910,11 @@ google has a similar monitoring system in there internal infrastructure.
 \chapter{Evaluation}
 \label{chap:eval}
 
-This chapter evaluates the nonfunctional production regression testing approach in two
-different aspects, experiments and a lessons learned section. Firstly the experiments aim
-to present an evaluation the approach's performance in the context of a whole delivery
-pipeline and how a sample metric comparison performs. The second part is a qualitative
-discussion of the lessons learned of an application use case, which was used in
-production.
+This chapter evaluates the \gls{nprt} approach in two different aspects, experiments and a
+lessons learned section. Firstly the experiments aim to present an evaluation the
+approach's performance in the context of a whole delivery pipeline and how a sample metric
+comparison performs. The second part is a qualitative discussion of the lessons learned of
+an application use case, which was used in production.
 
 \section{Experiments}
 
@@ -1131,14 +1123,12 @@ feasible and completely automatable.
 \section{Lessons learned}
 
 The GapFish ruby on rails application of the previous experiments as well as two other
-GapFish ruby services utilize the nonfunctional production regression testing approach in
-production. This section presents qualitative feedback, which comes mainly from use of
-nonfunctional production regression testing in production.
+GapFish ruby services utilize the \gls{nprt} approach in production. This section presents
+qualitative feedback, which comes mainly from use of \gls{nprt} in production.
 
 On the one hand nonfunctional regression testing was used to test maintenance of own code,
-such as refactorings and performance improvements. On the other hand nonfunctional
-regression testing was also used to maintain dependencies. The previously developed
-GemUpdater regularly and
+such as refactorings and performance improvements. On the other hand \gls{nprt} was also
+used to maintain dependencies. The previously developed GemUpdater regularly and
 automatically opened pull requests with dependency updates. The canary was tested using
 error metrics, which I explain later on in more detail.
 
@@ -1199,18 +1189,17 @@ system. These systems create the ability to create a fully automatable delivery 
 and a system for fully automated rollbacks. Those are the step stones for more
 possibilities.
 
-Nonfunctional production regression testing reduced the efforts of maintenance work on own
-code. The Engineers were able to test changes in production quickly and have a small
-feedback loop.
+\gls{nprt} reduced the efforts of maintenance work on own code. The Engineers were able to
+test changes in production quickly and have a small feedback loop.
 
 The engineers working for DIN are still sceptical to have unsupervised deploys. But in the
 example of GapFish, the engineers became confident about the automation of the deployment
 and regression test in production and start to use unsupervised deploys and tests more often.
 
 The possibility of dependency update automation with GemUpdater turned out to save effort
-at low risk as well. The combination of GemUpdater and nonfunctional production regression
-testing lead to a continuous fully automated approach for dependency updates, which used
-to be an important, but tedious maintenance work.
+at low risk as well. The combination of GemUpdater and \gls{nprt} lead to a continuous
+fully automated approach for dependency updates, which used to be an important, but
+tedious maintenance work.
 
 \section{Related Work}
 
@@ -1228,12 +1217,11 @@ There are also countless open source tools, which help to implement continuous d
 similar. Vamp\footnote{\url{https://vamp.io}} has the ability to deploy applications to
 kubernetes automatically. Also spinnaker\footnote{\url{https://www.spinnaker.io/}} can
 deploy applications to cloud environments, with kuberentes being one of them. Spinnaker
-very recently released a feature to analyse canaries, just like for nonfunctional
-production regression testing needed. The difference to deployer is that vamp and
-spinnaker are very complex and exhaustive. They also require other databases. Whereas
-deployer is a very simple and lightweight tool with focus on a single purpose and consists
-of only one docker image. Nevertheless deployer can be integrated to several monitoring
-solutions by the simple http interface.
+very recently released a feature to analyse canaries, just like for \gls{nprt} needed. The
+difference to deployer is that vamp and spinnaker are very complex and exhaustive. They
+also require other databases. Whereas deployer is a very simple and lightweight tool with
+focus on a single purpose and consists of only one docker image. Nevertheless deployer can
+be integrated to several monitoring solutions by the simple http interface.
 
 Schermann et. al. developed bifrost~\cite{bifrost}, an open source tool similar to the
 previously mentioned gatekeeper at Facebook. It implements canary testing and other
@@ -1378,24 +1366,23 @@ service which we cause by testing the new version.
 \section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of nonfunctional production regression testing. We can extend the continuous
-delivery pipeline in a natural way and support developers not only until the deploy,
-furthermore we automated a part of the developer's job during run time. The pipeline is
-now advanced in a way, that we can change application code and test it without the
-supervision of the developers at a very low risk. The change goes through the whole
-pipeline including tests in a testing environment, an automated deploy and tests in the
-production environment. If the nonfunctional production regression test and automated
-deploy is successful, developers will be completely free of work. Potential changes of
-bots would be robust enough to be able to act fully automated and unsupervised. However we
-still test the changes they make and can be sure to not have a regression in our
-production system.
+advantage of \gls{nprt}. We can extend the continuous delivery pipeline in a natural way
+and support developers not only until the deploy, furthermore we automated a part of the
+developer's job during run time. The pipeline is now advanced in a way, that we can change
+application code and test it without the supervision of the developers at a very low
+risk. The change goes through the whole pipeline including tests in a testing environment,
+an automated deploy and tests in the production environment. If the \gls{nprt} and
+automated deploy is successful, developers will be completely free of work. Potential
+changes of bots would be robust enough to be able to act fully automated and
+unsupervised. However we still test the changes they make and can be sure to not have a
+regression in our production system.
 
-Finally we want to summarize, what we examined so far: The whole process of nonfunctional
-production regression testing is fully automatable, every step is determined and traceable
-throughout and even reproducible until the deploy on the basis of the version
-reference. We save time not only by automization, but also by not having to write load and
-integration tests with edge cases, which occur in production. And ultimately the amount of
-work and time saved comes at a low risk.
+Finally we want to summarize, what we examined so far: The whole process of \gls{nprt} is
+fully automatable, every step is determined and traceable throughout and even reproducible
+until the deploy on the basis of the version reference. We save time not only by
+automization, but also by not having to write load and integration tests with edge cases,
+which occur in production. And ultimately the amount of work and time saved comes at a low
+risk.
 
 
 Finally in this chapter, we summarize what we have discussed so far. We went through the
@@ -1411,20 +1398,20 @@ fails.
 
 Another nice thing to mention about deployer, is that it deploys itself, which fits to the
 declarative model and recursion. That means we develop deployer itself with the continuous
-deployment flow and can apply nonfunctional production regression testing to deployer.
+deployment flow and can apply \gls{nprt} to deployer.
 
 
 
 \section{Outlook and Future Work}
 
-Nonfunctional production regression testing is good approach to continuously automate the
-maintenance of a software product. Nevertheless there are possible improvements. A
-automatic approach such as GemUpdater works well. More automatic service of such kind are
-needed. One obvious use case is the automation of updating docker base images. A docker
-base image updater would help to maintain continuously update the operating systems and
-software, on which the applications docker images are based. Furthermore there is a
-similar need for update mechanism for other languages such as java or python, which come
-with their own dependency managers.
+\gls{nprt} is good approach to continuously automate the maintenance of a software
+product. Nevertheless there are possible improvements. A automatic approach such as
+GemUpdater works well. More automatic service of such kind are needed. One obvious use
+case is the automation of updating docker base images. A docker base image updater would
+help to maintain continuously update the operating systems and software, on which the
+applications docker images are based. Furthermore there is a similar need for update
+mechanism for other languages such as java or python, which come with their own dependency
+managers.
 
 I image a completely unsupervised update mechanism for updates. An engineer would
 resultantly only have to do manual work in case of a regression. Engineers would need to

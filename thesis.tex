@@ -88,7 +88,7 @@ vcentering
 \usepackage[style=numeric,backend=bibtex8]{biblatex}
 \bibliography{./pieces/thesis}
 
-\usepackage{glossaries}
+\usepackage[acronym]{glossaries}
 \makeglossaries
 \include{pieces/glossary}
 
@@ -110,6 +110,7 @@ vcentering
 
 \addcontentsline{toc}{chapter}{\numberline{}Glossary}
 \printglossary[type=main,nonumberlist]
+\printglossary[type=\acronymtype]
 
 \addcontentsline{toc}{chapter}{\numberline{}\bibname}
 % \printbibheading
