@@ -319,7 +319,7 @@ creates pull request with dependency updates.
 The monitoring system, which I used in the evaluation, is
 datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
 prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
-as monitoring system. The continuous integration systems we use for the evaluation are
+as monitoring system. The \gls{ci} systems we use for the evaluation are
 codeship\footnote{\url{https://codeship.com}} and
 jenkins\footnote{\url{https://codeship.com}}. As an image repo, we use docker
 hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
@@ -350,12 +350,12 @@ the testing approach is completely automatable and you can continuously apply it
 new versions. The approach is designed in respect to failing as fast as possible and
 inform developers.
 
-This testing approach naturally evolves from common practices such as continuous
-integration, \gls{cd} and continuous deployment and extends those practices. The already
-established practices support developers before and until the software deployment. In
-contrast to that, \gls{nprt}, supports developers during and after the deployment. In
-other words it supports the developers to run applications in production, which formerly
-has been a business of operations teams.
+This testing approach naturally evolves from common practices such as \gls{ci}, \gls{cd}
+and continuous deployment and extends those practices. The already established practices
+support developers before and until the software deployment. In contrast to that,
+\gls{nprt}, supports developers during and after the deployment. In other words it
+supports the developers to run applications in production, which formerly has been a
+business of operations teams.
 
 \section{Pipeline Overview}
 
@@ -371,49 +371,48 @@ overview. In the following we will go through the steps of the pipeline and disc
 
 \subsection{Continuous Integration is a Requirement}
 
-The first parts of the pipeline are commonly known and established practices: continuous
-integration, delivery and deployment. It is necessary, though, to touch on them and
+The first parts of the pipeline are commonly known and established practices: \gls{ci},
+\gls{cd} and continuous deployment. It is necessary, though, to touch on them and
 integrate them in the whole picture. It will illustrate important design characteristics
 for the new testing approach.
 
 First the developer changes some code on his local machine and creates a new version. He
 then pushes the new version to the version control system as shown in~(1).
 
-After the push of the new version, the second step is a message~(2) to the continuous
-integration system. This message holds the reference of the new version and the continuous
-integration server pulls the new version from the version control system. Now the
-continuous integration system has three major jobs. Firstly it starts a build
-process~(3)(4), secondly it runs the tests~(5) and the thirdly gives the deploy
-signal~(6).
+After the push of the new version, the second step is a message~(2) to the \gls{ci}
+system. This message holds the reference of the new version and the \gls{ci} server pulls
+the new version from the version control system. Now the \gls{ci} system has three major
+jobs. Firstly it starts a build process~(3)(4), secondly it runs the tests~(5) and the
+thirdly gives the deploy signal~(6).
 
-In step~(3), namely the build, the continuous integration system typically compiles
-binaries, renders assets and may create further artifacts. For our purposes it is
-especially necessary to build at least one or multiple container images. The continuous
-integration system then pushes the ready built container image to an image repository
-in~(4). Later the image repository serves the built images.
+In step~(3), namely the build, the \gls{ci} system typically compiles binaries, renders
+assets and may create further artifacts. For our purposes it is especially necessary to
+build at least one or multiple container images. The \gls{ci} system then pushes the ready
+built container image to an image repository in~(4). Later the image repository serves the
+built images.
 
 One import thing is that we need to associate every built container image with a specific
 version. Therefore we use the version reference, which was created by the version control
 system. It is important to be able to trace the version through every step in the
-pipeline. With this thought in mind, the continuous integration system tags the container
-image with the version reference and an extra name. Just to mention that the extra name is
-not absolutely necessary to definitely associate the container image with a version. But
-it turned out that a human readable name is very helpful to recognize a version and to
-know what the version is about at first sight. The continuous integration system derives
-that extra name from the branch name. This tag, consisting out of the version and extra
-name, will follow us through the whole pipeline as readable and unique reference.
+pipeline. With this thought in mind, the \gls{ci} system tags the container image with the
+version reference and an extra name. Just to mention that the extra name is not absolutely
+necessary to definitely associate the container image with a version. But it turned out
+that a human readable name is very helpful to recognize a version and to know what the
+version is about at first sight. The \gls{ci} system derives that extra name from the
+branch name. This tag, consisting out of the version and extra name, will follow us
+through the whole pipeline as readable and unique reference.
 
-The second continuous integration step is to run the tests. This is shown as step~(5) in
-figure \ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such
-as unit, feature and smoke tests. Yet we do net need to recall all the details of
-automated testing at this point.
+The second \gls{ci} step is to run the tests. This is shown as step~(5) in figure
+\ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such as unit,
+feature and smoke tests. Yet we do net need to recall all the details of automated testing
+at this point.
 
-The last step of the continuous integration system is to send a deploy signal, step~(6) in
-the figure. But it depends on the results of the tests, whether to send that deploy signal
-or not. The tests can be successful or fail. If the tests fail, the continuous integration
-system does not send a deploy message, the pipeline stops and the continuous integration
-system may inform the responsible developer. If the tests are successful in all test
-stages, the continuous integration system will send the deploy signal to the deployer.
+The last step of the \gls{ci} system is to send a deploy signal, step~(6) in the
+figure. But it depends on the results of the tests, whether to send that deploy signal or
+not. The tests can be successful or fail. If the tests fail, the \gls{ci} system does not
+send a deploy message, the pipeline stops and the \gls{ci} system may inform the
+responsible developer. If the tests are successful in all test stages, the \gls{ci} system
+will send the deploy signal to the deployer.
 
 It makes sense to deploy only specific versions and not every commit. The practice which
 is pretty common, is that you develop new features in a seperate branch. For those
@@ -423,25 +422,24 @@ to production, even though it is a very small change. But when the decision is m
 merged into a specified branch, for instance the master branch, this version will go to
 production.
 
-However, just to clarify, the continuous integration system sends each built image for
-every single version to the image repository. This is independent of successful tests or
-the intention to go to production. The reason why we want to have every built image in the
-repository is to be able to test it in the continuous integration system, locally and a
-staging system. But this is just a side note.
+However, just to clarify, the \gls{ci} system sends each built image for every single
+version to the image repository. This is independent of successful tests or the intention
+to go to production. The reason why we want to have every built image in the repository is
+to be able to test it in the \gls{ci} system, locally and a staging system. But this is
+just a side note.
 
 So the deploy signal is given when two requirements are fulfilled: the build and tests are
 successful and it is a version which is planned to go to production.
 
-Until this point, as we already mentioned, it is continuous integration practice, which is
-commonly used in software development. We require it for our approach and again, it is
-important to \gls{nprt} to associate and trace every step through the whole pipeline. For
-that purpose we need to especially tag the container images.
+Until this point, as we already mentioned, it is \gls{ci} practice, which is commonly used
+in software development. We require it for our approach and again, it is important to
+\gls{nprt} to associate and trace every step through the whole pipeline. For that purpose
+we need to especially tag the container images.
 
 \subsection{Customizations of Continuous Deployment}
 
 \gls{nprt} is an approach, which we designed to be completely automatable. It is crucial
-to not only have continuous integration, but to have a customized continuous deployment
-process as well.
+to not only have \gls{ci}, but to have a customized continuous deployment process as well.
 
 The next component in the pipeline is the deployer. Deployer is a service, which realizes
 the customized parts of the continuous deployment practice. In the context of this thesis,
@@ -450,20 +448,19 @@ chapter demonstrates how deployer integrates in the pipeline and in the environm
 all the other tools. It is crucial to have full control over the whole deployment process
 and as a consequence it was necessary to implement the software and have it customizable.
 
-We could also implement the logic of the deploy deploy in the continuous integration
-system. But we had to decide against that, because the deploy needs full access to the
-production system and the continuous integration system is in our case outsourced to a
-third party company. We do not want to give other companies full access to another
-company. However this meant, that we had to implement some steps again, which a continuous
-integration server already implements.  the continuous integration system pulls the
-version from the version control system as well as the deployer. (2 different things: one
-application code, 2 infrastructure code. But good to have them both in a single
-repository, to have the relation.
+We could also implement the logic of the deploy deploy in the \gls{ci} system. But we had
+to decide against that, because the deploy needs full access to the production system and
+the \gls{ci} system is in our case outsourced to a third party company. We do not want to
+give other companies full access to another company. However this meant, that we had to
+implement some steps again, which a \gls{ci} server already implements. The \gls{ci}
+system pulls the version from the version control system as well as the deployer. (2
+different things: one application code, 2 infrastructure code. But good to have them both
+in a single repository, to have the relation.
 
-Deployer receives the deploy signal from the continuous integration system~(6). It again
-includes the version reference. Now deployer executes three major steps: firstly pull
-infrastructure code~(7), secondly modify the infrastructure code~(8) and thirdly send the
-infrastructure code to the production cluster~(9).
+Deployer receives the deploy signal from the \gls{ci} system~(6). It again includes the
+version reference. Now deployer executes three major steps: firstly pull infrastructure
+code~(7), secondly modify the infrastructure code~(8) and thirdly send the infrastructure
+code to the production cluster~(9).
 
 So in the first step deployer pulls the code from the version control system~(7). The
 version control system also holds the files, which describe our infrastructure. We want to
@@ -484,9 +481,9 @@ changed: infrastructure changes as well as application code changes.
 The production cluster receives the modified infrastructure definitions. The production
 changes the cluster state according to the definitions. Most important is that two
 versions in parallel are in the cluster. The production cluster fetches the container
-image in step~(10) from the image repository. The image, which the continuous integration
-system built in step~(3). The production cluster is aware of the specific image identified
-by the tag, which we described before.
+image in step~(10) from the image repository. The image, which the \gls{ci} system built
+in step~(3). The production cluster is aware of the specific image identified by the tag,
+which we described before.
 
 \subsection{Metrics Collection and Comparison}
 
@@ -581,14 +578,14 @@ can scale deployer to the concurrent deploys we need.
 \section{Interface}
 
 Requests to deployer are very simple. We can use curl request or any other http client and
-execute it for instance from our continuous integration system. Another way to interact
-with deployer is to use the depctl command line interface.
+execute it for instance from our \gls{ci} system. Another way to interact with deployer is
+to use the depctl command line interface.
 
 Depctl command line interface wraps http calls and assists developers with automatic
 completion of the repository to deploy and completion of the version to deploy. With
 depctl developers can easily skip steps of the whole \gls{nprt} flow. For instance they
-can skip the tests, which would run on the continuous integration system. This makes
-development more fluently and developer friendly.
+can skip the tests, which would run on the \gls{ci} system. This makes development more
+fluently and developer friendly.
 
 In the following we will go through the interface of deployer. Deployer provides different
 endpoints: ls, show, tags, deploy, canary and version.
@@ -638,14 +635,14 @@ Next we want to go through the steps involved in the deployment process. Initial
 client sends a http request to deployer (1). The service proxies the request to deployer
 (2). After that deployer needs to authenticate the client via http basic
 authentication. In other words, the client authenticates itself via a username and
-password. As we mentioned earlier, our continuous integration system is a software as a
-service solution, and one of the reasons why we could not implement a deploy logic inside
-the continuous integration system, were security concerns. The continuous integration
-system cannot have full production cluster access. In this case the token authorizes to
-only deploy a specific version from the repository. For us that means, that the client is
-not able to do everything to the kubernetes api consequently not everything to our whole
-production cluster. It is for instance not able to deploy other code than ours or read
-credentials from the production cluster.
+password. As we mentioned earlier, our \gls{ci} system is a software as a service
+solution, and one of the reasons why we could not implement a deploy logic inside the
+\gls{ci} system, were security concerns. The \gls{ci} system cannot have full production
+cluster access. In this case the token authorizes to only deploy a specific version from
+the repository. For us that means, that the client is not able to do everything to the
+kubernetes api consequently not everything to our whole production cluster. It is for
+instance not able to deploy other code than ours or read credentials from the production
+cluster.
 
 \subsection{Fetching the Code and Caching It}
 
@@ -732,9 +729,9 @@ The other important modification is the image version. The image tag specifies t
 of the docker image. Deployer modifies the resource only when the image tag is
 unspecified. In case the deployment already specifies a tag, such as 'debian:wheezy',
 deployer does not change that tag. The reason is there may be containers, which the
-continuous integration system does not build and tag with the specific version
-reference. Commonly another party maintains these docker images. One example is an
-additional statsd container running as a sidecar in the application pod.
+\gls{ci} system does not build and tag with the specific version reference. Commonly
+another party maintains these docker images. One example is an additional statsd container
+running as a sidecar in the application pod.
 
 The other case would be that the tag is not specified in the kubernetes resource. Then
 deployer appends the tag to the container image according to reference the client provided.
@@ -750,13 +747,13 @@ Sometimes something unexpected is happening during the deployment. This can be f
 that a verification of deployer fails, such as deployer does not find the tag
 corresponding to the commit. Or maybe kubernetes api server returns an error for any
 reason. If something like the described happens, deployer will inform the developers. We
-distinguish between two different clients. One is, a continuous integration system
-requests the deploy. In that case our error report system\footnote{In technologies
-  section, we mention Bugsnag. This is the error report system we use.} come to
-play. Deployer raises an error and the error is sends it to the error report system (7),
-which collects all the errors of any system. The error report system informs the
-developers via sending notifications to a specified channel. We have for example a slack
-chat channel, on which the person on call subscribes and receives notifications from.
+distinguish between two different clients. One is, a \gls{ci} system requests the
+deploy. In that case our error report system\footnote{In technologies section, we mention
+  Bugsnag. This is the error report system we use.} come to play. Deployer raises an error
+and the error is sends it to the error report system (7), which collects all the errors of
+any system. The error report system informs the developers via sending notifications to a
+specified channel. We have for example a slack chat channel, on which the person on call
+subscribes and receives notifications from.
 
 The other client is a developer sending a deploy request manually. In that case the
 developer typically uses depctl. Deployer discriminates usual curl requests from requests
@@ -930,11 +927,11 @@ The second application is a ruby on rails application, which employees of GapFis
 as backoffice tools for several panel
 platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
   \url{https://www.spiegel-panel.de}}. As an employee of GapFish I previously migrated the
-ruby on rails application to kubernetes and utilized codeship as continuous integration,
-docker hub as container image registry and integrated datadog as monitoring system. The
-application consists of a service and nine deployments. Eight of the deployments are
-different background workers each with one pod. And one deployment is for the ruby on
-rails application server with two pods.
+ruby on rails application to kubernetes and utilized codeship as \gls{ci}, docker hub as
+container image registry and integrated datadog as monitoring system. The application
+consists of a service and nine deployments. Eight of the deployments are different
+background workers each with one pod. And one deployment is for the ruby on rails
+application server with two pods.
 
 The experiments for the DIN apache application were conducted on virtual machines rented
 from Atos. The experiments for the GapFish application were conducted on virtual machines
@@ -944,7 +941,7 @@ plots in the appendix.
 Each of the experiments has three consecutive executions with three different canary
 versions in the deploy and rollback experiments. The measurements had to be manually
 collected from all the different logs of the involved systems, that are a local http
-client, continuous integration system, deployer and kubernetes.
+client, \gls{ci} system, deployer and kubernetes.
 
 \subsection{Deploy}
 
@@ -1026,8 +1023,8 @@ why the experiment was conducted for the GapFish rails application only.
 
 The total time of the \gls{cd} pipeline was between 172 and 414 seconds with a median of
 192 seconds. Again the caching saves time in the second and the third execution. This time
-the continuous integration system and the image registry partly cache the layers of the
-images. They only have to build and send the differing parts of the container image.
+the \gls{ci} system and the image registry partly cache the layers of the images. They
+only have to build and send the differing parts of the container image.
 
 As a result we see the overall pipeline duration for a typical canary change at round
 about 3 minutes, including a build and deployment. The makes a continuous deployment of
@@ -1182,10 +1179,9 @@ and running a software product.
 
 \subsection{Continuous and Fully Automatable}
 
-Deployer connects the continuous integration system, kubernetes and the monitoring
-system. These systems create the ability to create a fully automatable delivery pipeline
-and a system for fully automated rollbacks. Those are the step stones for more
-possibilities.
+Deployer connects the \gls{ci} system, kubernetes and the monitoring system. These systems
+create the ability to create a fully automatable delivery pipeline and a system for fully
+automated rollbacks. Those are the step stones for more possibilities.
 
 \gls{nprt} reduced the efforts of maintenance work on own code. The Engineers were able to
 test changes in production quickly and have a small feedback loop.
@@ -1364,16 +1360,15 @@ service which we cause by testing the new version.
 \section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of \gls{nprt}. We can extend the \gls{cd} pipeline in a natural way
-and support developers not only until the deploy, furthermore we automated a part of the
-developer's job during run time. The pipeline is now advanced in a way, that we can change
-application code and test it without the supervision of the developers at a very low
-risk. The change goes through the whole pipeline including tests in a testing environment,
-an automated deploy and tests in the production environment. If the \gls{nprt} and
-automated deploy is successful, developers will be completely free of work. Potential
-changes of bots would be robust enough to be able to act fully automated and
-unsupervised. However we still test the changes they make and can be sure to not have a
-regression in our production system.
+advantage of \gls{nprt}. We can extend the \gls{cd} pipeline in a natural way and support
+developers not only until the deploy, furthermore we automated a part of the developer's
+job during run time. The pipeline is now advanced in a way, that we can change application
+code and test it without the supervision of the developers at a very low risk. The change
+goes through the whole pipeline including tests in a testing environment, an automated
+deploy and tests in the production environment. If the \gls{nprt} and automated deploy is
+successful, developers will be completely free of work. Potential changes of bots would be
+robust enough to be able to act fully automated and unsupervised. However we still test
+the changes they make and can be sure to not have a regression in our production system.
 
 Finally we want to summarize, what we examined so far: The whole process of \gls{nprt} is
 fully automatable, every step is determined and traceable throughout and even reproducible
