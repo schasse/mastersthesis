@@ -16,7 +16,7 @@ be maintained as well via adapting and updating to new versions.
 
 DevOps practices interconnect operations including those maintenance necessities with
 development work. Nevertheless there is room for improvement in terms of continuous
-automatable processes regarding maintenance. The continuous delivery
+automatable processes regarding maintenance. The \gls{cd}
 pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
 supports only until the deploy whereas maintenance involves more than just the delivery.
 
@@ -28,9 +28,8 @@ engineering approach~\cite{sre_intro}.
 
 This thesis proposes with \gls{nprt} a practice, which faces the amount of maintenance
 work. The practice is designed for teams, which have the responsibility of developing and
-operating their own code as well as code dependencies. \gls{nprt} extends the
-\gls{cd} pipeline and automates continuous testing of nonfunctional changes in
-production.
+operating their own code as well as code dependencies. \gls{nprt} extends the \gls{cd}
+pipeline and automates continuous testing of nonfunctional changes in production.
 
 \section{Thesis Outline}
 
@@ -237,20 +236,20 @@ arguments, there is an obvious need of an automated process for updating service
 
 % cd provides good automation, but has lack of maintenance focus
 There is a lack of truly automatable practices for maintaining a software
-product. Continuous delivery brought up good automatable practices to continuously deliver
-changes and features into production. It has the lack of good practices though to maintain
-a software product.
+product. \gls{cd} brought up good automatable practices to continuously deliver changes
+and features into production. It has the lack of good practices though to maintain a
+software product.
 
-Continuous delivery does not focus on the maintenance work and the DevOps approach does
-not focus on automating the maintenance work as previously examined. We conclude that
-there is a need for practices, which continuously support and automate maintenance work.
+\gls{cd} does not focus on the maintenance work and the DevOps approach does not focus on
+automating the maintenance work as previously examined. We conclude that there is a need
+for practices, which continuously support and automate maintenance work.
 
 \section{Contribution of this Thesis}
 
 The contribution of this masterthesis is a practice, which can fully be automated in order
-to maintain a software product. It extends the continuous delivery and continuous
-deployment pipeline as those go until release and no further. \gls{nprt} extends the
-pipeline to the production environment, where we need to operate and maintain a system.
+to maintain a software product. It extends the \gls{cd} and continuous deployment pipeline
+as those go until release and no further. \gls{nprt} extends the pipeline to the
+production environment, where we need to operate and maintain a system.
 
 The thesis suggests \gls{nprt} as a practice which consists of different techniques. Those
 technique cover three major steps. First, quickly deploy a change to production. Second,
@@ -352,11 +351,11 @@ new versions. The approach is designed in respect to failing as fast as possible
 inform developers.
 
 This testing approach naturally evolves from common practices such as continuous
-integration, continuous delivery and continuous deployment and extends those
-practices. The already established practices support developers before and until the
-software deployment. In contrast to that, \gls{nprt}, supports developers during and after
-the deployment. In other words it supports the developers to run applications in
-production, which formerly has been a business of operations teams.
+integration, \gls{cd} and continuous deployment and extends those practices. The already
+established practices support developers before and until the software deployment. In
+contrast to that, \gls{nprt}, supports developers during and after the deployment. In
+other words it supports the developers to run applications in production, which formerly
+has been a business of operations teams.
 
 \section{Pipeline Overview}
 
@@ -1009,11 +1008,11 @@ registry differ in the duration.
 
 \subsection{Deploy in Pipeline}
 
-This section shows a deploy in the full context of the continuous delivery pipeline. The
-steps start with the commit and push of a new version in the version control system, the
-build of the docker image(s), saving the recently built images in the image registry,
-time spend by deployer and the remaining startup of the canary pods. The testsuite runtime
-is not included in this diagram, so that focus lies on the systems this thesis integrated.
+This section shows a deploy in the full context of the \gls{cd} pipeline. The steps start
+with the commit and push of a new version in the version control system, the build of the
+docker image(s), saving the recently built images in the image registry, time spend by
+deployer and the remaining startup of the canary pods. The testsuite runtime is not
+included in this diagram, so that focus lies on the systems this thesis integrated.
 
 At GapFish I could access all the involved system. This was not the case at DIN. That is
 why the experiment was conducted for the GapFish rails application only.
@@ -1025,11 +1024,10 @@ why the experiment was conducted for the GapFish rails application only.
   \label{fig:whole pipeline}
 \end{figure}
 
-The total time of the continuous delivery pipeline was between 172 and 414 seconds with a
-median of 192 seconds. Again the caching saves time in the second and the third
-execution. This time the continuous integration system and the image registry partly
-cache the layers of the images. They only have to build and send the differing parts of
-the container image.
+The total time of the \gls{cd} pipeline was between 172 and 414 seconds with a median of
+192 seconds. Again the caching saves time in the second and the third execution. This time
+the continuous integration system and the image registry partly cache the layers of the
+images. They only have to build and send the differing parts of the container image.
 
 As a result we see the overall pipeline duration for a typical canary change at round
 about 3 minutes, including a build and deployment. The makes a continuous deployment of
@@ -1213,7 +1211,7 @@ describes how Netflix~\cite{antifragile_org} tests their systems with the simian
 which produce random defects in a controlled production environment. This practice lays
 open unknown issues, which can be fixed in order to gain better reliability.
 
-There are also countless open source tools, which help to implement continuous delivery
+There are also countless open source tools, which help to implement \gls{cd}
 similar. Vamp\footnote{\url{https://vamp.io}} has the ability to deploy applications to
 kubernetes automatically. Also spinnaker\footnote{\url{https://www.spinnaker.io/}} can
 deploy applications to cloud environments, with kuberentes being one of them. Spinnaker
@@ -1366,7 +1364,7 @@ service which we cause by testing the new version.
 \section{Summary}
 
 We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of \gls{nprt}. We can extend the continuous delivery pipeline in a natural way
+advantage of \gls{nprt}. We can extend the \gls{cd} pipeline in a natural way
 and support developers not only until the deploy, furthermore we automated a part of the
 developer's job during run time. The pipeline is now advanced in a way, that we can change
 application code and test it without the supervision of the developers at a very low
