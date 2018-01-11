@@ -325,37 +325,36 @@ jenkins\footnote{\url{https://codeship.com}}. As an image repo, we use docker
 hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
 served to make experiments with production traffic.
 
-\chapter{Approach}
+\chapter{NPRT Approach}
 \label{chap:macro}
 
-In \gls{nprt} we automatically deploy a new version in the form of a canary. A monitoring
-system compares the metrics of the canary with the metrics of the current stable version
-side by side in production. The in production test verifies, if the nonfunctional metrics
-of the canary show a regression and eventually automatically rolls back the canary. This
-outlines \gls{nprt} in few sentences. Nevertheless the following text will go through the
-term in more detail. The approach is a novelty and we name the approach in the context of
-this thesis.
+In \gls{nprt} a deployment system deploys a nonfunctional change in form of a canary to
+the production environment. The new version is compared with the stable version side by
+side in production. In case the new version shows a regression, the deployment system will
+automatically roll it back. The novelty of the approach is that it creates a feedback loop
+between development and production, which is fully automatable. The following elaborates
+on the term in more detail.
 
-Nonfunctional refers to the change, which the tests evaluate. Nonfunctional changes are
-usually maintenance changes, for instance performance improvements or security
-updates. Production refers to the environment on account to the monitoring of the new
-version being in production. The term regression refers to the testing strategy. The test
-compares the metrics of the two differing versions, the stable version and the new
-version. The new version is instantiated in form of a canary. We test the canary version
-for a regression, concretely a decline of the monitored metrics. If the test identifies a
-regression, we roll back to the stable version.
+\emph{Nonfunctional} refers to the change, which the monitoring system monitors. Usually
+maintenance changes are nonfunctional changes, for instance performance improvements or
+security updates. \emph{Production} refers to the environment, in which the versions are
+monitored. The production traffic reaches the new version as well as the stable
+version. The term \emph{regression} refers to the testing strategy. The monitoring system
+tests the metrics of the stable version and the new version for a regression.
 
-The approach provides some further features, which are not included in the term. Indeed
-the testing approach is completely automatable and you can continuously apply it to the
-new versions. The approach is designed in respect to failing as fast as possible and
-inform developers.
+\gls{nprt} provides some further features, which are not included in the term. Indeed the
+testing approach is completely automatable and developers are able to continuously apply
+it to new versions. I designed \gls{nprt} in respect to failing as fast as possible and to
+inform developers as early as possible. \gls{nprt} is most useful for maintenance
+changes. Even automated maintenance changes, for instance dependency updates, are
+possible.
 
-This testing approach naturally evolves from common practices such as \gls{ci}, \gls{cd}
-and continuous deployment and extends those practices. The already established practices
+\gls{nprt} naturally evolved from common practices such as \gls{ci}, \gls{cd} and
+continuous deployment and extends those practices. The already established practices
 support developers before and until the software deployment. In contrast to that,
 \gls{nprt}, supports developers during and after the deployment. In other words it
-supports the developers to run applications in production, which formerly has been a
-business of operations teams.
+supports developers to run and maintain applications in production, which formerly has
+been a business of operations teams.
 
 \section{Pipeline Overview}
 
@@ -366,179 +365,185 @@ business of operations teams.
 \end{figure}
 
 To understand the testing approach in a whole, it is necessary to show a complete overview
-of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures this
-overview. In the following we will go through the steps of the pipeline and discuss them.
+of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures an overview. In
+the following I will go through the steps of the pipeline and discuss them.
 
-\subsection{Continuous Integration is a Requirement}
+\section{Continuous Integration is a Requirement}
 
 The first parts of the pipeline are commonly known and established practices: \gls{ci},
 \gls{cd} and continuous deployment. It is necessary, though, to touch on them and
-integrate them in the whole picture. It will illustrate important design characteristics
-for the new testing approach.
+integrate them in the whole picture. It will illustrate important design decisions for
+\gls{nprt}.
 
-First the developer changes some code on his local machine and creates a new version. He
-then pushes the new version to the \gls{vcs} as shown in~(1).
+First the developer changes the code on his local machine and creates a new version. He
+then pushes the new version to the \gls{vcs} as shown in~\texttt{(1)}.
 
-After the push of the new version, the second step is a message~(2) to the \gls{ci}
-system. This message holds the reference of the new version and the \gls{ci} server pulls
-the new version from the \gls{vcs}. Now the \gls{ci} system has three major jobs. Firstly
-it starts a build process~(3)(4), secondly it runs the tests~(5) and the thirdly gives the
-deploy signal~(6).
+After the push of the new version, the second step is a message~\texttt{(2)} to the
+\gls{ci} system. This message holds the reference of the new version and the \gls{ci}
+server pulls the new version from the \gls{vcs}. Now the \gls{ci} system has three major
+jobs. Firstly it starts a build process~\texttt{(3-4)}, secondly it runs the
+tests~\texttt{(5)} and the thirdly gives the deploy signal~\texttt{(6)}.
 
-In step~(3), namely the build, the \gls{ci} system typically compiles binaries, renders
-assets and may create further artifacts. For our purposes it is especially necessary to
-build at least one or multiple container images. The \gls{ci} system then pushes the ready
-built container image to an image repository in~(4). Later the image repository serves the
-built images.
+In step~\texttt{(3)}, namely the build, the \gls{ci} system typically compiles binaries,
+renders assets and may create further artifacts. For our purposes it is especially
+necessary to build at least one or multiple container images. The \gls{ci} system then
+pushes the ready built container image to an image repository in~\texttt{(4)}. Later the
+image repository serves the built images.
 
-One import thing is that we need to associate every built container image with a specific
-version. Therefore we use the version reference, which was created by the \gls{vcs}. It is important to be able to trace the version through every step in the
-pipeline. With this thought in mind, the \gls{ci} system tags the container image with the
-version reference and an extra name. Just to mention that the extra name is not absolutely
-necessary to definitely associate the container image with a version. But it turned out
-that a human readable name is very helpful to recognize a version and to know what the
-version is about at first sight. The \gls{ci} system derives that extra name from the
-branch name. This tag, consisting out of the version and extra name, will follow us
-through the whole pipeline as readable and unique reference.
+One import thing is that every built container image relates to a specific version. The
+version reference, which was created by the \gls{vcs}, serves for this purpose. It is
+important to be able to trace the version through every step in the pipeline. With this
+thought in mind, the \gls{ci} system tags the container image with the version reference
+and an extra name. Just to mention that the extra name is not absolutely necessary to
+definitely associate the container image with a version. But it turned out that a human
+readable name is very helpful to recognize a version and to know what the version is about
+at first sight. The \gls{ci} system derives that extra name from the branch name. This
+tag, consisting out of the version and extra name, will follow us through the whole
+pipeline as readable and unique reference.
 
-The second \gls{ci} step is to run the tests. This is shown as step~(5) in figure
-\ref{fig:nprt_flow}. The tests themselves can be split into multiple stages, such as unit,
-feature and smoke tests. Yet we do net need to recall all the details of automated testing
-at this point.
+The second \gls{ci} step is to run the tests. The figure~\ref{fig:nprt_flow} shows this in
+step~\texttt{(5)}. The tests themselves can be split into multiple stages, such as unit,
+feature and smoke tests. At this point, though, I will not recall all the details of
+automated testing at this point.
 
-The last step of the \gls{ci} system is to send a deploy signal, step~(6) in the
+The last step of the \gls{ci} system is to send a deploy signal, step~\texttt{(6)} in the
 figure. But it depends on the results of the tests, whether to send that deploy signal or
 not. The tests can be successful or fail. If the tests fail, the \gls{ci} system does not
 send a deploy message, the pipeline stops and the \gls{ci} system may inform the
-responsible developer. If the tests are successful in all test stages, the \gls{ci} system
-will send the deploy signal to the deployer.
+responsible Developer. If the tests are successful in all test stages, the \gls{ci} system
+will send the deploy signal to Deployer.
 
 It makes sense to deploy only specific versions and not every commit. The practice which
 is pretty common, is that you develop new features in a seperate branch. For those
-versions you usually don not send a deploy signal even though the branch build and tests
-are successful. Usually after there has been a review and a decision to deploy the changes
-to production, even though it is a very small change. But when the decision is made and
-merged into a specified branch, for instance the master branch, this version will go to
+versions you usually do not send a deploy signal even though the branch's build and tests
+are successful. Usually after the tests, a review and the developers a decide to deploy
+the changes to production. When the decision is made and one developer merges the change
+into a specified branch, for instance the master branch, and the version will go to
 production.
 
 However, just to clarify, the \gls{ci} system sends each built image for every single
-version to the image repository. This is independent of successful tests or the intention
-to go to production. The reason why we want to have every built image in the repository is
-to be able to test it in the \gls{ci} system, locally and a staging system. But this is
-just a side note.
+version to the image repository. This is independent of successful tests or the decision
+to go to production. The reason why I want to have every built image in the repository is
+to be able to test it in the \gls{ci} system, locally and maybe a staging system. But this
+is just a side note.
 
-So the deploy signal is given when two requirements are fulfilled: the build and tests are
-successful and it is a version which is planned to go to production.
+The \gls{ci} system gives the deploy signal when two requirements are fulfilled: the build
+and tests are successful and developers decided that the version will go to production.
 
-Until this point, as we already mentioned, it is \gls{ci} practice, which is commonly used
-in software development. We require it for our approach and again, it is important to
-\gls{nprt} to associate and trace every step through the whole pipeline. For that purpose
-we need to especially tag the container images.
+Until this point, as I already mentioned, it is \gls{ci} practice, which is commonly used
+in software development. I require it for \gls{nprt}. For \gls{nprt} it is especially
+important to associate and trace every step through the whole pipeline. For that purpose I
+need the \gls{ci} system to tag, as the previous paragraphs explain, the container images
+with the exact version reference.
 
-\subsection{Customizations of Continuous Deployment}
+\section{Customizations of Continuous Deployment}
 
-\gls{nprt} is an approach, which we designed to be completely automatable. It is crucial
-to not only have \gls{ci}, but to have a customized continuous deployment process as well.
+\gls{nprt} is an approach, which I designed to be completely automatable. It is crucial to
+not only have \gls{ci}, but to have a customized continuous deployment process as well.
 
-The next component in the pipeline is the deployer. Deployer is a service, which realizes
-the customized parts of the continuous deployment practice. In the context of this thesis,
-we implemented the software. We describe deployer in detail in the next chapter. This
-chapter demonstrates how deployer integrates in the pipeline and in the environment among
-all the other tools. It is crucial to have full control over the whole deployment process
-and as a consequence it was necessary to implement the software and have it customizable.
+The next component in the pipeline is Deployer. Deployer is a service, which realizes the
+customized parts of the continuous deployment practice. In the context of this thesis, I
+implemented Deployer. Chapter~\ref{chap:detail} describes Deployer in detail. This chapter
+demonstrates how Deployer integrates in the pipeline and in the environment among all the
+other tools. It is crucial to have full control over the deployment process and as a
+consequence it was necessary to implement Deployer.
 
-We could also implement the logic of the deploy deploy in the \gls{ci} system. But we had
-to decide against that, because the deploy needs full access to the production system and
-the \gls{ci} system is in our case outsourced to a third party company. We do not want to
-give other companies full access to another company. However this meant, that we had to
-implement some steps again, which a \gls{ci} server already implements. The \gls{ci}
-system pulls the version from the \gls{vcs} as well as the deployer. (2 different things:
-one application code, 2 infrastructure code. But good to have them both in a single
-repository, to have the relation.
+It would also be possible to implement the logic of the deploy in the \gls{ci} system. But
+I had to decide against that, because the deploy needs full access to the production
+system and the \gls{ci} system is in our case outsourced to a third party company. I did
+not want to give other companies full access to the production cluster. However this
+meant, that I had to implement some steps again, which a \gls{ci} server already
+implements. Deployer pulls the version from the \gls{vcs} as well as the \gls{ci}. The
+difference to the \gls{ci} system is that Deployer's interest lies in the resource
+definitions and not the application code. The resource definitions define the application
+infrastructure.
 
-Deployer receives the deploy signal from the \gls{ci} system~(6). It again includes the
-version reference. Now deployer executes three major steps: firstly pull infrastructure
-code~(7), secondly modify the infrastructure code~(8) and thirdly send the infrastructure
-code to the production cluster~(9).
+Deployer receives the deploy signal from the \gls{ci} system\texttt{(6)}. The deploy
+signal again includes the version reference. Now Deployer executes three major steps:
+firstly pull the resource definitions~\texttt{(7)}, secondly modify the resource
+definitions~\texttt{(8)} and thirdly send the resource definitions to the production
+cluster~\texttt{(9)}.
 
-So in the first step deployer pulls the code from the \gls{vcs}~(7). The \gls{vcs} also
-holds the files, which describe our infrastructure. We want to version control the
-infrastructure definitions of in order to be able to relate the version of the
-infrastructure to the version of the code and the version of the artifacts. In kubernetes
-those infrastructure definitions are made up of different resources, which were already
-mentioned in the background chapter.
+In the first step Deployer pulls the code from the \gls{vcs}~\texttt{(7)}. The \gls{vcs}
+also holds the resource definitions, which describe the application infrastructure. I
+wanted to version control the resource definitions in order to be able to relate the
+version of the infrastructure, the version of the code and the version of the
+artifacts. In kubernetes those definitions contain different resources, which
+chapter~\ref{chap:background} explains with an example.
 
-In the second step deployer modifies those infrastructure~(8) defintions in a way, that
-the production system uses the related container image. The running container needs to be
-aware of the its version. The modifications of deployer achieve that as well. The latter
-is important to later tag the metrics with running version.
+In the second step, Deployer modifies those resource definitions~\texttt{(8)} in a way,
+that the production system uses the correct container image, which relates to the version
+to deploy. The modifications of Deployer also achieve that the running container is aware
+of its version. The latter is important to later tag the metrics with the version
+reference.
 
-The third step of deployer is to apply the modified infrastructure definitions to the
-production cluster, which is shown in the figure as step~(9). We note that two things are
-changed: infrastructure changes as well as application code changes.
+The third step of Deployer is to apply the modified infrastructure definitions to the
+production cluster, which is shown in the figure as step~\texttt{(9)}. In result a deploy
+changes two things: application infrastructure as well as application code changes.
 
 The production cluster receives the modified infrastructure definitions. The production
-changes the cluster state according to the definitions. Most important is that two
-versions in parallel are in the cluster. The production cluster fetches the container
-image in step~(10) from the image repository. The image, which the \gls{ci} system built
-in step~(3). The production cluster is aware of the specific image identified by the tag,
-which we described before.
+changes the cluster state according to the definitions. Most important is that pod
+instance of two versions in parallel are in the cluster. The production cluster fetches
+the container images in step~\texttt{(10)} from the image repository. The images, which
+the \gls{ci} system built in step~\texttt{(3)}. The production cluster is aware of the
+specific image identified by the tag.
 
-\subsection{Metrics Collection and Comparison}
+\section{Metric Collection and Comparison}
 
-The figure illustrates the two different versions with two differnt colors. Most of the
-running instances are in the stable version (red) and only one instance or in practice few
-instances are in the new version (orange). The loadbalancer sends traffic to both versions
-and both versions respond to clients, which is not shown in the figure.
+Figure~\ref{fig:nprt_flow} illustrates the two differing versions with two colors. Most of
+the running instances are in the stable version, red, and only one instance or in practice
+few instances are in the new version, orange. The loadbalancer sends traffic to both
+versions and both versions respond to clients, on which section~\ref{test_architecture}
+elaborates.
 
-The production cluster collects the data, in which we are interested for the regression
-tests.  The collected metrics are nonfunctional metrics. We adapted those metrics from the
-four golden metrics of google's sre. The metrics are throughput, latency, errorrate and
+The production cluster collects the metrics, which are necessary for the regression tests.
+I adapted those metrics from the four golden metrics of Google's
+\gls{sre}~\cite{sre_monitoring}. The metrics are throughput, latency, errorrate and
 utilization.
 
-We are interested in the monitoring data of specific versions. Consequently the production
-cluster label the metrics with the specific version. This is important, since we want to
-compare the metrics of the different version.  The production cluster sends those labeled
-metrics to the monitoring system~(10).
+The interest lies in the metrics of the two specific versions. Consequently the production
+cluster labels those metrics with the version references. This is important since the
+metrics of the differing versions will be compared with each other. The production cluster
+labels and then sends those metrics to the monitoring system~\texttt{(10)}.
 
-The monitoring system stores all the metrics of the two different versions in a
-timeseriesdatabase. The monitoring system evaluates those metrics by drawing different
-graphs and diagrams and comparing those graphs with each other. One example would be that
-it draws two graphs for the latency in one diagram. The first latency graph is the one of
-the stable version. The second latency graph is the one of the new version. The monitoring
-system monitors now those two graphs for a regression. That means in the case of latency,
-that if the latency of the new version is much bigger than the latency of the stable
-version, the monitoring system detects this as a regression. In other words we would have
-a deviation of a monitored metric, which is above a certain threshold. We discuss the
-specific implementations of the different metrics and their comparisons in the following
-chapter.
+The monitoring system stores all the metrics of the two versions in a timeseries
+database. The monitoring system evaluates those metrics by drawing graphs and comparing
+those graphs with each other. One example would be that it draws two graphs for the
+latency in one diagram. The first latency graph is the one of the stable version. The
+second latency graph is the one of the new version. The monitoring system monitors now
+those two graphs for a regression. That means in the case of latency, that if the latency
+of the new version is much bigger than the latency of the stable version, the monitoring
+system detects this as a regression. I explain the specifics of the metric comparison and
+in the section~\ref{sec:metric_comparison}.
 
-\subsection{Rollouts and Rollbacks}
+\section{Rollouts and Rollbacks}
 
-Now there are two different scenarios. The first one would be, that the new version runs
-in production for a certain amount time and the monitoring system does not identify any
-regression. In this case the monitoring system does nothing. A scheduled job triggers the
-full rollout of the new version. This job sends a usual deploy message of the new version
-to deployer in case the new version still exists in production and was not rolled back
-beforehand. Deployer receives this deploy message, deletes the canary and modifies
-infrastructure definitions to have the new version as the new stable version and the
-production system proceeds and stops and starts the running instances accordingly.
+Two possible scenarios arise. The first one would be, that the new version runs in
+production for a certain amount of time and the monitoring system does not identify any
+regression. In this case the monitoring system does nothing. A next deploy triggers the
+full rollout of the new version. A usual deploy message with new version reference is
+sufficient to do so. Deployer receives the deploy message, deletes the canary and modifies
+resource definitions to have the new version as the new stable version and the production
+cluster proceeds, stops and starts the running instances accordingly.
 
-The other scenario is that the new version turns out to be a regression compared to the
-stable version. In that case we want to rollback the new version. Our monitoring system
-identifies the regression and it sends a message to deployer, as shown in step~(12) in the
-figure. Accordingly our test for regression is failed.
+The second scenario is that the new version turns out to be a regression compared to the
+stable version. In that case the new version in form of the canary should be rolled
+back. The monitoring system identifies the regression and sends a message to Deployer, as
+figure~\ref{fig:nprt_flow} pictures in step~\texttt{(12)}. Accordingly the test for
+regression is failed.
 
-Deployer receives the rollback message and sends a deploy to the production system. Just
-to be precise, it is actually a deploy message with the commit hash of the stable version,
-which the monitoring system is aware about because of the metrics it monitors. Deployer
-now modifies the infrastructure definitions similar to step~(8). The important thing is
-that there must not be instances of the new version anymore. The production system itself
-takes care of deleting instances in the new version. Since instances of the stable version
-are already running in the production cluster, the production cluster does not touch the
-other instances.
+Deployer receives the rollback message, pulls the resource definitions again, modifies the
+resource definitions accordingly and applies the modified resource definitions to the
+production cluster. Just to be precise, it is actually a deploy message with the commit
+hash of the stable version, which the monitoring system is aware of because of the metrics
+it monitors. Deployer modifies the resource definitions similar to step~\texttt{(8)}. The
+deploy is idempotent, so that Deployer it can repeatedly receive the same deploys. This
+can happen in the case a developer as well as the monitoring system trigger the
+rollback. The production system itself takes care of deleting the canary instances in the
+new version. Since the instances of the stable version are already running in the
+production cluster, the production cluster does not touch the running stable instances.
 
-\chapter{In Practice}
+\chapter{Implementation of Deployer and Metric Comparison}
 \label{chap:detail}
 
 This chapter discusses deployer. We implemented deployer in order to realize \gls{nprt}
@@ -649,7 +654,7 @@ After deployer authenticated a valid user, it then fetches the code from the ver
 control system (3). When there is git as the version control system, deployer uses commit
 hashes and branches as version reference and to determine the code version. When there is
 subversion, deployer uses revision numbers instead. We implemented subversion, which is
-more of an ancient technology, to be able to do the evaluation with the DIN system.
+more of an ancient technology, to be able to do the evaluation with the \gls{din} system.
 
 As we know, the process of fetching a repository includes persistence and disk
 interaction. That is true. Deployer uses its volume just as a cache, though. The reason
@@ -761,6 +766,7 @@ request with an errorcode and a message in the http body. As mentioned earlier t
 communication with deployer is synchronous.
 
 \section{Testing Architecture}
+\label{test_architecture}
 
 In this section we look at the testing architecture inside the production cluster. A few
 canary pods in the new version run next to the stable version. These pods are able to
@@ -801,7 +807,7 @@ deployment to only one replica.
 
 \section{Metrics}
 
-\subsection{Metrics Collection}
+\subsection{Metric Collection}
 
 Now we want to focus on how we collect the metrics during the two versions are in
 production. We differentiate between two different collection mechanisms. Metrics
@@ -828,7 +834,8 @@ collection, the monitoring agent can pick up the label from the labeled pod. And
 second group of metrics collection the instrumentation code of the application picks up
 the label from environment variables, which have been set by deployer as either stable or
 canary.
-\subsection{Metrics Comparison}
+\subsection{Metric Comparison}
+\label{sec:metric_comparison}
 
 Another part of \gls{nprt} is the comparison within the monitoring system.
 
@@ -915,12 +922,12 @@ an application use case, which was used in production.
 
 I had the opportunity to do experiments with two different production applications. The
 first one is an apache webserver, which is the middleware in front of a tomcat application
-server. This application serves DIN's the website\footnote{\url{https://www.beuth.de}}. In
-the case of DIN, I setup a version control system, a kubernetes cluster, with deployer,
-instrumentation and monitoring setup. Software engineers working for DIN helped to setup a
-container image registry. I also migrated the apache webserver to be able to run on
-kubernetes. The kubernetes resources for the apache webserver consisted of a service and a
-deployment with two pods.
+server. This application serves \gls{din}'s the website\footnote{\url{https://www.beuth.de}}. In
+the case of \gls{din}, I setup a version control system, a kubernetes cluster, with deployer,
+instrumentation and monitoring setup. Software engineers working for \gls{din} helped to
+setup a container image registry. I also migrated the apache webserver to be able to run
+on kubernetes. The kubernetes resources for the apache webserver consisted of a service
+and a deployment with two pods.
 
 The second application is a ruby on rails application, which employees of GapFish utilize
 as backoffice tools for several panel
@@ -932,7 +939,7 @@ consists of a service and nine deployments. Eight of the deployments are differe
 background workers each with one pod. And one deployment is for the ruby on rails
 application server with two pods.
 
-The experiments for the DIN apache application were conducted on virtual machines rented
+The experiments for the \gls{din} apache application were conducted on virtual machines rented
 from Atos. The experiments for the GapFish application were conducted on virtual machines
 hosted at Google. You can read more about the specific details and the data used for the
 plots in the appendix.
@@ -958,7 +965,7 @@ of kubernetes starting the canary (9-running).
   \centering
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{deploy_din}
-    \caption[DIN]{DIN Apache Middleware}
+    \caption[DIN]{\gls{din} Apache Middleware}
     \label{fig:deploy_din}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
@@ -969,7 +976,7 @@ of kubernetes starting the canary (9-running).
   \caption[Deploy]{Deploy}
 \end{figure}
 
-Figure~\ref{fig:deploy_din} shows that DIN's apache middleware takes between 9 and 12
+Figure~\ref{fig:deploy_din} shows that \gls{din}'s apache middleware takes between 9 and 12
 seconds with a median of 10 seconds. Deployer took in the third execution 9 seconds and
 the start of the canary was in every execution at 1 second.
 
@@ -979,17 +986,17 @@ seconds in median.
 
 In both experiments the second and third execution are faster than the first one. That is
 because deployer caches the code from the version control system and does only need to
-download the difference in the consecutive executions. The impact of the cache on DIN's
+download the difference in the consecutive executions. The impact of the cache on \gls{din}'s
 apache webserver was not that big, because the repository size is comparably
 small. Whereas the cache could save almost half of the time at the GapFish rails
 application.
 
-The start of DIN's apache pods is with 1 second quite fast. This demonstrates the quick
+The start of \gls{din}'s apache pods is with 1 second quite fast. This demonstrates the quick
 scheduling of kubernetes and quick startup of docker containers compared to virtual
 machines. The start of GapFish's application is between 45 and 75 seconds with median of
 70 seconds.
 
-Accordingly DIN's apache application deploy significantly faster. So deployer is able to
+Accordingly \gls{din}'s apache application deploy significantly faster. So deployer is able to
 handle multiple deployments as in the case of GapFish. The multiple requests to the
 kubernetes api slightly reduce the deploy duration though. An improvement would be a
 batched request. Deployer's cache works well for big repository sizes.
@@ -1010,7 +1017,7 @@ docker image(s), saving the recently built images in the image registry, time sp
 deployer and the remaining startup of the canary pods. The testsuite runtime is not
 included in this diagram, so that focus lies on the systems this thesis integrated.
 
-At GapFish I could access all the involved system. This was not the case at DIN. That is
+At GapFish I could access all the involved system. This was not the case at \gls{din}. That is
 why the experiment was conducted for the GapFish rails application only.
 
 \begin{figure}[htbp]
@@ -1036,7 +1043,7 @@ of the bar again represents the time deployer is involved, that is from the roll
 request including steps (7) and (8) until the kubernetes api responded. The red bar
 represent the remaining time the pods take to shut down.
 
-Figure~\ref{fig:rollback_din} shows the rollback duration of a DIN apache canary
+Figure~\ref{fig:rollback_din} shows the rollback duration of a \gls{din} apache canary
 is between 4 and 5 seconds. The duration send in deployer is less than in the deploy case.
 That is mostly because it the delete request to the kubernetes api is faster.
 
@@ -1060,7 +1067,7 @@ executions of the rollback were 63 seconds. This is due to slow shutdowns of the
 pods. The kubernetes partly waits for the shutdown process of the pods. That is why
 deployer spends most of the 48-49 seconds waiting for kubernetes api responses.
 
-Also for the rollback case, deployer performs better with DIN's apache system, because of
+Also for the rollback case, deployer performs better with \gls{din}'s apache system, because of
 less deployment resources and the fast apache application. Nevertheless the deploys as
 well as the rollbacks involve zero downtime. So it's acceptable to have a bit longer
 durations.
@@ -1068,10 +1075,9 @@ durations.
 \subsection{Metric Comparison}
 
 This last experiment aims at a first evaluation of the feasibility and a first assessment
-of a metric comparison and the time of a broken canary being in production. DIN provided
-one hour of production traffic of their website, which a
-goreplay process recorded on production
-and replayed with the test setup.
+of a metric comparison and the time of a broken canary being in production. \gls{din}
+provided one hour of production traffic of their website, which a goreplay process
+recorded on production and replayed with the test setup.
 
 Due to the fact the test setup database state differs to the production database, the
 throughput of the requests with http 200 responses was at the low rate of 25 requests per
@@ -1185,7 +1191,7 @@ automated rollbacks. Those are the step stones for more possibilities.
 \gls{nprt} reduced the efforts of maintenance work on own code. The Engineers were able to
 test changes in production quickly and have a small feedback loop.
 
-The engineers working for DIN are still sceptical to have unsupervised deploys. But in the
+The engineers working for \gls{din} are still sceptical to have unsupervised deploys. But in the
 example of GapFish, the engineers became confident about the automation of the deployment
 and regression test in production and start to use unsupervised deploys and tests more often.
 
