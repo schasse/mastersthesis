@@ -38,9 +38,10 @@ Chapter~\ref{chap:problem} elaborates on the problem of the amount of maintenanc
 demonstrates how the thesis contributes to solve the issue.
 
 \paragraph{\ref{chap:background} \nameref{chap:background}}
-Chapter~\ref{chap:background} briefly summarizes the background and provides good
-references to the practices and technologies, which the thesis presumes. Furthermore, it
-shortly explains the major kubernetes resources on the example of a 3 tier webapp.
+The glossary explains the practices and techniques required in order to understand the
+problem in depth. In contrast to this, chapter~\ref{chap:background} briefly explains the
+major kubernetes resources on the example of a 3 tier webapp and names the software
+dependencies.
 
 \paragraph{\ref{chap:macro} \nameref{chap:macro}}
 Chapter~\ref{chap:macro} describes the conceptual macro view of \gls{nprt}. The text goes
@@ -274,8 +275,8 @@ concepts of the most technologies.
 
 \section{Typical 3 Tier Webapp in Kubernetes}
 
-I'll explain how you would implement a typical 3 tier webapp in kubernetes as it helps a
-lot to understand the next chapters. You would implement the application tier with a
+I'll explain the typical implementtion of a 3 tier webapp in kubernetes as it helps a lot
+to understand the next chapters. You would implement the application tier with a
 deployment, which monitors the presence of a specified number of stateless pods. A service
 acts as a loadbalancer and selects the pods and forwards the request. The data tier can be
 implemented with a statefulset, which monitors the presence of the stateful pods. Those
@@ -328,12 +329,12 @@ served to make experiments with production traffic.
 \chapter{NPRT Approach}
 \label{chap:macro}
 
-In \gls{nprt} a deployment system deploys a nonfunctional change in form of a canary to
-the production environment. The new version is compared with the stable version side by
-side in production. In case the new version shows a regression, the deployment system will
-automatically roll it back. The novelty of the approach is that it creates a feedback loop
-between development and production, which is fully automatable. The following elaborates
-on the term in more detail.
+In \gls{nprt} the pipeline deploys a nonfunctional change in form of a canary to the
+production environment. The new version is compared with the stable version side by side
+in production. In case the new version shows a regression, the pipeline will automatically
+roll it back. The novelty of the approach is that it creates a feedback loop between
+development and production, which is fully automatable. The following elaborates on the
+term in more detail.
 
 \emph{Nonfunctional} refers to the change, which the monitoring system monitors. Usually
 maintenance changes are nonfunctional changes, for instance performance improvements or
@@ -581,10 +582,12 @@ horizontally scaled for more concurrent deploys.
 
 
 \section{Deployer Interface}
+\label{sec:interface}
 
-Requests to deployer are very simple. Curl or any other http client serves as a client. In
-result Deployer can easily integrate with other systems for instance from a \gls{ci}
-system. Another way to interact with Deployer is to use the depctl command line interface.
+I designed requests to Deployer to be simple and usable. Curl or any other http client
+serves as a client. In result Deployer can easily integrate with other systems for
+instance from a \gls{ci} system. Another way to interact with Deployer is to use the
+depctl command line interface.
 
 The depctl command line interface wraps http calls and assists developers with automatic
 completion of the repository to deploy and completion of the version to deploy. With
@@ -729,46 +732,52 @@ application version. Deployer picks the correct image tag belonging to the versi
 reference from the \gls{vcs}.
 
 Deployer modifies the resource definitions only when the image tag is unspecified. In case
-a deployment resource already specifies an image tag, for instance version 0.8.0 for a
-statsd image. Deployer does not change the specified tag. The reason is that the \gls{ci}
-does not build images, which are maintained by somebody else. Such images doe not have a
-tag the specific version reference of the \gls{vcs}. One example is an additional statsd
-container running as a sidecar in the application pod.
+a deployment resource already specifies an image tag, for instance somebody else maintains
+the image. Then Deployer does not change the specified tag. The reason is that the
+\gls{ci} does not build images, which are maintained by somebody else. Such images do not
+have a tag with the specific version reference of the \gls{vcs}. One example is an
+additional statsd container running as a sidecar in the application pod.
 
-The other case would be that the tag is not specified in the kubernetes resource. Then
-deployer appends the tag to the container image according to reference the client provided.
+The other case would be that kubernetes resource defintion leaves the tag specification
+open. Then deployer appends the tag to the container image according to reference the
+, which the client provided.
 
-The next step is to communicate the modifications to the kubernetes api (6). Deployer
-sends the modified resources to the kubernetes api. The kubernetes master manages the
-rollout of the changes. It swaps out one pod by another and replaces the old version with
-the new version. The procedure is called rolling update.
+The next step is to communicate the modifications to the kubernetes
+api~\texttt{(6)}. Deployer sends the modified resources to the kubernetes api. The
+kubernetes master manages the rollout of the changes. It swaps out one pod by another and
+replaces the old version with the new version. The procedure is called rolling update.
 
 \subsection{Errorhandling}
 
-Sometimes something unexpected is happening during the deployment. This can be for example
-that a verification of deployer fails, such as deployer does not find the tag
-corresponding to the commit. Or maybe kubernetes api server returns an error for any
-reason. If something like the described happens, deployer will inform the developers. We
-distinguish between two different clients. One is, a \gls{ci} system requests the
-deploy. In that case our error report system\footnote{In technologies section, we mention
-  Bugsnag. This is the error report system we use.} come to play. Deployer raises an error
-and the error is sends it to the error report system (7), which collects all the errors of
-any system. The error report system informs the developers via sending notifications to a
-specified channel. We have for example a slack chat channel, on which the person on call
+Sometimes something unexpected happens during the deploy. For example Deployer deos not
+find the tag to the corresponding commit hash, then the verification fails. Or another
+example is, the kubernetes api server returns an error. If this happens, Deployer will
+inform the developers. Deployer distinguishes between two different clients.
+
+The first one is a \gls{ci} system, which sent the deploy request. In this case the error
+report system\footnote{Chapter~\ref{chap:background} mentions bugsnag. The application of
+  GapFish uses it for error reporting.} comes into play. Deployer sends the error to
+report system ~\texttt{(7)}, which collects the errors of multiple systems. The error
+report system informs the developers via sending notifications to a specified
+channel. GapFish has for example a slack chat channel, on which the person on call
 subscribes and receives notifications from.
 
-The other client is a developer sending a deploy request manually. In that case the
-developer typically uses depctl. Deployer discriminates usual curl requests from requests
+The other client is a developer sending a deploy request manually. In this case the
+developer typically uses depctl. Deployer differentiates usual curl requests from requests
 with depctl. Instead of utilizing the error report system, deployer answers the http
 request with an errorcode and a message in the http body. As mentioned earlier the
 communication with deployer is synchronous.
 
+In result developers always receive feedback as fast as possible in case a deploy
+fails. The information receives the developer in both cases, whether the \gls{ci} system
+triggers a deploy or a developer manually triggers a deploy.
+
 \section{Testing Architecture}
 \label{test_architecture}
 
-In this section we look at the testing architecture inside the production cluster. A few
-canary pods in the new version run next to the stable version. These pods are able to
-receive and respond to production traffic.
+This section explains the testing architecture inside the production cluster. Few canary
+pods in the new version run next to the stable version. These pods are able to receive and
+respond to production traffic.
 
 \begin{figure}[htbp] \centering \includegraphics[width=\textwidth]{deployer_flow}
   \caption[nprtflow]{Testing Flow Implementation.}
@@ -776,136 +785,134 @@ receive and respond to production traffic.
 \end{figure}
 
 
-To deploy a canary, the client sends the deploy canary request to a separate http path ,
-which is different from the usual deploy and which deployer defines as well. The client
-needs to provide the same arguments as for the deploy request. Namely those arguments are
-the service, which is required, and either a commit hash, a tag or both. When deployer
-receives the canary request, it proceeds almost identical to the deploy request. The steps
-are verification, fetching the version, resource modification and application to the
-kubernetes api. The difference to the deploy lies in the modification step. Deployer
-creates a new canary deployment resource.
+To deploy a canary, the client sends the deploy canary request to a separate http path,
+which section~\ref{sec:interface} previously describes. The client needs to provide the
+same arguments as for the deploy request. Namely those arguments are the service and
+either a commit hash, a tag or both. When Deployer receives the canary deploy request, it
+proceeds almost identical to the deploy request. The steps are verification, fetching the
+version, resource modification and application to the kubernetes api. The difference to
+the deploy lies in the modification step. Instead of deploying a new version, Deployer
+creates a additional new canary deployment resource.
 
-In the modification step deployer does not only change the container image version, but it
-also changes the name of the deployment, which would then represent another
-deployment. Deployer names this new deployment resource with the suffix canary. Since
-deployer changes the name, kubernetes does not identify the canary deployment as the
-original deployment. Instead it treads the canary deployment as a separate resource and
-creates pods for that deployment in the different version, which deployer specified.
+In the modification step Deployer does not only change the container image version, but it
+adds another canary deployment. Deployer names the new deployment resource with the name
+of the original deployment resource and a canary suffix. Kubernetes differentiates the
+canary deployment from the original deployment. Kubernetes creates pods for the additional
+canary deployment in the different version, which Deployer specified.
 
-The service though, which does our loadbalancing, selects both. It selects the pods which
-the original deployment created. And it selects the pods, which the canary deployment
-created. Hence the service selects its pods on account of the label and the original and
-the canary deployment share some of their labels. An example would be a shared label like
-'deploy=webserver' and tow different labels like 'track=stable' respectively
-'track=canary'.
+The service though, which does the loadbalancing, selects both. It selects the pods which
+belong to the original deployment. And it selects the pods, which belong to the canary
+deployment. Hence the service selects its pods in account to the label. The original and
+the canary deployment share a subset of their labels. A shared label would be for instance
+'deploy=webserver'. And the two differentiating labels would be 'track=stable' and
+respectively 'track=canary'.
 
-As it was mentioned in the previous chapter, we want to have fewer pods in the canary
-version than in the stable version. Deploy does this simply by scaling the canary
-deployment to only one replica.
+I designed the canary deploy to result in fewer canary pods than stable pods in order to
+reduce risk as the previous chapter describes. Deployer does this simply by scaling the
+canary deployment to a single replica.
 
 \section{Metrics}
 
 \subsection{Metric Collection}
 
-Now we want to focus on how we collect the metrics during the two versions are in
-production. We differentiate between two different collection mechanisms. Metrics
-collected from hosts and metrics from applications.
+This section focuses on how metrics are being collected during the two versions are in
+production. There exist two separate collection mechanisms. Those are hosts, which collect
+metrics, and the application instrumentation, which sends metrics.
 
-Firstly the group of metrics, which are picked up from the host. The host has information
-about the pods' utilization of cpu and memory. So on each kubernetes host, there is a
-monitoring agent running, which watches the \verb!/proc! directory and the docker
-daemon. The agent picks up the information frequently and then sends it to our monitoring
-system.
+Firstly the group of metrics, which the host picks up. The host has information about the
+pods' utilization of cpu and memory. Accordingly, on each kubernetes host, a monitoring
+agent runs, which watches the '/proc' directory and the docker daemon. The agent picks up
+the information frequently and then sends it to the monitoring system.
 
-Secondly the group of metrics, which the application sends. We need to have the
-application instrumented in order to collect metrics like throughput, latency and
-errorrate. In practice we use the statsd protocol and statsd server for that
-purpose. There are statsd libraries for the most languages and frameworks and you get the
-instrumentation without much effort. The instrumented application sends the data to the
-statsd server after each request and the statsd server aggregates the data. From there the
-statsd server forwards the aggregated metrics data to our monitoring system.
+Secondly the group of metrics, which the application sends. In order to collect the
+metrics, the application needs to be instrumented. Examples for those metrics are
+throughput, latency and errorrate. In practice, I instrumented the applications to use the
+statsd protocol and statsd server for that purpose. Simple statsd libraries for most
+languages and frameworks exist even though the instrumentation could be better. In case
+there is a good instrumentation developers can use the without much effort. The
+instrumented application then sends the data to the statsd server after each request and
+the statsd server aggregates the data. From there the statsd server forwards the
+aggregated metrics data to the monitoring system.
 
-It is important to correctly label the metrics independently from which version we collect
-the metric. The monitoring system is then able to distinguish between the metrics of the
-stable version and the metrics of the canary version. For the first group of metrics
-collection, the monitoring agent can pick up the label from the labeled pod. And for the
-second group of metrics collection the instrumentation code of the application picks up
-the label from environment variables, which have been set by deployer as either stable or
-canary.
+It is important to correctly label the metrics in order to decide whether a canary or a
+stable version sends the metric. The monitoring system is then able to distinguish between
+the metrics of the stable version and the metrics of the canary version. For the first
+group of metrics collection, the monitoring agent can pick up the label from the labeled
+pod. And for the second group of metrics collection, the instrumentation code of the
+application picks up the label from environment variables, which Deployer has set to
+either stable or canary.
+
 \subsection{Metric Comparison}
 \label{sec:metric_comparison}
 
-Another part of \gls{nprt} is the comparison within the monitoring system.
+The comparison between the canary and the stable version is the part of \gls{nprt}, which
+creates the feedback loop.
 
-The monitoring system consists basically out of a timeseriesdatabase, a graphing user
+The monitoring system basically consists out of a timeseriesdatabase, a graphing user
 interface and an alarm system. The timeseriesdatabase persists the metrics. And the user
-can define graphs from those metrics, which the user interface displays. Moreover you can
-define rules in the alarm system, which monitor the metrics in the timeseriesdatabase.
-In case the metrics violate any rule, the monitoring system sends a notification.
+can define graphs from the metrics, which the user interface then displays. Moreover you
+the monitoring systems enables developers to define rules, which monitor the metrics in
+the timeseriesdatabase. In case the metrics violate any rule, the monitoring system sends
+a notification.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{metric_comparison}
   \caption[metric_comparison]{Comparing the stable version with the canary version.}
-  \label{fig:3tierwebapp}
+  \label{fig:metrics_comparison}
 \end{figure}
 
-Let's have a closer look on those rules. The figure shows the example of a rule on the
-latency. The red continuous line is the latency of the stable version. The yellow
-continuous line is the latency of the canary version. The graph compares them side by
-side. Then we have a threshold, which is the red dotted line. The threshold depends on the
-latency of the stable version and is in our figure always 50ms higher. In case the latency
-of the canary goes above the threshold, the graph would violate the rule and trigger an
-alarm. The alarm would trigger a webhook, which would roll back the canary instance.
+Figure~\ref{fig:metric_comparison} pictures an example of a rule on latency. The red
+continuous line is the latency of the stable version. The yellow continuous line is the
+latency of the canary version. The graph compares them side by side. The red dotted line
+depicts a threshold. The threshold depends on the latency of the stable version and is
+always 50ms higher than the stable version in the figure. In case the latency of the
+canary goes above the threshold, the canary violate the rule and triggers an alarm. The
+alarm is in fact a webhook, which would roll back the canary instance.
 
-Next we have a look at the metrics, we want to monitor:
+Next I elaborate on the metrics to monitor: Latency, utilization, errors and throughput.
 
-\paragraph{Latency} of successful requests. This is a performance metric. And the
-monitoring rule should identify serious regressions. To achieve that, we use median or
-other percentiles so that outliers do not trigger a rollback, but only serious
-regressions do.
+Latency defines the duration of successful requests. Latency is a typical performance
+metric of a webserver. Utilization mostly refers to metrics such as CPU and Memory
+consumption. The errorrate is defined as counted error in a time period. Applications
+sometimes have the problem of reporting too many errors without focus on important
+ones. Also throughput of successful requests can be an indicator of the health of an
+application.
 
-\paragraph{Utilization} refers to the metrics CPU and Memory consumption. We can have the
-same aggregation window and aggregation method like we have it with Latency.
+Deviations between the stable and the canary always exist. The monitoring rules should
+identify problematic regressions. This is oftentimes hard to achieve. The use of median or
+percentiles instead of averages help to define a good monitor.
 
-\paragraph{Errors} We simply count errors. Best is an application, where no errors
-occur. Then we can trigger a rollback of the canary instance in case it raises an
-error. Nevertheless most applications are not free of errors. On account to this, we
-rollback in case the canary raises a new error, which the application never has raised.
+\subsection{Metric Parameters}
 
-Throughput is not a metric we define a rule on. The version of the canary does not have
-any influence on throughput. The production environment determines throughput. Throughput
-is relevant for the parameters of the other metrics, though.
+A comparison includes parameters such as a threshold, an aggregation window and a duration
+above the threshold. These parameters need adjustment in order to calibrate the rule and
+have a good recall and precision. The following gives insights on the factors, which
+affect those parameters.
 
-\subsection{Metric Parameters for Latency and Utilization Metrics}
+The ratio of the stable and canary metrics as well as the throughput affect the size of
+the \emph{aggregation window}. Assuming the application has a very low throughput of only
+1 request per minute and a ratio of 2 stable to 1 canary instance. In case the aggregation
+window is 1 minute large, then either the stable pods would have 1 request or the canary
+pod would have 1 request. This would be an improper aggregation window. Instead the
+aggregation window could be rather large with a size of 120 minutes. As result, the stable
+pods would receive 80 requests and the canary pods would receive 40 requests. This would
+be a much more appropriate aggregation window. Consequently the lower the throughput and
+the lower the stable canary ratio is, the larger should the window be.
 
-The ratio of stable and canary instances as well as the throughput affect the size of the
-\emph{aggregation window}. What would we do in case we had a very low throughput of only 1
-request per minute and a ratio of 2 stable instances and 1 canary instance? If we had
-chosen a small window of 1 minute, we would have had either 1 request on the stable or 1
-request on the canary instance. That would not be a good comparison. Instead we choose a
-rather big window of 120 minutes. Then we would have 80 requests on the stable instance
-and 40 on the canary instance. This is a definitely better comparison. Consequently the
-lower the throughput and the lower the stable canary ratio is, the bigger needs the window
-to be.
+The distribution of throughputs and latencies over the routes of the application affects
+which percentile to use. I make an example: If there would be a single route, which has a
+low throughput and a very high latency compared to other routes. The average would be an
+improper \emph{aggregation}. The outliers of low latencies would affect the
+average. Instead a percentile or the median would represent the latency much better.
 
-The distribution of different throughputs and different latencies over all the routes of
-the application affects which \emph{percentile} to use. I make an example: If we had one
-single route which has a very high throughput and a very low latency compared to all other
-routes, then we would not choose the median. Instead we would choose the 95th percentile
-to well represent the routes with a high latency.
+The range of throughputs and latencies also affects the \emph{threshold}. If the
+application had a larger range of throughputs and latencies, a proper throughput would
+need to a higher. However we can affect the volatility of the metrics by choosing a larger
+aggregation window. This allows to lower the throughput.
 
-The range of the different throughputs and the different latencies also affects the
-\emph{threshold}. If we had a bigger range of throughputs and latencies, we would need to
-choose a higher threshold. However we can affect the volatility of the metrics by choosing
-a bigger aggregation window. This allows as to lower the throughput.
-
-We see that the higher the throughput is and the distribution is more evenly, the better
-will the regression testing work.
-
-The monitoring system we were using in our evaluation, was datadog. But there is also the
-opens source monitoring system prometheus, which provides very similar features. Also
-google has a similar monitoring system in there internal infrastructure.
+As a result, application with higher and the more evenly distributed throughputs have
+better metrics in order to define proper monitoring rules.
 
 \chapter{Evaluation}
 \label{chap:eval}
@@ -1228,6 +1235,11 @@ loadbalancer. It does not provide any automation for the deploy itself. Deployer
 implements the deploy automation. It could be interesting to combine the two tools to have
 more testing strategies available.
 
+I used datadog in the evaluation as monitoring system. However there exist also other
+monitoring systems, such as the open source monitoring system prometheus, which provides
+very similar features. Google has a similar monitoring system in there internal
+infrastructure~\cite{sre_monitoring}.
+
 Lastly I am going to mention publications, which deal with metric analysis. Zimmerman
 motivates the need for data scientists software teams~\cite{data_science_role2} and
 identifies the multiple roles~\cite{data_science_role}. Farshchi et al. evaluates a
@@ -1242,6 +1254,8 @@ of error analysis models.
 \chapter{Conclusion}
 \label{chap:conclusion}
 
+
+% design decsion: argumentation of historical comparison
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
 production system with the metrics of the production system of the day before or even the
@@ -1259,6 +1273,7 @@ traffic, but also the advantage, that there is less risk involved. We illustrate
 advantage of less risk now by demonstrating the process of deploying the second version
 and comparing it to the old version.
 
+% deployer creates canaries and compares. don't know where to put this
 Ok, if you compare the two versions with each other, you will do it as follows. Deployer
 create another deployment resource from the one that already exists. Deployer calls this
 other deployment resource canary deployment. The creation of the canary deployment
@@ -1266,6 +1281,7 @@ resource has the effect, that not only pods of version I are running in producti
 there is pods running in version II as well. Similar to the regular deployment, the canary
 deployment defines how many pods in which version are supposed to be running.
 
+% only 25% canaries -> less risk
 We want to test, if there is a regression respectively a degradation between the two
 versions. On account to the fact, that a regression is possible and when introducing
 change, a regression is very likely, we at least want to affect as little users. So what
@@ -1278,6 +1294,7 @@ This certainly lowers the risk of failure and that users are affected by a
 regression. Even if the request of specific single user hits the degraded pod, the next
 request of the same user has the probability 75\% to hit the old stable version.
 
+% limitation to nonfunctional changes
 A limitation to this technique is that the new version II needs to be able to run side by
 side with the old version I. In most cases, that means that the new version needs to be
 semantically almost identical to the old version. So version II should not provide
@@ -1285,11 +1302,13 @@ functional changes compared to version I, but only nonfunctional changes. Howeve
 means we cannot test new feature like in an A/B test. Instead we can test performance
 improvements, refactoring or updates.
 
+% reference to canary deploy
 They call this technique canary releasing. Again, you change would only change a part of
 the production system, the canary instead of the whole. Devops~\cite{cd_humble_deploy}
 examines this technique in more detail.
 % TODO: difference to canary testing
 
+% limitation to nonfunctional changes
 Assuming we would want to test features in production, the current implementation of the
 technique is not suitable. If we wanted to do that, we would need to include the
 loadbalancer. The loadbalancer would need to remember which user is proxied to which
@@ -1301,6 +1320,7 @@ same user will hit on the same potentially degraded service and it is not that s
 automatically provide a stable service to the user. Due to simplification, we did decide
 to not include the implementation of the loadbalancing.
 
+% two versions in production suboptimal, rolling updates presume it
 We want to state that it is suboptimal to run multiple versions in the cluster like also
 mentioned in devops TODO. Rolling updates require it to be able to have two versions in
 production, though. And kubernetes utilizes rolling updates as a technique to provide zero
@@ -1310,6 +1330,7 @@ same time in production. Deployer ensures that by either updating a deployment, 
 canary deployment, or creating a deployment in a new version, just before it deleted the
 canary deployment.
 
+% enhancement to use gemupdater
 Especially to test the latter, security updates, is absolutely appealing, since we can
 fully automate the procedure of updating the dependencies of our application in a fully
 automated and in a way, which would have a very low risk. We could have a job, which
@@ -1318,6 +1339,7 @@ the continous integration system runs the pre deploy tests, deployer deploys the
 and even in production we check the update for an regression. We could save a lot of
 developer time, who would usually need to take care of the whole updating procedure.
 
+% low risk because of automatic rollbacks
 And even if there is a degradation in production, a small amount of requests is affected,
 because we send only a reasonable amount of traffic, which arrives at the same time, to
 the potentially degraded version. Further more we limit the time the degraded version is
@@ -1325,6 +1347,7 @@ in production, because we automate detection of the degradation and the rollback
 old stable version.
 
 
+% argument pro microservices
 We let this running for a specified time in production. We need to decide on how long we
 want to compare the versions. That depends on how much traffic is in production, because
 when we would few traffic in production, we wanted to compare for a longer time. We
@@ -1337,20 +1360,19 @@ microservice environment, the deploy affects only a specific service, hence litt
 the whole application. As a result deploys are less frequent and we have more time for the
 canary in production.
 
+% advantage: no need to create test traffic
 We do not need to generate the test traffic, we do not need to weight traffic and we do
 not need to think about edge cases. These are all advantages, that we get for free from
 the production traffic. We save time and work, because the users generate the test data,
 instead of us.
 
+% advantage: edge cases included
 The users create more requests and with that test data for parts of the application, which
 are more important. Consequently the users reasonably weight the test data. And lastly the
 longer we run the comparison in production, users will produce more of those edge cases,
 which would be hard to make up.
 
-We are aware of that the two compared versions do not receive the very same
-requests. Hence the comparison is not perfect. In future work we could extend the
-technique to achieve that.
-
+% request cloning to staging
 We could simply clone the requests, send the original request to the stable version and
 send a cloned request to the canary. The loadbalancer could then differentiate between the
 two responses of the two versions. We would reject the response of the canary. And we
@@ -1421,3 +1443,5 @@ grained open source instrumentation for popular application frameworks and webse
 In order to be able to better maintain the metric comparisons, these would need to go into
 version control as well. With datadog it was not possible to version those tests,
 though. With other tools for instance prometheus this may be possible.
+
+% extend nprt for functional changes by including a loadbalancer
