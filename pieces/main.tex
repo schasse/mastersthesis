@@ -8,28 +8,31 @@ practices or even cultures, which break down the silos between the development a
 operation teams and their conflicting goals. For instance Amazon and Facebook successfully
 use those practices to build and run their software products~\cite{build_run,dev_at_fb}.
 
-However the responsibility of the maintenance of a software product changed. A single team
-is responsible in two aspects: their own code and the dependencies they are using and
-relying on. The need for maintenance of own code exists, for instance with nonfunctional
-changes concerning performance, scalability or bug fixes. Code written by others needs to
-be maintained as well via adapting and updating to new versions.
+However the responsibility of maintaining a software product changed. A single team is
+responsible in two aspects: their own code and the dependencies they are using and relying
+on. The need for maintenance of own code exists, for instance with nonfunctional changes
+concerning performance, scalability or bug fixes. Code written by others needs to be
+maintained as well via adapting and updating to new versions.
 
 Devops practices interconnect operations including those maintenance necessities with
 development work. Nevertheless there is room for improvement in terms of continuous
 automatable processes regarding maintenance. The \gls{cd}
 pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
-supports only until the deploy whereas maintenance involves more than just the delivery.
+covers the process only up to the deploy whereas maintenance involves more than just the
+delivery.
 
-Instead of employing more engineers, Google faces workforce problems with
+Instead of employing more engineers, Google combats workforce problems with
 automation~\cite{sre_automation}. They recognized that automation does not only save
-valuable programmer time, furthermore it adds reliability to the process. Google explains
+valuable programmer time, it furthermore adds reliability to the process. Google explains
 how valuable automation is and successfully illustrates it with their site reliability
 engineering approach~\cite{sre_intro}.
 
-This thesis proposes with \gls{nprt} a practice, which faces the amount of maintenance
+This thesis proposes with \gls{nprt} a practice which addresses the amount of maintenance
 work. The practice is designed for teams, which have the responsibility of developing and
 operating their own code as well as code dependencies. \gls{nprt} extends the \gls{cd}
-pipeline and automates continuous testing of nonfunctional changes in production.
+pipeline and automates continuous testing of nonfunctional changes in production. I
+implemented \gls{nprt} at two companies, \gls{din} and GapFish, in order to make an
+evaluation.
 
 \section{Thesis Outline}
 
@@ -56,8 +59,8 @@ in practice. The chapter also elaborates on the collection and comparison of the
 \paragraph{\ref{chap:eval} \nameref{chap:eval}}
 Chapter~\ref{chap:eval} evaluates \gls{nprt} in three aspects. Firstly, it discusses the
 performance with the help of experiments. Secondly, it provides a qualitative evaluation
-of \gls{nprt}. And lastly, it relates \gls{nprt} to other practices, tools and
-sophisticated metric analysis.
+of \gls{nprt} based on the experiences at \gls{din} and GapFish. And lastly, it relates
+\gls{nprt} to other practices, tools and sophisticated metric analysis.
 
 \paragraph{\ref{chap:conclusion} \nameref{chap:conclusion}}
 Chapter~\ref{chap:conclusion} summarizes the thesis and suggests more automation
@@ -66,7 +69,7 @@ opportunities and extensions to the implementation.
 \chapter{Problem Definition}
 \label{chap:problem}
 
-\section{Maintenance Responsibility Shifts}
+\section{Maintenance Responsibility Shift}
 
 % devops/microservices aproach successful development and operation
 The devops~\cite{devops_definition} approach and the
@@ -75,9 +78,9 @@ the conflicting tension~\cite{sre_intro} between a development and operation tea
 one hand the aim is to change the software product quickly and on the other hand to
 provide a stable and reliable software product of high quality. Vogels, the chief
 technology officer of amazon, once said in an interview ”You build it, you run
-it”~\cite{build_run}. This cite represents the awareness of teams to not only be
+it”~\cite{build_run}. This quote represents the awareness of teams to not only be
 responsible for the development and deliver features. Moreover the team is also
-responsible of operating their product in production, becuase operation is an essential
+responsible of operating their product in production, because operation is an essential
 part of a successful software product. One team is consequently responsible of the
 development, operation and maintenance of their own code.
 
@@ -85,11 +88,11 @@ development, operation and maintenance of their own code.
 Furthermore the responsibility of software dependencies shifts. In the past, development
 teams delivered code and depended on the previously installed software
 dependencies. Operation teams were responsible of maintaining those installed
-dependencies. Virtualization made a change. Teams operating virtual infrastructure,
-operate and maintain the hardware and software of this infrastructure. They do not
-maintain the specific dependencies of the code, which the development team develops. The
-development team can choose which dependencies they want to use. Accordingly there is a
-clear isolation between the dependencies of the virtual machine infrastructure and the
+dependencies. Virtualization changed this. Teams operating virtual infrastructure operate
+and maintain the hardware and software of this infrastructure. They do not maintain the
+specific dependencies of the code, which the development team develops. The development
+team can choose which dependencies they want to use. Accordingly there is a clear
+isolation between the dependencies of the virtual machine infrastructure and the
 development team.
 
 % contra arg vms operated by ops team
@@ -112,12 +115,13 @@ software product.
 \section{Lack of Focus on Maintenance}
 
 % is risky
-If we did not do maintenance properly, there is a risk of decreasing the quality of the
-software product. For instance there can be security vulnerabilities. Those can be very
-harmful to the company of the software product. If we do not maintain the software
-products properly more issues arise, such as bugs or performance problems. On account to
-that, maintaining a software product comes with responsibility. If we disregard
-maintenance and operations work, the quality of the software product suffers.
+If developers did not do maintenance properly, there is a risk of decreasing the quality
+of the software product. For instance there can be security vulnerabilities. Those can be
+very harmful to the company of the software product. If developers do not maintain the
+software products properly more issues arise, such as bugs or performance
+problems. Therefore, maintaining a software product comes with responsibility. If
+developers disregard maintenance and operations work, the quality of the software product
+suffers.
 
 % operate and maintaining software means: config, monitoring, incident management
 What does it mean to operate and maintain a software product in production? It is all the
@@ -130,9 +134,9 @@ security patches.
 % (maintenance is a lot of work and) is easily disregarded in favor of velocity
 Agile and continuous practices focus primarily on feature development. Those practices
 altered software development to deliver features faster into production. Highsmith argues
-velocity kills agility~\cite{velocity_kills}. Also Fitzgerald observes the issue of a
+”velocity kills agility”~\cite{velocity_kills}. Also Fitzgerald observes the issue of a
 ”misplaced focus on speed rather than continuity”~\cite{continuous_fitzgerald}. Focusing
-on development velocity only, has a major drawback. Operating software in production and
+on development velocity only has a major drawback. Operating software in production and
 maintaining it needs to be done properly to ensure the quality of a software
 product. Companies easily disregard the importance of operation and maintenance of the
 software product.
@@ -141,7 +145,7 @@ software product.
 \section{Underestimated Amount of Maintenance Work}
 
 % maintenance of the written code itself is a major source of changes
-The software written by the development team needs to be maintained as well. As we
+The software written by the development team needs to be maintained as well. As I
 illustrated previously, different issues occur in production. For instance performance and
 scaling issues or simply bugs. The developers need to refactor the software without
 changing the actual functionality. Those changes are mostly invisible or do not alter any
@@ -149,13 +153,13 @@ function visible to users. At Facebook~\cite{dev_at_fb} those invisible changes 
 than 50\% of the total changes.
 
 % dependencies are becoming more
-Moreover Software products have a high amount of dependencies. This totally makes sense,
-because when programming a software you do not want to do it from scratch. Firstly the
+Moreover, software products have a high amount of dependencies. This totally makes sense,
+because when programming a software you do not want to do it from scratch. Firstly, the
 dependencies are different abstraction levels, such as a processor, a programming language
-and for instance a programming framework. And secondly the dependencies are modules which
-encapsulate a certain functionality. Those are very common functionalities for
-applications, for instance authentication of a user. The abstraction as well as the
-reusable software modules make it easier and faster for developers to reach their goals.
+and a programming framework. And secondly, the dependencies are modules which encapsulate
+a certain functionality. Those are very common functionalities for applications, for
+instance authentication of a user. The abstraction as well as the reusable software
+modules make it easier and faster for developers to reach their goals.
 
 % many versions in open source
 The open source communities change and release their software continuously. Sometimes
@@ -163,9 +167,9 @@ those changes consist of new feature, often times just refactorings and every no
 security patches. This results in releases and new versions.
 
 % almost every software product relies on open source
-In the web, there is rarely a software product, which does not depend on open source
+On the web, there is rarely a software product which does not depend on open source
 software. The most web servers run linux and there are many popular open source
-frameworks, which make up the basis of the running software products.
+frameworks which make up the basis of the running software products.
 
 % RedHat/Ubuntu companies provide bundling and update service
 Companies like RedHat or Ubuntu provide enterprise support to those open source
@@ -186,53 +190,57 @@ very same applies to open source frameworks such as django or ruby on rails.
 % it is much work though
 One reason for the introduction of microservice is the flexibility to update only a small
 specific part of the whole software product~\cite{microservices_fowler}. With a
-microservice architecture we are able to update a single service without having to upgrade
-the whole product at once. We can choose the microservice for the update because it is
-more important. Or we can update one microservice by another without the major problem of
-upgrading the whole software product at once. Consequently this means we need to update
-more often and the amount work of updates itself is more.
-
-% compensation by automation instead of more humans
-There are several things you can do to keep up with the amount of
-work. Facebook~\cite{dev_at_fb} for example hires more developers. This is expensive
-though. A much cheaper solution is automation. We should automate some of the maintenance
-work.
+microservice architecture, developers are able to update a single service without having
+to upgrade the whole product at once. Developers can choose a microservice for the update
+depending on its importance. Or developers can update microservices one by one without the
+major problem of upgrading the whole software product at once. Consequently this means
+developers need to update more often and the amount of work of updates itself is higher.
 
 \section{Disregard of Automation for Maintenance Work}
 
+% compensation by automation instead of more humans
+There are several things companies can do to keep up with the amount of maintenance
+work. Facebook~\cite{dev_at_fb} for example hires more developers. This is expensive
+though. A much better solution is automation. Developers should automate some of the
+maintenance work.
+
 % practices exist which connect dev and ops
 You could argue that devops practices already exist and connect development and operations
-including maintenance of a software product. However the focus lies mostly on testing the
+including maintenance of a software product. However, the focus lies mostly on testing the
 quality of a change in a lean fashion and to reduce risk of a change in
 production~\cite{devops_definition}. It is true that those practices help to deliver
-changes faster to production and help to detect issues at low risk. Nevertheless
+changes faster to production and help to detect issues at low risk. Nevertheless,
 monitoring and reacting to errors requires manual work.
 
 % testing in production is already done
-There exist practices, which already enable production testing~\cite{dev_at_fb}. For
-example A/B testing, where you compare two different versions in production. Or canary
-releasing, with which you change only a few replicated parts of the production environment
-to reduce risk. There is also shadow releasing, where users are not affected by the
-change, which goes into production. Netflix tests its services with the simian army in
-production to detect unforeseen events in a controlled environment~\cite{antifragile_org}.
+There exist practices which already enable production testing~\cite{dev_at_fb}. One
+example is A/B testing, where you compare two different versions in production. Another
+canary releasing, with which you change only a few replicated parts of the production
+environment to reduce risk. There is also shadow releasing, where users are not affected
+by the change, which goes into production. Netflix tests its services with the simian army
+in production to detect unforeseen events in a controlled
+environment~\cite{antifragile_org}.
 
-% containerization takes out risk for updates
-Containerization takes out the risk of updating a service. Morris describes phoenix
+% containerization reduces risk for updates
+Containerization reduces the risk of updating a service. Morris describes phoenix
 replacement in immutable infrastructure~\cite{infra_as_code_phoenix}. Kubernetes has the
-approach of rolling updates, which implement the same practices. A containerized ecosystem
-is typically immutable. Rather than changing a running container, we would create a new
-container based on an updated image including the changes to deploy. After the new
-container was started, we can kill the old container. Usually an image repository holds
-every built container image version. Those saved images allow us to easily rollback to a
-previous version. Hence updates are less risky in a containerized immutable
-infrastructure.
+approach of rolling updates which implements the same practices. A containerized ecosystem
+is typically immutable. Rather than changing a running container directly, the container
+image repository would receive and store an updated container image including the changes
+to deploy. Then kubernetes would create a new container based on that updated image. After
+kubernetes started this new container, it can stop the old container. The container image
+repository still stores every container image version. Those saved images allow to easily
+rollback to a previous version. Automation enables developers to deploy more frequently
+which usually leads to deploys with few changes. Few changes per deploy and the ability to
+rollback makes updates less risky. In result, updates in an automated containerized
+immutable infrastructure are less risky compared to a manually operated infrastructure.
 
 Murphy et al. illustrate the value of automation~\cite{sre_automation}. Software
 reliability engineers automate tasks to firstly save the valuable human resources and
-secondly take risk out of the tasks because of human errors. This is a good approach and
-focuses the quality of the software product.
+secondly reduce the risk in those tasks because of human errors. This is a good approach
+and focuses the quality of the software product.
 
-Immutability takes out some of the risks and automation brings value. Combining those two
+Immutability reduces some of the risks and automation brings value. Combining those two
 arguments, there is an obvious need of an automated process for updating services.
 
 % cd provides good automation, but has lack of maintenance focus
@@ -242,7 +250,7 @@ and features into production. It has the lack of good practices though to mainta
 software product.
 
 \gls{cd} does not focus on the maintenance work and the devops approach does not focus on
-automating the maintenance work as previously examined. We conclude that there is a need
+automating the maintenance work as previously examined. I conclude that there is a need
 for practices, which continuously support and automate maintenance work.
 
 \section{Contribution of this Thesis}
@@ -258,54 +266,53 @@ monitor the change, having it in production at low risk. And third in case of a 
 automatically roll back.
 
 I implemented the tool, Deployer, in order to connect essential components of the
-practice, \gls{nprt}. The thesis evaluates the performance of the tool as well as the the
+practice, \gls{nprt}. The thesis evaluates the performance of the tool as well as the
 practice itself via experiments as well as in the production environment of an existing
 software product.
 
 \chapter{Background}
 \label{chap:background}
 
-\section{Prerequisite Practices and Technologies}
+\section{Prerequisite Practices and Terms}
 
 Some background is required to understand the thesis. The glossary lists those most
-important practices and technologies. Moreover it provides well chosen references in order
-to enable the reader to glean more detailed descriptions of the prerequisite practices and
-technologies. Those practices are well known in software engineering as well as the
-concepts of the most technologies.
+important practices and terms. Moreover it provides well chosen references in order to
+enable the reader to read up on more detailed descriptions of the prerequisites. Those
+practices and terms are usually well known in software engineering.
 
 \section{Typical 3 Tier Webapp in Kubernetes}
 
-I'll explain the typical implementtion of a 3 tier webapp in kubernetes as it helps a lot
-to understand the next chapters. You would implement the application tier with a
-deployment, which monitors the presence of a specified number of stateless pods. A service
-acts as a loadbalancer and selects the pods and forwards the request. The data tier can be
-implemented with a statefulset, which monitors the presence of the stateful pods. Those
-stateful pods keep their host name and mount the same volumes when they are being
-restarted.
+I'll explain the typical implementation of a 3 tier webapp in kubernetes as it helps a lot
+to understand the next chapters. The application tier is usually implemented with a
+\emph{deployment} which monitors the presence of a specified number of stateless
+\emph{pods}. A \emph{service} acts as a loadbalancer and selects the pods and forwards the
+request. The data tier is implemented with a \emph{statefulset} which monitors the
+presence of the stateful pods. Those stateful pods keep their host name and mount the same
+volumes when they are being restarted.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{3tierwebapp}
-  \caption[3tierwebapp]{Typical 3 tier webapp in kuberentes.}
+  \caption[3tierwebapp]{Typical 3 tier webapp in kubernetes.}
   \label{fig:3tierwebapp}
 \end{figure}
 
-So the service receives a request from the client. It selects a pod via round robin and
+When the service receives a request from the client, it selects a pod via round robin and
 proxies the request to the pod. The pod probably communicates with the database and sends
-the request back to the client, where the loadbalancer acts again as a proxy.
+the request back to the client, where the service acts again as a reverse proxy.
 
 \section{Software Dependencies}
 
 This section shortly mentions the dependencies, which I used to implement Deployer and the
 tools for other components of the pipeline.
 
-Deployer is implemented in ruby\footnote{\url{https://www.ruby-lang.org}} and since it is
-a webserver, sinatra\footnote{\url{http://sinatrarb.com}} is its framework. Deployer uses
-git\footnote{\url{https://git-scm.com}} and subversion\footnote{\url{https://git-scm.com}}
-to communicate with either git or subversion\footnote{\url{https://subversion.apache.org}}
-as the control version system. Moreover deployer has a plugin which sends messages to
-bugsnag\footnote{\url{https://www.bugsnag.com}} and
-slack\footnote{\url{https://slack.com}}, to inform the developer in case it identifies a
+Deployer is implemented in ruby\footnote{\url{https://www.ruby-lang.org}}. it is a
+webserver and sinatra\footnote{\url{http://sinatrarb.com}} is its framework. Deployer uses
+git\footnote{\url{https://git-scm.com}} and
+subversion\footnote{\url{https://subversion.apache.org}} to communicate with either git or
+subversion as the control version system. Moreover deployer has a plugin which sends
+messages to bugsnag\footnote{\url{https://www.bugsnag.com}} and
+slack\footnote{\url{https://slack.com}} to inform the developer in case it identifies a
 problem. Deployer uses kubectl to interact with
 kubernetes\footnote{\url{https://kubernetes.io}, see also
   \cite{kubernetes_architecture,kubernetes_architecture2}} master. Deployer itself is
@@ -369,7 +376,7 @@ To understand the testing approach in a whole, it is necessary to show a complet
 of the whole pipeline and environment. Figure \ref{fig:nprt_flow} pictures an overview. In
 the following I will go through the steps of the pipeline and discuss them.
 
-\section{Continuous Integration is a Requirement}
+\section{Continuous Integration as Requirement}
 
 The first parts of the pipeline are commonly known and established practices: \gls{ci},
 \gls{cd} and continuous deployment. It is necessary, though, to touch on them and
@@ -411,16 +418,15 @@ The last step of the \gls{ci} system is to send a deploy signal, step~\texttt{(6
 figure. But it depends on the results of the tests, whether to send that deploy signal or
 not. The tests can be successful or fail. If the tests fail, the \gls{ci} system does not
 send a deploy message, the pipeline stops and the \gls{ci} system may inform the
-responsible Developer. If the tests are successful in all test stages, the \gls{ci} system
+responsible developer. If the tests are successful in all test stages, the \gls{ci} system
 will send the deploy signal to Deployer.
 
 It makes sense to deploy only specific versions and not every commit. The practice which
 is pretty common, is that you develop new features in a seperate branch. For those
 versions you usually do not send a deploy signal even though the branch's build and tests
-are successful. Usually after the tests, a review and the developers a decide to deploy
-the changes to production. When the decision is made and one developer merges the change
-into a specified branch, for instance the master branch, and the version will go to
-production.
+are successful. Usually after the tests, a review and the developers decide to deploy the
+changes to production. When the decision is made and one developer merges the change into
+a specified branch, for instance the master branch, and the version will go to production.
 
 However, just to clarify, the \gls{ci} system sends each built image for every single
 version to the image repository. This is independent of successful tests or the decision
@@ -431,8 +437,8 @@ is just a side note.
 The \gls{ci} system gives the deploy signal when two requirements are fulfilled: the build
 and tests are successful and developers decided that the version will go to production.
 
-Until this point, as I already mentioned, it is \gls{ci} practice, which is commonly used
-in software development. I require it for \gls{nprt}. For \gls{nprt} it is especially
+Until this point, as I already mentioned, this is \gls{ci} practice, which is commonly
+used in software development. I require it for \gls{nprt}. For \gls{nprt} it is especially
 important to associate and trace every step through the whole pipeline. For that purpose I
 need the \gls{ci} system to tag, as the previous paragraphs explain, the container images
 with the exact version reference.
@@ -452,8 +458,8 @@ consequence it was necessary to implement Deployer.
 It would also be possible to implement the logic of the deploy in the \gls{ci} system. But
 I had to decide against that, because the deploy needs full access to the production
 system and the \gls{ci} system is in our case outsourced to a third party company. I did
-not want to give other companies full access to the production cluster. However this
-meant, that I had to implement some steps again, which a \gls{ci} server already
+not want to give other companies full access to the production cluster. However, this
+meant that I had to implement some steps again, which a \gls{ci} server already
 implements. Deployer pulls the version from the \gls{vcs} as well as the \gls{ci}. The
 difference to the \gls{ci} system is that Deployer's interest lies in the resource
 definitions and not the application code. The resource definitions define the application
@@ -472,14 +478,14 @@ version of the infrastructure, the version of the code and the version of the
 artifacts. In kubernetes those definitions contain different resources, which
 chapter~\ref{chap:background} explains with an example.
 
-In the second step, Deployer modifies those resource definitions~\texttt{(8)} in a way,
-that the production system uses the correct container image, which relates to the version
+In the second step, Deployer modifies those resource definitions~\texttt{(8)} in a way
+that the production system uses the correct container image which relates to the version
 to deploy. The modifications of Deployer also achieve that the running container is aware
 of its version. The latter is important to later tag the metrics with the version
 reference.
 
 The third step of Deployer is to apply the modified infrastructure definitions to the
-production cluster, which is shown in the figure as step~\texttt{(9)}. In result a deploy
+production cluster which is shown in the figure as step~\texttt{(9)}. In result a deploy
 changes two things: application infrastructure as well as application code changes.
 
 The production cluster receives the modified infrastructure definitions. The production
@@ -519,19 +525,20 @@ in the section~\ref{sec:metric_comparison}.
 
 \section{Rollouts and Rollbacks}
 
-Two possible scenarios arise. The first one would be, that the new version runs in
+Two possible scenarios arise. The first one would be that the new version runs in
 production for a certain amount of time and the monitoring system does not identify any
-regression. In this case the monitoring system does nothing. A next deploy triggers the
-full rollout of the new version. A usual deploy message with new version reference is
-sufficient to do so. Deployer receives the deploy message, deletes the canary and modifies
-resource definitions to have the new version as the new stable version and the production
-cluster proceeds, stops and starts the running instances accordingly.
+regression. In this case the monitoring system does nothing. A deploy with the reference
+to the new version triggers the full rollout of the new version. A usual deploy message
+with the new version reference is sufficient to do so. Deployer receives the deploy
+message, deletes the canary and modifies resource definitions to have the new version as
+the new stable version and the production cluster proceeds, stops and starts the running
+instances accordingly.
 
 The second scenario is that the new version turns out to be a regression compared to the
 stable version. In that case the new version in form of the canary should be rolled
 back. The monitoring system identifies the regression and sends a message to Deployer, as
 figure~\ref{fig:nprt_flow} pictures in step~\texttt{(12)}. Accordingly the test for
-regression is failed.
+regression has failed.
 
 Deployer receives the rollback message, pulls the resource definitions again, modifies the
 resource definitions accordingly and applies the modified resource definitions to the
@@ -548,17 +555,18 @@ production cluster, the production cluster does not touch the running stable ins
 \label{chap:detail}
 
 I implemented Deployer and setup metrics collection and comparison in order to realize
-\gls{nprt} with kubernetes. Deployer receives a deploy messages, modifies kubernetes
+\gls{nprt} with kubernetes. Deployer receives a deploy message, modifies kubernetes
 resource definitions and applies those modified resources to the production
 cluster. Deployer is able to automatically deploy a canary of a new version of an
-application, which runs in parallel to instances of the stable version. The kubernetes
+application which runs in parallel to instances of the stable version. The kubernetes
 cluster is setup to collect the metrics from the instances of both versions. Datadog, the
 monitoring system compares the metrics and checks them for regressions.
 
 \section{Deployer Architecture}
 
 Similar to the previous chapter, I demonstrate the implementation with the help of
-figures. The following sections will explain all the steps of the figure.
+figures. The following sections will explain all the steps of
+figure~\ref{fig:deployer_architecture}.
 
 \begin{figure}[htbp]
   \centering
@@ -567,33 +575,58 @@ figures. The following sections will explain all the steps of the figure.
   \label{fig:deployer_architecture}
 \end{figure}
 
-As mentioned earlier, Deployer is a webserver, which runs in kubernetes itself and is
-stateless. The production cluster in the figure is the same kubernetes cluster the
-application to test runs in. The yellow box is a kubernetes service. The service is, as
-described in chapter~\ref{chap:background}, a loadbalancer. Clients can reach Deployer via
-an http interface. The figure shows that Deployer consists of multiple pods. These pods
-are replicated and are identical in their behaviour. The pods are basically stateless, yet
-every pod has its own caching layer, which the sections explain. The statelessness leads
-to easy horizontal scaling of Deployer. It is possible to add more pods if
-needed. Furthermore, Deployer uses approximately 50mb memory and few cpu, so computing
-resources are no problem. A request to Deployer is blocking and waits for the deploy
-process to complete. Obviously there is no queuing or worker system. Deployer can be
-horizontally scaled for more concurrent deploys.
-
+As mentioned earlier, Deployer is a webserver which runs in kubernetes itself and is
+stateless. The production cluster in figure~\ref{fig:deployer_architecture} is the same
+kubernetes cluster in which the application to test runs in. The yellow box is a
+kubernetes service. The service is, as described in chapter~\ref{chap:background}, a
+loadbalancer. Clients can reach Deployer via an http interface. The figure shows that
+Deployer consists of multiple pods. These pods are replicated and are identical in their
+behaviour. The pods are basically stateless, yet every pod has its own caching layer which
+section~\ref{sec:cache} explains in more detail. Deployer uses approximately 50mb memory
+and few cpu, so computing resources are no problem. I designed Deployer to have
+synchronous communication with a client. Deployer waits for the deploy process to complete
+before it responds. This has the advantage of clients receiving feedback about the
+deploy. Furthermore it enables Deployer of being independent of other services such as a
+queuing or worker system. Deployers statelessness leads to easy horizontal scaling of
+Deployer. It is possible to add more pods if needed in order to achieve more concurrent
+deploys.
 
 \section{Deployer Interface}
 \label{sec:interface}
 
 I designed requests to Deployer to be simple and usable. Curl or any other http client
 serves as a client. In result Deployer can easily integrate with other systems for
-instance from a \gls{ci} system. Another way to interact with Deployer is to use the
-depctl command line interface.
+instance a \gls{ci} system. Another way to interact with Deployer is to use the depctl
+command line interface.
 
 The depctl command line interface wraps http calls and assists developers with automatic
-completion of the repository to deploy and completion of the version to deploy. With
-depctl, developers can easily skip steps of the whole \gls{nprt} flow. For instance they
-can skip the tests, which would run on the \gls{ci} system. This makes development more
-fluent and developer friendly.
+completion of the service to deploy and completion of the version to deploy. With depctl,
+developers can easily skip steps of the whole \gls{nprt} flow. For instance they can skip
+the tests which would run on the \gls{ci} system. This makes development more fluent and
+developer friendly.
+
+\begin{table}[!htbp]
+\begin{verbatim}
+   | Endpoint            | depctl command | Parameters  |
+   |---------------------+----------------+-------------|
+   | GET /               | ls             |             |
+   | GET /SERVICE        | show           |             |
+   | GET /SERVICE/tags   | tags           |             |
+   | PUT /SERVICE/deploy | deploy         | commit, tag |
+   | PUT /SERVICE/canary | canary         | commit, tag |
+   | GET /version        | version        |             |
+
+\end{verbatim}
+\caption{Deployer interface.}
+\label{tab:interface}
+\end{table}
+Examples:
+\begin{verbatim}
+curl --data commit=025838f \
+  https://auth_token:secret@deployer.me.com/app/deploy
+
+depctl deploy
+\end{verbatim}
 
 The following will go through the interface of Deployer. Deployer provides different
 endpoints: ls, show, tags, deploy, canary and version. The following descriptions uses the
@@ -612,29 +645,6 @@ request updates the service, this is why the endpoint defines a http put.
 
 The \emph{version} endpoint simply returns the Deployer version.
 
-\begin{table}[!htbp]
-  \begin{tabular}{ l|l|l }
-    Endpoint & \texttt{depctl} command & Parameters \\
-    \hline \hline
-    \textbf{GET /} & ls & \\
-    \textbf{GET /SERVICE} & show & \\
-    \textbf{GET /SERVICE/tags} & tags & \\
-    \textbf{PUT /SERVICE/deploy} & deploy & commit, tag \\
-    \textbf{PUT /SERVICE/canary} & canary & commit, tag \\
-    \textbf{GET /version} & version & \\
-    \multicolumn{3}{l}{} % empty line
-  \end{tabular}
-
-  Examples:
-
-\begin{verbatim}
- curl --data commit=025838f \
-    https://auth_token:secret@deployer.company.com/gapfish/deploy
-
- depctl deploy
-\end{verbatim}
-\end{table}
-
 \section{Logic and Flow of a Deploy}
 
 \subsection{Authorization}
@@ -652,6 +662,7 @@ means, that the \gls{ci} system is only able to deploy versions from the \gls{vc
 credentials from the production cluster.
 
 \subsection{Fetching the Code and Caching It}
+\label{sec:cache}
 
 After Deployer authenticated a valid client, it then fetches the code from the
 \gls{vcs}~\texttt{(3)}. If git is the \gls{vcs}, Deployer uses commit hashes and branches
@@ -873,7 +884,7 @@ alarm is in fact a webhook, which would roll back the canary instance.
 Next I elaborate on the metrics to monitor: Latency, utilization, errors and throughput.
 
 Latency defines the duration of successful requests. Latency is a typical performance
-metric of a webserver. Utilization mostly refers to metrics such as CPU and Memory
+metric of a webserver. Utilization mostly refers to metrics such as cpu and memory
 consumption. The errorrate is defined as counted error in a time period. Applications
 sometimes have the problem of reporting too many errors without focus on important
 ones. Also throughput of successful requests can be an indicator of the health of an
