@@ -18,7 +18,7 @@ Devops practices interconnect operations including those maintenance necessities
 development work. Nevertheless there is room for improvement in terms of continuous
 automatable processes regarding maintenance. The \gls{cd}
 pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
-covers the process only up to the deploy whereas maintenance involves more than just the
+covers the process only up to the deploy, whereas maintenance involves more than just the
 delivery.
 
 Instead of employing more engineers, Google combats workforce problems with
@@ -53,7 +53,7 @@ communicate with each other.
 
 \paragraph{\ref{chap:detail} \nameref{chap:detail}}
 Chapter~\ref{chap:detail} goes more into detail of the thesis contributions. It
-demonstrates the design of Deployer, the software I wrote in account to enable \gls{nprt}
+demonstrates the design of Deployer, the software I wrote in order to enable \gls{nprt}
 in practice. The chapter also elaborates on the collection and comparison of the metrics.
 
 \paragraph{\ref{chap:eval} \nameref{chap:eval}}
@@ -96,7 +96,7 @@ isolation between the dependencies of the virtual machine infrastructure and the
 development team.
 
 % contra arg vms operated by ops team
-You could argue that virtual machines have still the same functionality like bare metal
+You could argue that virtual machines still have the same functionality as bare metal
 servers and need to be maintained in the same way by the same operation
 teams. Nevertheless it becomes easier to maintain dynamic virtual
 infrastructure~\cite{infra_as_code_platforms} in comparison to bare metal
@@ -118,10 +118,9 @@ software product.
 If developers did not do maintenance properly, there is a risk of decreasing the quality
 of the software product. For instance there can be security vulnerabilities. Those can be
 very harmful to the company of the software product. If developers do not maintain the
-software products properly more issues arise, such as bugs or performance
-problems. Therefore, maintaining a software product comes with responsibility. If
-developers disregard maintenance and operations work, the quality of the software product
-suffers.
+software products properly more issues arise, such as bugs or performance problems. On
+account of that, maintaining a software product comes with responsibility. If developers
+disregard maintenance and operations work, the quality of the software product suffers.
 
 % operate and maintaining software means: config, monitoring, incident management
 What does it mean to operate and maintain a software product in production? It is all the
@@ -153,13 +152,14 @@ function visible to users. At Facebook~\cite{dev_at_fb} those invisible changes 
 than 50\% of the total changes.
 
 % dependencies are becoming more
-Moreover, software products have a high amount of dependencies. This totally makes sense,
-because when programming a software you do not want to do it from scratch. Firstly, the
-dependencies are different abstraction levels, such as a processor, a programming language
-and a programming framework. And secondly, the dependencies are modules which encapsulate
-a certain functionality. Those are very common functionalities for applications, for
-instance authentication of a user. The abstraction as well as the reusable software
-modules make it easier and faster for developers to reach their goals.
+Moreover, software products have a high amount of dependencies. This is very reasonable,
+because when programming a software product you do not want to do it from
+scratch. Firstly, the dependencies are different abstraction levels, such as a processor,
+a programming language and a programming framework. And secondly, the dependencies are
+modules which encapsulate a certain functionality. Those functionality can be common
+functionalities for applications, for instance authentication of a user. The abstraction
+as well as the reusable software modules make it easier and faster for developers to reach
+their goals.
 
 % many versions in open source
 The open source communities change and release their software continuously. Sometimes
@@ -168,12 +168,12 @@ security patches. This results in releases and new versions.
 
 % almost every software product relies on open source
 On the web, there is rarely a software product which does not depend on open source
-software. The most web servers run linux and there are many popular open source
-frameworks which make up the basis of the running software products.
+software. Most web servers run linux and there are many popular open source frameworks
+which make up the basis of the running software products.
 
 % RedHat/Ubuntu companies provide bundling and update service
 Companies like RedHat or Ubuntu provide enterprise support to those open source
-projects. Those companies bundle those open source projects, care about the bugs and
+projects. Those companies bundle open source projects, care about the bugs and
 security issues and provide tools to upgrade from one version to another easily. As a
 result companies with a software product can outsource the maintenance work of the
 dependencies. There is still the need though, to integrate those changes to the own
@@ -182,13 +182,13 @@ software product.
 % hard to upgrade at once
 One problem is that it is not always easy to upgrade from one version to
 another. Refactorings result in breaking changes and the depending software needs to adapt
-to those changes. As a result software such as windows xp is still out in the wild. Due to
+to those changes. As a result software such as Windows XP is still out in the wild. Due to
 the fact that companies are not able to adapt to those major changes at once. However the
-very same applies to open source frameworks such as django or ruby on rails.
+very same applies to open source frameworks such as Django or Ruby on Rails.
 
 % microservices create ability to continuously upgrade one part by another
 % it is much work though
-One reason for the introduction of microservice is the flexibility to update only a small
+One reason for the introduction of microservices is the flexibility to update only a small
 specific part of the whole software product~\cite{microservices_fowler}. With a
 microservice architecture, developers are able to update a single service without having
 to upgrade the whole product at once. Developers can choose a microservice for the update
@@ -200,8 +200,8 @@ developers need to update more often and the amount of work of updates itself is
 
 % compensation by automation instead of more humans
 There are several things companies can do to keep up with the amount of maintenance
-work. Facebook~\cite{dev_at_fb} for example hires more developers. This is expensive
-though. A much better solution is automation. Developers should automate some of the
+work. Facebook~\cite{dev_at_fb} for example hires more developers. This, however, is
+expensive. A much better solution is automation. Developers should automate some of the
 maintenance work.
 
 % practices exist which connect dev and ops
@@ -236,9 +236,9 @@ rollback makes updates less risky. In result, updates in an automated containeri
 immutable infrastructure are less risky compared to a manually operated infrastructure.
 
 Murphy et al. illustrate the value of automation~\cite{sre_automation}. Software
-reliability engineers automate tasks to firstly save the valuable human resources and
-secondly reduce the risk in those tasks because of human errors. This is a good approach
-and focuses the quality of the software product.
+reliability engineers automate tasks to firstly save valuable human resources and secondly
+reduce the risk in those tasks because of human errors. This is a good approach and
+focuses on the quality of the software product.
 
 Immutability reduces some of the risks and automation brings value. Combining those two
 arguments, there is an obvious need of an automated process for updating services.
@@ -261,7 +261,7 @@ as those go until release and no further. \gls{nprt} extends the pipeline to the
 production environment, where we need to operate and maintain a system.
 
 The thesis suggests \gls{nprt} as a practice which consists of different techniques. Those
-technique cover three major steps. First, quickly deploy a change to production. Second,
+techniques cover three major steps. First, quickly deploy a change to production. Second,
 monitor the change, having it in production at low risk. And third in case of a regression
 automatically roll back.
 
@@ -276,17 +276,17 @@ software product.
 \section{Prerequisite Practices and Terms}
 
 Some background is required to understand the thesis. The glossary lists those most
-important practices and terms. Moreover it provides well chosen references in order to
+important practices and terms. Moreover, it provides well chosen references in order to
 enable the reader to read up on more detailed descriptions of the prerequisites. Those
 practices and terms are usually well known in software engineering.
 
 \section{Typical 3 Tier Web App in Kubernetes}
 
-I'll explain the typical implementation of a 3 tier web app in Kubernetes as it helps a lot
-to understand the next chapters. The application tier is usually implemented with a
+I'll explain the typical implementation of a 3 tier web app in Kubernetes as it helps a
+lot to understand the next chapters. The application tier is usually implemented with a
 \emph{deployment} which monitors the presence of a specified number of stateless
-\emph{pods}. A \emph{service} acts as a load balancer and selects the pods and forwards the
-request. The data tier is implemented with a \emph{statefulset} which monitors the
+\emph{pods}. A \emph{service} acts as a load balancer and selects the pods and forwards
+the request. The data tier is implemented with a \emph{statefulset} which monitors the
 presence of the stateful pods. Those stateful pods keep their host name and mount the same
 volumes when they are being restarted.
 
@@ -329,7 +329,7 @@ datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Neverth
 prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
 as monitoring system. The \gls{ci} systems we use for the evaluation are
 codeship\footnote{\url{https://codeship.com}} and
-jenkins\footnote{\url{https://codeship.com}}. As an image repo, we use docker
+jenkins\footnote{\url{https://codeship.com}}. As an image repository, we use docker
 hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
 served to make experiments with production traffic.
 
@@ -339,7 +339,7 @@ served to make experiments with production traffic.
 In \gls{nprt} the pipeline deploys a non-functional change in form of a canary to the
 production environment. The new version is compared with the stable version side by side
 in production. In case the new version shows a regression, the pipeline will automatically
-roll it back. The novelty of the approach is that it creates a feedback loop between
+roll it back. The novelty of this approach is that it creates a feedback loop between
 development and production, which is fully automatable. The following elaborates on the
 term in more detail.
 
@@ -372,7 +372,7 @@ been a business of operations teams.
   \label{fig:nprt_flow}
 \end{figure}
 
-To understand the testing approach in a whole, it is necessary to show a complete overview
+To understand the testing approach as a whole, it is necessary to show a complete overview
 of the whole pipeline and environment. Figure \ref{fig:nprt_flow} depicts an overview. In
 the following I will go through the steps of the pipeline and discuss them.
 
@@ -402,14 +402,14 @@ One import thing is that every built container image relates to a specific versi
 version reference, which was created by the \gls{vcs}, serves for this purpose. It is
 important to be able to trace the version through every step in the pipeline. With this
 thought in mind, the \gls{ci} system tags the container image with the version reference
-and an extra name. Just to mention that the extra name is not absolutely necessary to
-definitely associate the container image with a version. But it turned out that a human
-readable name is very helpful to recognize a version and to know what the version is about
+and an extra name. Maybe it should be mentioned that the extra name is not absolutely necessary to
+definitely associate the container image with a version. Experience has shown that a human
+readable name is very helpful in recognizing a version and to know what the version is about
 at first sight. The \gls{ci} system derives that extra name from the branch name. This
 tag, consisting out of the version and extra name, will follow us through the whole
 pipeline as readable and unique reference.
 
-The second \gls{ci} step is to run the tests. The figure~\ref{fig:nprt_flow} shows this in
+The second \gls{ci} step is to run the tests. Figure~\ref{fig:nprt_flow} shows this in
 step~\texttt{(5)}. The tests themselves can be split into multiple stages, such as unit,
 feature and smoke tests. At this point, though, I will not recall all the details of
 automated testing at this point.
@@ -421,24 +421,24 @@ send a deploy message, the pipeline stops and the \gls{ci} system may inform the
 responsible developer. If the tests are successful in all test stages, the \gls{ci} system
 will send the deploy signal to Deployer.
 
-It makes sense to deploy only specific versions and not every commit. The practice which
-is pretty common, is that you develop new features in a seperate branch. For those
+It is reasonable to deploy only specific versions and not every commit. The practice which
+is pretty common, is that you develop new features on a separate branch. For those
 versions you usually do not send a deploy signal even though the branch's build and tests
-are successful. Usually after the tests, a review and the developers decide to deploy the
-changes to production. When the decision is made and one developer merges the change into
-a specified branch, for instance the master branch, and the version will go to production.
+are successful. Usually, after the tests, a review is done and the developers decide to
+deploy the changes to production. When the decision is made and one developer merges the
+change into a specified branch, for instance the master branch, the version will go to
+production.
 
-However, just to clarify, the \gls{ci} system sends each built image for every single
+Clarifyingly it has to be mentioned that the \gls{ci} system sends each built image for every single
 version to the image repository. This is independent of successful tests or the decision
 to go to production. The reason why I want to have every built image in the repository is
-to be able to test it in the \gls{ci} system, locally and maybe a staging system. But this
-is just a side note.
+to be able to test it in the \gls{ci} system, locally and maybe on a staging system.
 
 The \gls{ci} system gives the deploy signal when two requirements are fulfilled: the build
 and tests are successful and developers decided that the version will go to production.
 
-Until this point, as I already mentioned, this is \gls{ci} practice, which is commonly
-used in software development. I require it for \gls{nprt}. For \gls{nprt} it is especially
+Until this point, as already mentioned, this is \gls{ci} practice which is commonly used
+in software development. I require it for \gls{nprt}. For \gls{nprt} it is especially
 important to associate and trace every step through the whole pipeline. For that purpose I
 need the \gls{ci} system to tag, as the previous paragraphs explain, the container images
 with the exact version reference.
@@ -471,7 +471,7 @@ firstly pull the resource definitions~\texttt{(7)}, secondly modify the resource
 definitions~\texttt{(8)} and thirdly send the resource definitions to the production
 cluster~\texttt{(9)}.
 
-In the first step Deployer pulls the code from the \gls{vcs}~\texttt{(7)}. The \gls{vcs}
+In the first step, Deployer pulls the code from the \gls{vcs}~\texttt{(7)}. The \gls{vcs}
 also holds the resource definitions, which describe the application infrastructure. I
 wanted to version control the resource definitions in order to be able to relate the
 version of the infrastructure, the version of the code and the version of the
@@ -542,14 +542,14 @@ regression has failed.
 
 Deployer receives the rollback message, pulls the resource definitions again, modifies the
 resource definitions accordingly and applies the modified resource definitions to the
-production cluster. Just to be precise, it is actually a deploy message with the commit
+production cluster. To be precise, it is actually a deploy message with the commit
 hash of the stable version, which the monitoring system is aware of because of the metrics
 it monitors. Deployer modifies the resource definitions similar to step~\texttt{(8)}. The
 deploy is idempotent, so that Deployer it can repeatedly receive the same deploys. This
 can happen in the case a developer as well as the monitoring system trigger the
 rollback. The production system itself takes care of deleting the canary instances in the
 new version. Since the instances of the stable version are already running in the
-production cluster, the production cluster does not touch the running stable instances.
+production cluster, the production cluster does not modify the running stable instances.
 
 \chapter{Implementation of Deployer and Metric Comparison}
 \label{chap:detail}
@@ -595,9 +595,9 @@ deploys.
 \label{sec:interface}
 
 I designed requests to Deployer to be simple and usable. Curl or any other http client
-serves as a client. In result Deployer can easily integrate with other systems for
-instance a \gls{ci} system. Another way to interact with Deployer is to use the depctl
-command line interface.
+serves as a client. As a result, Deployer can easily integrate with other systems for
+instance with a \gls{ci} system. Another way to interact with Deployer is to use the
+depctl command line interface.
 
 The depctl command line interface wraps http calls and assists developers with automatic
 completion of the service to deploy and completion of the version to deploy. With depctl,
@@ -660,7 +660,7 @@ and one of the reasons why I implemented Deployer is the concern about security.
 \gls{ci} system can not have full production cluster access. In the case of Deployer the
 auth token authorizes to only deploy a specific version from the repository. For us that
 means, that the \gls{ci} system is only able to deploy versions from the \gls{vcs}. The
-\gls{ci} system is for instance whether able to deploy other code than ours nor read
+\gls{ci} system is for instance neither able to deploy other code than ours nor read
 credentials from the production cluster.
 
 \subsection{Fetching the Code and Caching It}
@@ -669,14 +669,14 @@ credentials from the production cluster.
 After Deployer authenticated a valid client, it then fetches the code from the
 \gls{vcs}~\texttt{(3)}. If git is the \gls{vcs}, Deployer uses commit hashes and branches
 as version reference and to determine the code version. If subversion is the \gls{vcs},
-Deployer uses revision numbers instead. Deployer implements subversion, which is more of
-an ancient technology, to be able to do the evaluation with the \gls{din} system.
+Deployer uses revision numbers instead. Deployer implements subversion, which is an older
+\gls{vcs}, to be able to do the evaluation with the \gls{din} system.
 
 It is obvious that the process of fetching a repository includes persistence and disk
 interaction. Deployer uses the volume just as cache, though. The reason for the existence
 of the cache is performance. One of the bottlenecks of a deploy is downloading the
 repository. If a repository is large, for instance because of pictures or a long history
-of commits, it lasts quite an amount of time to download it. If the download rate is
+of commits, it takes quite an amount of time to download it. If the download rate is
 additionally low the duration is even longer. This leads to long running deploys and a bad
 development flow experience. Therefore Deployer keeps the already downloaded repositories
 on its volume as a cache. The next time Deployer deploys the same repository in a
@@ -738,7 +738,7 @@ Deployer applies two main modifications: the \emph{environment} and the image ta
 former is especially important for the metrics collection. Deployer modifies the
 environment in order to enable the instrumentation to differentiate between the stable
 version and the canary version. The running pods can later read the version information
-from the environment variables and are able adjust the instrumentation configuration to
+from the environment variables and are able to adjust the instrumentation configuration to
 add the version information.
 
 The second important modification is the \emph{image tag}. The image tag specifies the
@@ -748,14 +748,14 @@ reference from the \gls{vcs}.
 
 Deployer modifies the resource definitions only when the image tag is unspecified. In case
 a deployment resource already specifies an image tag, for instance somebody else maintains
-the image. Then Deployer does not change the specified tag. The reason is that the
+the image, then Deployer does not change the specified tag. The reason is that the
 \gls{ci} does not build images, which are maintained by somebody else. Such images do not
 have a tag with the specific version reference of the \gls{vcs}. One example is an
 additional statsd container running as a sidecar in the application pod.
 
-The other case would be that Kubernetes resource defintion leaves the tag specification
-open. Then deployer appends the tag to the container image according to reference the
-which the client provided.
+The other case would be that the Kubernetes resource defintion leaves the tag
+specification open. Then Deployer appends the tag to the container image according to
+reference which the client provided.
 
 The next step is to communicate the modifications to the Kubernetes
 api~\texttt{(6)}. Deployer sends the modified resources to the Kubernetes api. The
@@ -772,9 +772,9 @@ inform the developers. Deployer distinguishes between two different clients.
 The first one is a \gls{ci} system, which sent the deploy request. In this case the error
 the error reporting system\footnote{Chapter~\ref{chap:background} mentions bugsnag. The
   application of GapFish uses it for error reporting.} comes into play. Deployer sends the
-error to reporting system ~\texttt{(7)}, which collects the errors of multiple
+error to the reporting system ~\texttt{(7)} which collects the errors of multiple
 systems. The error reporting system informs the developers via sending notifications to a
-specified channel. GapFish has for example a slack chat channel, on which the person on
+specified channel. GapFish has for example a slack chat channel, to which the person on
 call subscribes and receives notifications from.
 
 The other client is a developer sending a deploy request manually. In this case the
@@ -783,7 +783,7 @@ with depctl. Instead of utilizing the error reporting system, deployer answers t
 request with an errorcode and a message in the http body. As mentioned earlier the
 communication with deployer is synchronous.
 
-In result developers always receive feedback as fast as possible in case a deploy
+As a result, developers always receive feedback as fast as possible in case a deploy
 fails. The information receives the developer in both cases, whether the \gls{ci} system
 triggers a deploy or a developer manually triggers a deploy.
 
@@ -830,7 +830,7 @@ canary deployment to a single replica.
 
 \subsection{Metric Collection}
 
-This section focuses on how metrics are being collected during the two versions are in
+This section focuses on how metrics are being collected during when two versions are in
 production. There exist two separate collection mechanisms. Those are hosts, which collect
 metrics, and the application instrumentation, which sends metrics.
 
