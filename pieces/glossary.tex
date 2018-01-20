@@ -1,4 +1,4 @@
-\newcommand{\myterm}[1]{\textit{#1} }
+\newcommand{\myterm}[1]{\textit{#1}~}
 \renewcommand{\emph}[1]{\textbf{#1}}
 
 \newcommand{\nprt}{\myterm{Nonfunctional Production Regression Testing}}
@@ -20,10 +20,14 @@
     A continuous integration system is a server, which automates the tests.}
 }
 \newglossaryentry{g:devops}{
-  name=devops,
+  name=DevOps,
   description={is a made up of developers and operations.
     Devops practices aim for a short time between commit and deploy,
     still ensuring high quality~\cite{devops_definition}}
+}
+\newglossaryentry{g:microservices}{
+  name=microservices,
+  description={TODO}
 }
 \newglossaryentry{g:cd}{
   name=continuous delivery,
@@ -61,7 +65,7 @@
     change them}
 }
 \newglossaryentry{g:kubernetes}{
-  name=kubernetes,
+  name=Kubernetes,
   description={is a cluster management system, which Google's borg
     heavily influenced~\cite{borg,borg_kubernetes}. Beda gives a good
     overview of the architecture~\cite{kubernetes_architecture2}}
@@ -119,10 +123,10 @@
 }
 
 \newacronym{nprt}{\myterm{NPRT}}{\nprt}
-\newacronym{cd}{CD}{continuous delivery}
-\newacronym{ci}{CI}{continuous integration}
-\newacronym{vcs}{VCS}{version control system}
+\newacronym{cd}{CD}{Continuous Delivery}
+\newacronym{ci}{CI}{Continuous Integration}
+\newacronym{vcs}{VCS}{Version Control System}
 \newacronym{din}{DIN}{Deutsches Institut für Normung}
-\newacronym{sre}{SRE}{site reliability engineering}
+\newacronym{sre}{SRE}{Site Reliability Engineering}
 
 % slack, ruby on rails etc... linux

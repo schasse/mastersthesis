@@ -3,7 +3,7 @@
 \section{Automation to Support Maintenance Work}
 
 % TODO: microservices case study von klems
-Devops~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
+DevOps~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
 practices or even cultures, which break down the silos between the development and
 operation teams and their conflicting goals. For instance Amazon and Facebook successfully
 use those practices to build and run their software products~\cite{build_run,dev_at_fb}.
@@ -14,7 +14,7 @@ on. The need for maintenance of own code exists, for instance with non-functiona
 concerning performance, scalability or bug fixes. Code written by others needs to be
 maintained as well via adapting and updating to new versions.
 
-Devops practices interconnect operations including those maintenance necessities with
+DevOps practices interconnect operations including those maintenance necessities with
 development work. Nevertheless there is room for improvement in terms of continuous
 automatable processes regarding maintenance. The \gls{cd}
 pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
@@ -72,12 +72,12 @@ opportunities and extensions to the implementation.
 \section{Maintenance Responsibility Shift}
 
 % devops/microservices aproach successful development and operation
-The devops~\cite{devops_definition} approach and the
-microservice~\cite{microservices_fowler} culture create practices to solve the issues of
-the conflicting tension~\cite{sre_intro} between a development and operation team. On the
-one hand the aim is to change the software product quickly and on the other hand to
-provide a stable and reliable software product of high quality. Vogels, the chief
-technology officer of amazon, once said in an interview ”You build it, you run
+The DevOps\footnote{see glossary: \gls{g:devops}} approach and the
+Microservices\footnote{see glossary: \gls{g:microservices}} culture create practices to
+solve the issues of the conflicting tension~\cite{sre_intro} between a development and
+operation team. On the one hand the aim is to change the software product quickly and on
+the other hand to provide a stable and reliable software product of high quality. Vogels,
+the chief technology officer of amazon, once said in an interview ”You build it, you run
 it”~\cite{build_run}. This quote represents the awareness of teams to not only be
 responsible for the development and deliver features. Moreover the team is also
 responsible of operating their product in production, because operation is an essential
@@ -99,17 +99,17 @@ development team.
 You could argue that virtual machines still have the same functionality as bare metal
 servers and need to be maintained in the same way by the same operation
 teams. Nevertheless it becomes easier to maintain dynamic virtual
-infrastructure~\cite{infra_as_code_platforms} in comparison to bare metal
+infrastructure\footnote{see glossary: \gls{g:dynamic}} in comparison to bare metal
 infrastructure. And the easier it becomes, the more it enables developers to operate their
 software product themselves.
 
-Containerization manifests the responsibility shift. It is a further step of
-isolation. The operating system is able to isolate CPU and memory for every process. Yet
-with containerization the operating system can also isolate the disk between processes,
-which means it can isolate the installed dependencies for every process. Containerization
-techniques even potentiate the ease of managing dependencies. So the responsibility of the
-software dependencies shifts resultantly towards the team, which builds and runs the
-software product.
+Containerization\footnote{see glossary: \gls{g:container}} manifests the responsibility
+shift. It is a further step of isolation. The operating system is able to isolate CPU and
+memory for every process. Yet with containerization the operating system can also isolate
+the disk between processes, which means it can isolate the installed dependencies for
+every process. Containerization techniques even potentiate the ease of managing
+dependencies. So the responsibility of the software dependencies shifts resultantly
+towards the team, which builds and runs the software product.
 
 
 \section{Lack of Focus on Maintenance}
@@ -205,7 +205,7 @@ expensive. A much better solution is automation. Developers should automate some
 maintenance work.
 
 % practices exist which connect dev and ops
-You could argue that devops practices already exist and connect development and operations
+You could argue that DevOps practices already exist and connect development and operations
 including maintenance of a software product. However, the focus lies mostly on testing the
 quality of a change in a lean fashion and to reduce risk of a change in
 production~\cite{devops_definition}. It is true that those practices help to deliver
@@ -215,25 +215,28 @@ monitoring and reacting to errors requires manual work.
 % testing in production is already done
 There exist practices which already enable production testing~\cite{dev_at_fb}. One
 example is A/B testing, where you compare two different versions in production. Another
-canary releasing, with which you change only a few replicated parts of the production
-environment to reduce risk. There is also shadow releasing, where users are not affected
-by the change, which goes into production. Netflix tests its services with the simian army
-in production to detect unforeseen events in a controlled
-environment~\cite{antifragile_org}.
+canary releasing\footnote{see glossary: \gls{g:canary}}, with which you change only a few
+replicated parts of the production environment to reduce risk. There is also shadow
+releasing, where users are not affected by the change, which goes into production. Netflix
+tests its services with the simian army in production to detect unforeseen events in a
+controlled environment~\cite{antifragile_org}.
 
 % containerization reduces risk for updates
 Containerization reduces the risk of updating a service. Morris describes phoenix
-replacement in immutable infrastructure~\cite{infra_as_code_phoenix}. Kubernetes has the
-approach of rolling updates which implements the same practices. A containerized ecosystem
-is typically immutable. Rather than changing a running container directly, the container
-image repository would receive and store an updated container image including the changes
-to deploy. Then Kubernetes would create a new container based on that updated image. After
-Kubernetes started this new container, it can stop the old container. The container image
-repository still stores every container image version. Those saved images allow to easily
-rollback to a previous version. Automation enables developers to deploy more frequently
-which usually leads to deploys with few changes. Few changes per deploy and the ability to
-rollback makes updates less risky. In result, updates in an automated containerized
-immutable infrastructure are less risky compared to a manually operated infrastructure.
+replacement~\cite{infra_as_code_phoenix} in immutable infrastructure\footnote{see
+  glossary: \gls{g:immutable}}. Kubernetes\footnote{see glossary: \gls{g:kubernetes}} has
+the approach of rolling updates~\footnote{see glossary: \gls{g:rolling}} which implements
+the same practices. A containerized ecosystem is typically immutable. Rather than changing
+a running container directly, the container image repository\footnote{see glossary:
+  \gls{g:image} and \gls{g:registry}} would receive and store an updated container image
+including the changes to deploy. Then Kubernetes would create a new container based on
+that updated image. After Kubernetes started this new container, it can stop the old
+container. The container image repository still stores every container image
+version. Those saved images allow to easily rollback to a previous version. Automation
+enables developers to deploy more frequently which usually leads to deploys with few
+changes. Few changes per deploy and the ability to rollback makes updates less risky. In
+result, updates in an automated containerized immutable infrastructure are less risky
+compared to a manually operated infrastructure.
 
 Murphy et al. illustrate the value of automation~\cite{sre_automation}. Software
 reliability engineers automate tasks to firstly save valuable human resources and secondly
@@ -245,20 +248,21 @@ arguments, there is an obvious need of an automated process for updating service
 
 % cd provides good automation, but has lack of maintenance focus
 There is a lack of truly automatable practices for maintaining a software
-product. \gls{cd} brought up good automatable practices to continuously deliver changes
-and features into production. It has the lack of good practices though to maintain a
-software product.
+product. \gls{cd}\footnote{see glossary: \gls{g:cd}} brought up good automatable practices
+to continuously deliver changes and features into production. It has the lack of good
+practices though to maintain a software product.
 
-\gls{cd} does not focus on the maintenance work and the devops approach does not focus on
+\gls{cd} does not focus on the maintenance work and the DevOps approach does not focus on
 automating the maintenance work as previously examined. I conclude that there is a need
 for practices, which continuously support and automate maintenance work.
 
 \section{Contribution of this Thesis}
 
-The contribution of this mater's thesis is a practice, which can fully be automated in order
-to maintain a software product. It extends the \gls{cd} and continuous deployment pipeline
-as those go until release and no further. \gls{nprt} extends the pipeline to the
-production environment, where we need to operate and maintain a system.
+The contribution of this mater's thesis is a practice, which can fully be automated in
+order to maintain a software product. It extends the \gls{cd} and continuous deployment
+pipeline\footnote{see glossary: \gls{g:cdep}} as those go until release and no
+further. \gls{nprt} extends the pipeline to the production environment, where we need to
+operate and maintain a system.
 
 The thesis suggests \gls{nprt} as a practice which consists of different techniques. Those
 techniques cover three major steps. First, quickly deploy a change to production. Second,
@@ -273,22 +277,17 @@ software product.
 \chapter{Background}
 \label{chap:background}
 
-\section{Prerequisite Practices and Terms}
-
-Some background is required to understand the thesis. The glossary lists those most
-important practices and terms. Moreover, it provides well chosen references in order to
-enable the reader to read up on more detailed descriptions of the prerequisites. Those
-practices and terms are usually well known in software engineering.
-
 \section{Typical 3 Tier Web App in Kubernetes}
 
 I'll explain the typical implementation of a 3 tier web app in Kubernetes as it helps a
 lot to understand the next chapters. The application tier is usually implemented with a
-\emph{deployment} which monitors the presence of a specified number of stateless
-\emph{pods}. A \emph{service} acts as a load balancer and selects the pods and forwards
-the request. The data tier is implemented with a \emph{statefulset} which monitors the
-presence of the stateful pods. Those stateful pods keep their host name and mount the same
-volumes when they are being restarted.
+\emph{deployment}\footnote{see glossary: \gls{g:deployment} and \gls{g:deploy}} which
+monitors the presence of a specified number of stateless \emph{pods}\footnote{see
+  glossary: \gls{g:pod}}. A \emph{service}\footnote{see glossary: \gls{g:service}} acts as
+a load balancer and selects the pods and forwards the request. The data tier is
+implemented with a \emph{statefulset}\footnote{see glossary: \gls{g:statefulset}} which
+monitors the presence of the stateful pods. Those stateful pods keep their host name and
+mount the same volumes when they are being restarted.
 
 \begin{figure}[htbp]
   \centering
@@ -321,14 +320,15 @@ solution would be Kubernetes. We published \deployer on
 github\footnote{\url{https://github.com/gapfish/deployer}} under GPL-3.0, a free software
 license.
 
-The previously developed \gemupdater\footnote{\url{https://github.com/schasse/gem_updater}}
-creates pull request with dependency updates.
+The previously developed
+\gemupdater\footnote{\url{https://github.com/schasse/gem_updater}} creates pull request
+with dependency updates.
 
-The monitoring system, which I used in the evaluation, is
-datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
+The monitoring system\footnote{see glossary: \gls{g:mon}}, which I used in the evaluation,
+is datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
 prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
-as monitoring system. The \gls{ci} systems we use for the evaluation are
-codeship\footnote{\url{https://codeship.com}} and
+as monitoring system. The \gls{ci}\footnote{see glossary: \gls{g:ci}} systems we use for
+the evaluation are codeship\footnote{\url{https://codeship.com}} and
 jenkins\footnote{\url{https://jenkins.io}}. As an image repository, we use docker
 hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
 served to make experiments with production traffic.
@@ -399,15 +399,16 @@ pushes the ready built container image to an image repository in~\texttt{(4)}. L
 image repository serves the built images.
 
 One import thing is that every built container image relates to a specific version. The
-version reference, which was created by the \gls{vcs}, serves for this purpose. It is
-important to be able to trace the version through every step in the pipeline. With this
-thought in mind, the \gls{ci} system tags the container image with the version reference
-and an extra name. Maybe it should be mentioned that the extra name is not absolutely necessary to
-definitely associate the container image with a version. Experience has shown that a human
-readable name is very helpful in recognizing a version and to know what the version is about
-at first sight. The \gls{ci} system derives that extra name from the branch name. This
-tag, consisting out of the version and extra name, will follow us through the whole
-pipeline as readable and unique reference.
+version reference\footnote{see glossary: \gls{g:versionref}}, which was created by the
+\gls{vcs}, serves for this purpose. It is important to be able to trace the version
+through every step in the pipeline. With this thought in mind, the \gls{ci} system tags
+the container image with the version reference and an extra name. Maybe it should be
+mentioned that the extra name is not absolutely necessary to definitely associate the
+container image with a version. Experience has shown that a human readable name is very
+helpful in recognizing a version and to know what the version is about at first sight. The
+\gls{ci} system derives that extra name from the branch name. This tag, consisting out of
+the version and extra name, will follow us through the whole pipeline as readable and
+unique reference.
 
 The second \gls{ci} step is to run the tests. Figure~\ref{fig:nprt_flow} shows this in
 step~\texttt{(5)}. The tests themselves can be split into multiple stages, such as unit,
@@ -429,10 +430,11 @@ deploy the changes to production. When the decision is made and one developer me
 change into a specified branch, for instance the master branch, the version will go to
 production.
 
-Clarifyingly it has to be mentioned that the \gls{ci} system sends each built image for every single
-version to the image repository. This is independent of successful tests or the decision
-to go to production. The reason why I want to have every built image in the repository is
-to be able to test it in the \gls{ci} system, locally and maybe on a staging system.
+Clarifyingly it has to be mentioned that the \gls{ci} system sends each built image for
+every single version to the image repository. This is independent of successful tests or
+the decision to go to production. The reason why I want to have every built image in the
+repository is to be able to test it in the \gls{ci} system, locally and maybe on a staging
+system.
 
 The \gls{ci} system gives the deploy signal when two requirements are fulfilled: the build
 and tests are successful and developers decided that the version will go to production.
@@ -462,8 +464,8 @@ not want to give other companies full access to the production cluster. However,
 meant that I had to implement some steps again, which a \gls{ci} server already
 implements. \deployer pulls the version from the \gls{vcs} as well as the \gls{ci}. The
 difference to the \gls{ci} system is that \deployer's interest lies in the resource
-definitions and not the application code. The resource definitions define the application
-infrastructure.
+definitions and not the application code. The resource definitions\footnote{see glossary:
+  \gls{g:resource}} define the application infrastructure.
 
 \deployer receives the deploy signal from the \gls{ci} system\texttt{(6)}. The deploy
 signal again includes the version reference. Now \deployer executes three major steps:
@@ -473,10 +475,10 @@ cluster~\texttt{(9)}.
 
 In the first step, \deployer pulls the code from the \gls{vcs}~\texttt{(7)}. The \gls{vcs}
 also holds the resource definitions, which describe the application infrastructure. I
-wanted to version control the resource definitions in order to be able to relate the
-version of the infrastructure, the version of the code and the version of the
-artifacts. In Kubernetes those definitions contain different resources, which
-chapter~\ref{chap:background} explains with an example.
+wanted to version control\footnote{see glossary: \gls{g:vcs}} the resource definitions in
+order to be able to relate the version of the infrastructure, the version of the code and
+the version of the artifacts. In Kubernetes those definitions contain different resources,
+which chapter~\ref{chap:background} explains with an example.
 
 In the second step, \deployer modifies those resource definitions~\texttt{(8)} in a way
 that the production system uses the correct container image which relates to the version
@@ -1092,10 +1094,10 @@ executions of the rollback were 63 seconds. This is due to slow shutdowns of the
 pods. The Kubernetes partly waits for the shutdown process of the pods. That is why
 \deployer spends most of the 48-49 seconds waiting for Kubernetes API responses.
 
-Also for the rollback case, \deployer performs better with \gls{din}'s apache system, because of
-less deployment resources and the fast apache application. Nevertheless the deploys as
-well as the rollbacks involve zero downtime. So it's acceptable to have a bit longer
-durations.
+Also for the rollback case, \deployer performs better with \gls{din}'s apache system,
+because of less deployment resources and the fast apache application. Nevertheless the
+deploys as well as the rollbacks involve zero downtime\footnote{see glossary:
+  \gls{g:zdp}}. So it is acceptable to have slightly longer durations.
 
 \subsection{Metric Comparison}
 \label{sec:eval_metrics}
@@ -1325,7 +1327,7 @@ improvements, refactoring or updates.
 
 % reference to canary deploy
 They call this technique canary releasing. Again, you change would only change a part of
-the production system, the canary instead of the whole. Devops~\cite{cd_humble_deploy}
+the production system, the canary instead of the whole. DevOps~\cite{cd_humble_deploy}
 examines this technique in more detail.
 % TODO: difference to canary testing
 
@@ -1343,10 +1345,10 @@ to not include the implementation of the load balancing.
 
 % two versions in production suboptimal, rolling updates presume it
 We want to state that it is suboptimal to run multiple versions in the cluster like also
-mentioned in devops TODO. Rolling updates require it to be able to have two versions in
+mentioned in DevOps TODO. Rolling updates require it to be able to have two versions in
 production, though. And Kubernetes utilizes rolling updates as a technique to provide zero
 downtime deployments. Accordingly our proposed technique does not introduce a worsening to
-that. But as in devops mentioned, you should avoid to run more than two versions at the
+that. But as in DevOps mentioned, you should avoid to run more than two versions at the
 same time in production. \deployer ensures that by either updating a deployment, creating a
 canary deployment, or creating a deployment in a new version, just before it deleted the
 canary deployment.
