@@ -673,7 +673,7 @@ Deployer uses revision numbers instead. Deployer implements subversion, which is
 an ancient technology, to be able to do the evaluation with the \gls{din} system.
 
 It is obvious that the process of fetching a repository includes persistence and disk
-interaction. Deployer uses the volume just a cache, though. The reason for the existence
+interaction. Deployer uses the volume just as cache, though. The reason for the existence
 of the cache is performance. One of the bottlenecks of a deploy is downloading the
 repository. If a repository is large, for instance because of pictures or a long history
 of commits, it lasts quite an amount of time to download it. If the download rate is
@@ -718,9 +718,10 @@ images by communicating with the image repository~\texttt{(4)}.
 
 For simplicity and usability the client sends usually only one argument, either the commit
 hash or the tag. One argument is completely sufficient to determine the version, so a
-client can provide either one of them. A developer for instance only has to pick the
+client can provide either one of them. For instance, a developer has to pick only the
 commit hash for a manually triggered deploy. This creates a more efficient development
-flow. Nevertheless Deployer validates in advance if the deploy of the version is feasible.
+flow. Regardless of the whether Deployer receives multiple or only one argument, Deployer
+validates if the deploy of the version is feasible.
 
 The http client and depctl do not have any validations. Consequently, Deployer is the
 single point of defining validations.
@@ -753,7 +754,7 @@ additional statsd container running as a sidecar in the application pod.
 
 The other case would be that kubernetes resource defintion leaves the tag specification
 open. Then deployer appends the tag to the container image according to reference the
-, which the client provided.
+which the client provided.
 
 The next step is to communicate the modifications to the kubernetes
 api~\texttt{(6)}. Deployer sends the modified resources to the kubernetes api. The
@@ -762,22 +763,22 @@ replaces the old version with the new version. The procedure is called rolling u
 
 \subsection{Errorhandling}
 
-Sometimes something unexpected happens during the deploy. For example Deployer deos not
-find the tag to the corresponding commit hash, then the verification fails. Or another
-example is, the kubernetes api server returns an error. If this happens, Deployer will
+Sometimes something unexpected happens during the deploy. For example Deployer does not
+find the tag to the corresponding commit hash, then the verification fails. Another
+example is that the kubernetes api server returns an error. If this happens, Deployer will
 inform the developers. Deployer distinguishes between two different clients.
 
 The first one is a \gls{ci} system, which sent the deploy request. In this case the error
-report system\footnote{Chapter~\ref{chap:background} mentions bugsnag. The application of
-  GapFish uses it for error reporting.} comes into play. Deployer sends the error to
-report system ~\texttt{(7)}, which collects the errors of multiple systems. The error
-report system informs the developers via sending notifications to a specified
-channel. GapFish has for example a slack chat channel, on which the person on call
-subscribes and receives notifications from.
+the error reporting system\footnote{Chapter~\ref{chap:background} mentions bugsnag. The
+  application of GapFish uses it for error reporting.} comes into play. Deployer sends the
+error to reporting system ~\texttt{(7)}, which collects the errors of multiple
+systems. The error reporting system informs the developers via sending notifications to a
+specified channel. GapFish has for example a slack chat channel, on which the person on
+call subscribes and receives notifications from.
 
 The other client is a developer sending a deploy request manually. In this case the
 developer typically uses depctl. Deployer differentiates usual curl requests from requests
-with depctl. Instead of utilizing the error report system, deployer answers the http
+with depctl. Instead of utilizing the error reporting system, deployer answers the http
 request with an errorcode and a message in the http body. As mentioned earlier the
 communication with deployer is synchronous.
 
@@ -837,12 +838,12 @@ pods' utilization of cpu and memory. Accordingly, on each kubernetes host, a mon
 agent runs, which watches the '/proc' directory and the docker daemon. The agent picks up
 the information frequently and then sends it to the monitoring system.
 
-Secondly the group of metrics, which the application sends. In order to collect the
+Secondly, the group of metrics, which the application sends. In order to collect the
 metrics, the application needs to be instrumented. Examples for those metrics are
 throughput, latency and errorrate. In practice, I instrumented the applications to use the
 statsd protocol and statsd server for that purpose. Simple statsd libraries for most
 languages and frameworks exist even though the instrumentation could be better. In case
-there is a good instrumentation developers can use the without much effort. The
+there is a good instrumentation, developers can use it without much effort. The
 instrumented application then sends the data to the statsd server after each request and
 the statsd server aggregates the data. From there the statsd server forwards the
 aggregated metrics data to the monitoring system.
@@ -861,12 +862,12 @@ either stable or canary.
 The comparison between the canary and the stable version is the part of \gls{nprt}, which
 creates the feedback loop.
 
-The monitoring system basically consists out of a timeseriesdatabase, a graphing user
-interface and an alarm system. The timeseriesdatabase persists the metrics. And the user
-can define graphs from the metrics, which the user interface then displays. Moreover you
-the monitoring systems enables developers to define rules, which monitor the metrics in
-the timeseriesdatabase. In case the metrics violate any rule, the monitoring system sends
-a notification.
+The monitoring system basically consists out of a time series database, a graphing user
+interface and an alarm system. The time series database persists the metrics. And the user
+can define graphs from the metrics, which the user interface then displays. Moreover, the
+monitoring systems enables developers to define rules which monitor the metrics in the
+time series database. In case the metrics violate any rule, the monitoring system sends a
+notification.
 
 \begin{figure}[htbp]
   \centering
@@ -880,21 +881,22 @@ continuous line is the latency of the stable version. The yellow continuous line
 latency of the canary version. The graph compares them side by side. The red dotted line
 depicts a threshold. The threshold depends on the latency of the stable version and is
 always 50ms higher than the stable version in the figure. In case the latency of the
-canary goes above the threshold, the canary violate the rule and triggers an alarm. The
+canary goes above the threshold, the canary violates the rule and triggers an alarm. The
 alarm is in fact a webhook, which would roll back the canary instance.
 
 Next I elaborate on the metrics to monitor: Latency, utilization, errors and throughput.
 
 Latency defines the duration of successful requests. Latency is a typical performance
 metric of a webserver. Utilization mostly refers to metrics such as cpu and memory
-consumption. The errorrate is defined as counted error in a time period. Applications
+consumption. The errorrate is defined as counted errors in a time period. Applications
 sometimes have the problem of reporting too many errors without focus on important
 ones. Also throughput of successful requests can be an indicator of the health of an
 application.
 
 Deviations between the stable and the canary always exist. The monitoring rules should
-identify problematic regressions. This is oftentimes hard to achieve. The use of median or
-percentiles instead of averages help to define a good monitor.
+identify problematic regressions. This is oftentimes hard to
+achieve. Section~\ref{sec:eval_metrics}, in chapter~evaluation, illustrates one such
+example of a metric comparison which serves as a test.
 
 \subsection{Metric Parameters}
 
@@ -904,14 +906,14 @@ have a good recall and precision. The following gives insights on the factors, w
 affect those parameters.
 
 The ratio of the stable and canary metrics as well as the throughput affect the size of
-the \emph{aggregation window}. Assuming the application has a very low throughput of only
-1 request per minute and a ratio of 2 stable to 1 canary instance. In case the aggregation
-window is 1 minute large, then either the stable pods would have 1 request or the canary
-pod would have 1 request. This would be an improper aggregation window. Instead the
-aggregation window could be rather large with a size of 120 minutes. As result, the stable
-pods would receive 80 requests and the canary pods would receive 40 requests. This would
-be a much more appropriate aggregation window. Consequently the lower the throughput and
-the lower the stable canary ratio is, the larger should the window be.
+the \emph{aggregation window}. Let's assume the application has a very low throughput of
+only 1 request per minute and a ratio of 2 stable to 1 canary instance. In case the
+aggregation window is 1 minute large, then either the stable pods would have 1 request or
+the canary pod would have 1 request. This would be an improper aggregation window. Instead
+the aggregation window could be rather large with a size of 120 minutes. As result, the
+stable pods would receive 80 requests and the canary pods would receive 40 requests. This
+would be a much more appropriate aggregation window. Consequently the lower the throughput
+and the lower the stable canary ratio is, the larger the window should be.
 
 The distribution of throughputs and latencies over the routes of the application affects
 which percentile to use. I make an example: If there would be a single route, which has a
@@ -930,24 +932,28 @@ better metrics in order to define proper monitoring rules.
 \chapter{Evaluation}
 \label{chap:eval}
 
-This chapter evaluates the \gls{nprt} approach in two different aspects, experiments and a
-lessons learned section. Firstly the experiments aim to present an evaluation the
-approach's performance in the context of a whole delivery pipeline and how a sample metric
-comparison performs. The second part is a qualitative discussion of the lessons learned of
-an application use case, which was used in production.
+This chapter evaluates the \gls{nprt} approach in three different aspects, experiments, a
+lessons learned section and a related work section. Firstly, the experiments aim to
+present an evaluation the approach's performance in the context of a whole delivery
+pipeline and how a sample metric comparison performs. The second part is a qualitative
+discussion of the lessons learned of the application use cases at \gls{din} and GapFish.
+In the case of GapFish it was a application in production. The third aspect, related work,
+compares \gls{nprt} with other approaches in production and references similar tools like
+Deployer.
 
 \section{Experiments}
 
 I had the opportunity to do experiments with two different production applications. The
 first one is an apache webserver, which is the middleware in front of a tomcat application
-server. This application serves \gls{din}'s the website\footnote{\url{https://www.beuth.de}}. In
-the case of \gls{din}, I setup a version control system, a kubernetes cluster, with deployer,
-instrumentation and monitoring setup. Software engineers working for \gls{din} helped to
-setup a container image registry. I also migrated the apache webserver to be able to run
-on kubernetes. The kubernetes resources for the apache webserver consisted of a service
-and a deployment with two pods.
+server. This application serves \gls{din}'s
+website\footnote{\url{https://www.beuth.de}}. In the case of \gls{din}, I setup a version
+control system, a kubernetes cluster with deployer, instrumentation and monitoring
+setup. Software engineers working for \gls{din} helped to setup a container image
+registry. I also migrated the apache webserver to be able to run on kubernetes. The
+kubernetes resources for the apache webserver consisted of a service and a deployment with
+two pods.
 
-The second application is a ruby on rails application, which employees of GapFish utilize
+The second application is a ruby on rails application which employees of GapFish utilize
 as backoffice tools for several panel
 platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
   \url{https://www.spiegel-panel.de}}. As an employee of GapFish I previously migrated the
@@ -957,10 +963,10 @@ consists of a service and nine deployments. Eight of the deployments are differe
 background workers each with one pod. And one deployment is for the ruby on rails
 application server with two pods.
 
-The experiments for the \gls{din} apache application were conducted on virtual machines rented
-from Atos. The experiments for the GapFish application were conducted on virtual machines
-hosted at Google. You can read more about the specific details and the data used for the
-plots in the appendix.
+The experiments for the \gls{din} apache application were conducted on virtual machines
+rented from Atos. The experiments for the GapFish application were conducted on virtual
+machines hosted at Google. The appendix describes more about the specific details and the
+data used for the plots.
 
 Each of the experiments has three consecutive executions with three different canary
 versions in the deploy and rollback experiments. The measurements had to be manually
@@ -1091,6 +1097,7 @@ well as the rollbacks involve zero downtime. So it's acceptable to have a bit lo
 durations.
 
 \subsection{Metric Comparison}
+\label{sec:eval_metrics}
 
 This last experiment aims at a first evaluation of the feasibility and a first assessment
 of a metric comparison and the time of a broken canary being in production. \gls{din}
@@ -1124,9 +1131,9 @@ the factor 2, because there was one canary pod and two stable pods. An aggregati
 of 30 seconds and a threshold 3, which means the canary throughput had to differ 3 times
 as much as the one of the canary.
 
-Figure~\ref{fig:metric_comparison} shows that in each of the three executions the test has
-successfully detected the broken canary. The duration of the defect canary in production
-was between 129 and 400 seconds with a median of 185 seconds.
+Figure~\ref{fig:metric_comparison} shows that in each of the three executions, the test
+has successfully detected the broken canary. The duration of the defect canary in
+production was between 129 and 400 seconds with a median of 185 seconds.
 
 \begin{figure}[htbp]
   \centering
@@ -1172,7 +1179,7 @@ specific versions are simple. The rolling update mechanism provides deploys and 
 without downtime. This fact lead to a certain confidence of the engineering team to deploy
 and rollback and the amount of deploys increased.
 
-\subsection{Engineers know the Product}
+\subsection{Engineers Know the Product}
 
 The experiments already showed that a simple side by side comparison of the throughput can
 have good results for a test metric with production traffic. You could argue that
@@ -1248,12 +1255,12 @@ loadbalancer. It does not provide any automation for the deploy itself. Deployer
 implements the deploy automation. It could be interesting to combine the two tools to have
 more testing strategies available.
 
-I used datadog in the evaluation as monitoring system. However there exist also other
+I used datadog in the evaluation as monitoring system. However, there also exist other
 monitoring systems, such as the open source monitoring system prometheus, which provides
 very similar features. Google has a similar monitoring system in there internal
 infrastructure~\cite{sre_monitoring}.
 
-Lastly I am going to mention publications, which deal with metric analysis. Zimmerman
+Lastly, I am going to mention publications, which deal with metric analysis. Zimmerman
 motivates the need for data scientists software teams~\cite{data_science_role2} and
 identifies the multiple roles~\cite{data_science_role}. Farshchi et al. evaluates a
 regression based approach in order to detect errors during rolling
