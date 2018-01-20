@@ -1,5 +1,5 @@
 \newcommand{\myterm}[1]{\textit{#1}~}
-\renewcommand{\emph}[1]{\textbf{#1}}
+\newcommand{\myemph}[1]{\textbf{#1}}
 
 \newcommand{\nprt}{\myterm{Nonfunctional Production Regression Testing}}
 \newcommand{\deployer}{\myterm{Deployer}}
@@ -17,7 +17,7 @@
   name=continuous integration,
   description={is a practice of continuously merging code to a
     repository and automatically test it~\cite{ci_fowler}.
-    A continuous integration system is a server, which automates the tests.}
+    A continuous integration system is a server which automates the tests}
 }
 \newglossaryentry{g:devops}{
   name=DevOps,
@@ -36,7 +36,7 @@
 }
 \newglossaryentry{g:cdep}{
   name=continuous deployment,
-  description={is an extension to continuous delivery. An automated deployment process,
+  description={is an extension to continuous delivery. An automated deploy process,
     which delivers most changes directly to production~\cite{cd_humble_deploy}}
 }
 \newglossaryentry{g:canary}{
@@ -66,7 +66,7 @@
 }
 \newglossaryentry{g:kubernetes}{
   name=Kubernetes,
-  description={is a cluster management system, which Google's borg
+  description={is a cluster management system which Google's borg
     heavily influenced~\cite{borg,borg_kubernetes}. Beda gives a good
     overview of the architecture~\cite{kubernetes_architecture2}}
 }
@@ -79,39 +79,39 @@
   description={is an immutable snapshot of a container state~\cite{docker_orientation,docker_orientation2}}
 }
 \newglossaryentry{g:pod}{
-  name=pod,
-  description={is a kubernetes resource. It is a unit of multiple containers,
+  name=Pod,
+  description={is a Kubernetes resource. It is a unit of multiple containers,
     which are located on the same host to be able to share resources~\cite{pod}}
 }
 \newglossaryentry{g:service}{
-  name=service,
-  description={is a kubernetes resource, which basically acts as a loadbalancer in front
-  of pods~\cite{service}}
+  name=Service,
+  description={is a Kubernetes resource which basically acts as a load balancer
+  in front of Pods~\cite{service}}
 }
 \newglossaryentry{g:deployment}{
-  name=deployment,
-  description={is a kubernetes resource, which ensures the existence of replicated
-    pods. Deployments are an evolution to replicationcontrollers, which have similar
+  name=Deployment,
+  description={is a Kubernetes resource which ensures the existence of replicated
+    Pods. Deployments are an evolution to ReplicationControllers which have similar
     features~\cite{replicationcontroller}}
 }
 \newglossaryentry{g:statefulset}{
-  name=statefulset,
+  name=StatefulSet,
   description={TODO}
 }
 \newglossaryentry{g:deploy}{
   name=deploy,
   description={I use the term deploy in the thesis in order to differentiate the procedure
-    from deployment, the kubernetes resource.}
+    from Deployment, the Kubernetes resource}
 }
 \newglossaryentry{g:resource}{
   name=resource definitions,
-  description={are files, which define kubernetes resources such as service,
-    deployment, pod etc..}
+  description={are files which define Kubernetes resources such as Service,
+    Deployment, Pod etc.}
 }
 \newglossaryentry{g:versionref}{
   name=version reference,
   description={is either a commit hash (git), revision (subversion).
-    In \gls{nprt} the container image tag includes a version reference.}
+    In \gls{nprt} the container image tag includes a version reference}
 }
 \newglossaryentry{g:rolling}{
   name=rolling updates,
@@ -128,5 +128,3 @@
 \newacronym{vcs}{VCS}{Version Control System}
 \newacronym{din}{DIN}{Deutsches Institut für Normung}
 \newacronym{sre}{SRE}{Site Reliability Engineering}
-
-% slack, ruby on rails etc... linux

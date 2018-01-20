@@ -73,7 +73,7 @@ opportunities and extensions to the implementation.
 
 % devops/microservices aproach successful development and operation
 The DevOps\footnote{see glossary: \gls{g:devops}} approach and the
-Microservices\footnote{see glossary: \gls{g:microservices}} culture create practices to
+microservices\footnote{see glossary: \gls{g:microservices}} culture create practices to
 solve the issues of the conflicting tension~\cite{sre_intro} between a development and
 operation team. On the one hand the aim is to change the software product quickly and on
 the other hand to provide a stable and reliable software product of high quality. Vogels,
@@ -133,8 +133,8 @@ security patches.
 % (maintenance is a lot of work and) is easily disregarded in favor of velocity
 Agile and continuous practices focus primarily on feature development. Those practices
 altered software development to deliver features faster into production. Highsmith argues
-”velocity kills agility”~\cite{velocity_kills}. Also Fitzgerald observes the issue of a
-”misplaced focus on speed rather than continuity”~\cite{continuous_fitzgerald}. Focusing
+”velocity is killing agility”~\cite{velocity_kills}. Also Fitzgerald observes the issue of
+a ”misplaced focus on speed rather than continuity”~\cite{continuous_fitzgerald}. Focusing
 on development velocity only has a major drawback. Operating software in production and
 maintaining it needs to be done properly to ensure the quality of a software
 product. Companies easily disregard the importance of operation and maintenance of the
@@ -168,7 +168,7 @@ security patches. This results in releases and new versions.
 
 % almost every software product relies on open source
 On the web, there is rarely a software product which does not depend on open source
-software. Most web servers run linux and there are many popular open source frameworks
+software. Most web servers run Linux and there are many popular open source frameworks
 which make up the basis of the running software products.
 
 % RedHat/Ubuntu companies provide bundling and update service
@@ -238,7 +238,7 @@ changes. Few changes per deploy and the ability to rollback makes updates less r
 result, updates in an automated containerized immutable infrastructure are less risky
 compared to a manually operated infrastructure.
 
-Murphy et al. illustrate the value of automation~\cite{sre_automation}. Software
+Murphy et~al. illustrate the value of automation~\cite{sre_automation}. Software
 reliability engineers automate tasks to firstly save valuable human resources and secondly
 reduce the risk in those tasks because of human errors. This is a good approach and
 focuses on the quality of the software product.
@@ -281,43 +281,43 @@ software product.
 
 I'll explain the typical implementation of a 3 tier web app in Kubernetes as it helps a
 lot to understand the next chapters. The application tier is usually implemented with a
-\emph{deployment}\footnote{see glossary: \gls{g:deployment} and \gls{g:deploy}} which
-monitors the presence of a specified number of stateless \emph{pods}\footnote{see
-  glossary: \gls{g:pod}}. A \emph{service}\footnote{see glossary: \gls{g:service}} acts as
-a load balancer and selects the pods and forwards the request. The data tier is
-implemented with a \emph{statefulset}\footnote{see glossary: \gls{g:statefulset}} which
-monitors the presence of the stateful pods. Those stateful pods keep their host name and
+\myemph{Deployment}\footnote{see glossary: \gls{g:deployment} and \gls{g:deploy}} which
+monitors the presence of a specified number of stateless \myemph{Pods}\footnote{see
+  glossary: \gls{g:pod}}. A \myemph{Service}\footnote{see glossary: \gls{g:service}} acts as
+a load balancer and selects the Pods and forwards the request. The data tier is
+implemented with a \myemph{StatefulSet}\footnote{see glossary: \gls{g:statefulset}} which
+monitors the presence of the stateful Pods. Those stateful Pods keep their host name and
 mount the same volumes when they are being restarted.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{3tierwebapp}
-  \caption[3tierwebapp]{Typical 3 tier web app in Kubernetes.}
+  \caption{Typical 3 Tier Web App in Kubernetes}
   \label{fig:3tierwebapp}
 \end{figure}
 
-When the service receives a request from the client, it selects a pod via round robin and
-proxies the request to the pod. The pod probably communicates with the database and sends
-the request back to the client, where the service acts again as a reverse proxy.
+When the Service receives a request from the client, it selects a Pod via round robin and
+proxies the request to the Pod. The Pod probably communicates with the database and sends
+the request back to the client, where the Service acts again as a reverse proxy.
 
 \section{Software Dependencies}
 
 This section shortly mentions the dependencies, which I used to implement \deployer and the
 tools for other components of the pipeline.
 
-\deployer is implemented in ruby\footnote{\url{https://www.ruby-lang.org}}. it is a
-web server and sinatra\footnote{\url{http://sinatrarb.com}} is its framework. \deployer uses
-git\footnote{\url{https://git-scm.com}} and
-subversion\footnote{\url{https://subversion.apache.org}} to communicate with either git or
-subversion as the control version system. Moreover, \deployer has a plugin which sends
-messages to bugsnag\footnote{\url{https://www.bugsnag.com}} and
-slack\footnote{\url{https://slack.com}} to inform the developer in case it identifies a
+\deployer is implemented in Ruby\footnote{\url{https://www.ruby-lang.org}}. it is a
+web server and Sinatra\footnote{\url{http://sinatrarb.com}} is its framework. \deployer uses
+Git\footnote{\url{https://git-scm.com}} and
+Subversion\footnote{\url{https://subversion.apache.org}} to communicate with either Git or
+Subversion as the control version system. Moreover, \deployer has a plugin which sends
+messages to Bugsnag\footnote{\url{https://www.bugsnag.com}} and
+Slack\footnote{\url{https://slack.com}} to inform the developer in case it identifies a
 problem. \deployer uses kubectl to interact with
 Kubernetes\footnote{\url{https://kubernetes.io}, see also
   \cite{kubernetes_architecture,kubernetes_architecture2}} master. \deployer itself is
-containerized with docker\footnote{\url{https://www.docker.com}} and its natural hosting
+containerized with Docker\footnote{\url{https://www.docker.com}} and its natural hosting
 solution would be Kubernetes. We published \deployer on
-github\footnote{\url{https://github.com/gapfish/deployer}} under GPL-3.0, a free software
+Github\footnote{\url{https://github.com/gapfish/deployer}} under GPL-3.0, a free software
 license.
 
 The previously developed
@@ -325,12 +325,12 @@ The previously developed
 with dependency updates.
 
 The monitoring system\footnote{see glossary: \gls{g:mon}}, which I used in the evaluation,
-is datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
-prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
+is Datadog\footnote{\url{https://www.datadoghq.com}}, a commercial service. Nevertheless
+Prometheus\footnote{\url{https://prometheus.io}} is also a suitable open source solution
 as monitoring system. The \gls{ci}\footnote{see glossary: \gls{g:ci}} systems we use for
-the evaluation are codeship\footnote{\url{https://codeship.com}} and
-jenkins\footnote{\url{https://jenkins.io}}. As an image repository, we use docker
-hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
+the evaluation are Codeship\footnote{\url{https://codeship.com}} and
+Jenkins\footnote{\url{https://jenkins.io}}. As an image repository, we use Docker
+Hub\footnote{\url{https://hub.docker.com}}. Goreplay\footnote{\url{https://github.com/buger/goreplay}}
 served to make experiments with production traffic.
 
 \chapter{NPRT Approach}
@@ -343,11 +343,11 @@ roll it back. The novelty of this approach is that it creates a feedback loop be
 development and production, which is fully automatable. The following elaborates on the
 term in more detail.
 
-\emph{Non-functional} refers to the change, which the monitoring system monitors. Usually
+\myemph{Non-functional} refers to the change, which the monitoring system monitors. Usually
 maintenance changes are non-functional changes, for instance performance improvements or
-security updates. \emph{Production} refers to the environment, in which the versions are
+security updates. \myemph{Production} refers to the environment, in which the versions are
 monitored. The production traffic reaches the new version as well as the stable
-version. The term \emph{regression} refers to the testing strategy. The monitoring system
+version. The term \myemph{regression} refers to the testing strategy. The monitoring system
 tests the metrics of the stable version and the new version for a regression.
 
 \gls{nprt} provides some further features, which are not included in the term. Indeed the
@@ -360,15 +360,15 @@ possible.
 \gls{nprt} naturally evolved from common practices such as \gls{ci}, \gls{cd} and
 continuous deployment and extends those practices. The already established practices
 support developers before and until the software deployment. In contrast to that,
-\gls{nprt}, supports developers during and after the deployment. In other words it
-supports developers to run and maintain applications in production, which formerly has
-been a business of operations teams.
+\gls{nprt}, supports developers during and after the deploy. In other words it supports
+developers to run and maintain applications in production, which formerly has been a
+business of operations teams.
 
 \section{Pipeline Overview}
 
 \begin{figure}[htbp]
   \includegraphics[width=0.97\textwidth]{nprt_overview}
-  \caption[nprtflow]{Overview of the NPRT flow.}
+  \caption{Overview of NPRT}
   \label{fig:nprt_flow}
 \end{figure}
 
@@ -450,11 +450,11 @@ with the exact version reference.
 \gls{nprt} is an approach, which I designed to be completely automatable. It is crucial to
 not only have \gls{ci}, but to have a customized continuous deployment process as well.
 
-The next component in the pipeline is \deployer. \deployer is a service, which realizes the
-customized parts of the continuous deployment practice. In the context of this thesis, I
-implemented \deployer. Chapter~\ref{chap:detail} describes \deployer in detail. This chapter
-demonstrates how \deployer integrates in the pipeline and in the environment among all the
-other tools. It is crucial to have full control over the deployment process and as a
+The next component in the pipeline is \deployer. \deployer is a service which realizes
+the customized parts of the continuous deployment practice. In the context of this thesis,
+I implemented \deployer. Chapter~\ref{chap:detail} describes \deployer in detail. This
+chapter demonstrates how \deployer integrates in the pipeline and in the environment among
+all the other tools. It is crucial to have full control over the deploy process and as a
 consequence it was necessary to implement \deployer.
 
 It would also be possible to implement the logic of the deploy in the \gls{ci} system. But
@@ -491,7 +491,7 @@ production cluster which is shown in the figure as step~\texttt{(9)}. In result 
 changes two things: application infrastructure as well as application code changes.
 
 The production cluster receives the modified infrastructure definitions. The production
-changes the cluster state according to the definitions. Most important is that pod
+changes the cluster state according to the definitions. Most important is that Pod
 instance of two versions in parallel are in the cluster. The production cluster fetches
 the container images in step~\texttt{(10)} from the image repository. The images, which
 the \gls{ci} system built in step~\texttt{(3)}. The production cluster is aware of the
@@ -573,24 +573,24 @@ figure~\ref{fig:deployer_architecture}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{deployer_architecture}
-  \caption[nprtflow]{Detailed \deployer Architecture and Steps.}
+  \caption{Detailed Deployer Architecture and Steps}
   \label{fig:deployer_architecture}
 \end{figure}
 
 As mentioned earlier, \deployer is a web server which runs in Kubernetes itself and is
 stateless. The production cluster in figure~\ref{fig:deployer_architecture} is the same
 Kubernetes cluster in which the application to test runs in. The yellow box is a
-Kubernetes service. The service is, as described in chapter~\ref{chap:background}, a
+Kubernetes Service. The Service is, as described in chapter~\ref{chap:background}, a
 load balancer. Clients can reach \deployer via an http interface. The figure shows that
-\deployer consists of multiple pods. These pods are replicated and are identical in their
-behaviour. The pods are basically stateless, yet every pod has its own caching layer which
+\deployer consists of multiple Pods. These Pods are replicated and are identical in their
+behaviour. The Pods are basically stateless, yet every Pod has its own caching layer which
 section~\ref{sec:cache} explains in more detail. \deployer uses approximately 50mb memory
 and few CPU, so computing resources are no problem. I designed \deployer to have
 synchronous communication with a client. \deployer waits for the deploy process to complete
 before it responds. This has the advantage of clients receiving feedback about the
 deploy. Furthermore it enables \deployer of being independent of other services such as a
 queuing or worker system. \deployer's statelessness leads to easy horizontal scaling of
-\deployer. It is possible to add more pods if needed in order to achieve more concurrent
+\deployer. It is possible to add more Pods if needed in order to achieve more concurrent
 deploys.
 
 \section{Deployer Interface}
@@ -621,7 +621,7 @@ developer friendly.
    | GET /version        | version        |             |
 
 \end{verbatim}
-\caption{Deployer interface.}
+\caption{Deployer Interface}
 \label{tab:interface}
 \end{table}
 Examples:
@@ -636,25 +636,25 @@ The following will go through the interface of \deployer. \deployer provides dif
 endpoints: ls, show, tags, deploy, canary and version. The following descriptions uses the
 term service in the meaning of a microservice.
 
-The \emph{ls} or index endpoint returns the configured services and returns the endpoints
+The \myemph{ls} or index endpoint returns the configured services and returns the endpoints
 for the service, which the configuration defines.
 
-The \emph{tags} endpoint shows the available tags for that service. \deployer queries the
-docker image registry for all available tags for all images for a service and returns them
+The \myemph{tags} endpoint shows the available tags for that service. \deployer queries the
+Docker image registry for all available tags for all images for a service and returns them
 to the client.
 
-\emph{Deploy} and \emph{canary} are the endpoints for either a regular or a canary
+\myemph{Deploy} and \myemph{canary} are the endpoints for either a regular or a canary
 deploy. The requests needs to provide either a version reference, a tag or both. The
 request updates the service, this is why the endpoint defines a http put.
 
-The \emph{version} endpoint simply returns the \deployer version.
+The \myemph{version} endpoint simply returns the \deployer version.
 
 \section{Logic and Flow of a Deploy}
 
 \subsection{Authorization}
 
 Next I want to go through the steps involved in the deploy process. Initially a client
-sends a http request to \deployer~\texttt{(1)}. The service resource proxies the request
+sends a http request to \deployer~\texttt{(1)}. The Service resource proxies the request
 to \deployer~\texttt{(2)}. After that, \deployer needs to authenticate the client via http
 basic authentication. In other words, the client authenticates itself via a username and
 password. As I mentioned earlier, the \gls{ci} system is a software as a service solution,
@@ -669,10 +669,10 @@ credentials from the production cluster.
 \label{sec:cache}
 
 After \deployer authenticated a valid client, it then fetches the code from the
-\gls{vcs}~\texttt{(3)}. If git is the \gls{vcs}, \deployer uses commit hashes and branches
-as version reference and to determine the code version. If subversion is the \gls{vcs},
-\deployer uses revision numbers instead. \deployer implements subversion, which is an older
-\gls{vcs}, to be able to do the evaluation with the \gls{din} system.
+\gls{vcs}~\texttt{(3)}. If Git is the \gls{vcs}, \deployer uses commit hashes and branches
+as version reference and to determine the code version. If Subversion is the \gls{vcs},
+\deployer uses revision numbers instead. \deployer implements Subversion, which is an
+older \gls{vcs}, to be able to do the evaluation with the \gls{din} system.
 
 It is obvious that the process of fetching a repository includes persistence and disk
 interaction. \deployer uses the volume just as cache, though. The reason for the existence
@@ -684,16 +684,16 @@ development flow experience. Therefore \deployer keeps the already downloaded re
 on its volume as a cache. The next time \deployer deploys the same repository in a
 different version and \deployer only fetches the changes.
 
-As a simplification, every pod has its own cache and lives as long as the pod. Thus every
-pod utilizes its own volume as a cache and the need for communication and an extra caching
-service does not exist. Since docker containers are immutable, every time Kubernetes
-recreates a pod, Kubernetes destroys the volume. Thus the cached data is not available
+As a simplification, every Pod has its own cache and lives as long as the Pod. Thus every
+Pod utilizes its own volume as a cache and the need for communication and an extra caching
+service does not exist. Since Docker containers are immutable, every time Kubernetes
+recreates a Pod, Kubernetes destroys the volume. Thus the cached data is not available
 anymore and in other words the cache is empty again.
 
 The version control system contains application code as well as the resource
 definitions. In Kubernetes these resource definitions define the application
-infrastructure. Resources define for instance deployments, statefulsets and
-services. These resource definitions should be stored in the '/kubernetes' directory. This
+infrastructure. Resources define for instance Deployments, StatefulSets and
+Services. These resource definitions should be stored in the '/kubernetes' directory. This
 is a convention of \deployer and it assumes that the '/kubernetes' directory is the
 standard location. If application is unable to store the resource definitions in the
 '/kubernetes' directory, the configuration of \deployer provides an option to reconfigure
@@ -710,13 +710,13 @@ multiple microservices.
 After \deployer fetched the specific version reference from the repository, \deployer starts
 the deploy procedure. At first \deployer validates the arguments, which the client
 sent. The deploy request requires the service and the version to deploy. The client
-defines the version by passing either the commit hash, the docker image tag or both. The
+defines the version by passing either the commit hash, the Docker image tag or both. The
 tag includes the branch name, which makes the reference more readable.
 
 \deployer initially validates the arguments of the request. \deployer checks if the service
 exists in the configuration. \deployer checks if the commit hash exists in the repository
 and \deployer checks if the tag exists for all the images, which are necessary in order to
-deploy the service in the new version. \deployer receives the available tags for a docker
+deploy the service in the new version. \deployer receives the available tags for a Docker
 images by communicating with the image repository~\texttt{(4)}.
 
 For simplicity and usability the client sends usually only one argument, either the commit
@@ -732,28 +732,28 @@ single point of defining validations.
 \subsection{Modifications of Resource Definitions}
 
 After \deployer validated the deploy request, \deployer takes the previously checked out
-resources and modifies them in the next step~\texttt{(5)}. Especially deployments and
-statefulsets are relevant to those modifications. In contrast to those resources, \deployer
-does not modify all other resources, such as services.
+resources and modifies them in the next step~\texttt{(5)}. Especially Deployments and
+StatefulSets are relevant to those modifications. In contrast to those resources, \deployer
+does not modify all other resources, such as Services.
 
-\deployer applies two main modifications: the \emph{environment} and the image tag. The
+\deployer applies two main modifications: the \myemph{environment} and the image tag. The
 former is especially important for the metrics collection. \deployer modifies the
 environment in order to enable the instrumentation to differentiate between the stable
-version and the canary version. The running pods can later read the version information
+version and the canary version. The running Pods can later read the version information
 from the environment variables and are able to adjust the instrumentation configuration to
 add the version information.
 
-The second important modification is the \emph{image tag}. The image tag specifies the
+The second important modification is the \myemph{image tag}. The image tag specifies the
 container image. The specific container image is import as it holds the specific
 application version. \deployer picks the correct image tag belonging to the version
 reference from the \gls{vcs}.
 
-\deployer modifies the resource definitions only when the image tag is unspecified. In case
-a deployment resource already specifies an image tag, for instance somebody else maintains
-the image, then \deployer does not change the specified tag. The reason is that the
-\gls{ci} does not build images, which are maintained by somebody else. Such images do not
-have a tag with the specific version reference of the \gls{vcs}. One example is an
-additional statsd container running as a sidecar in the application pod.
+\deployer modifies the resource definitions only when the image tag is unspecified. In
+case a Deployment resource already specifies an image tag, for instance somebody else
+maintains the image, then \deployer does not change the specified tag. The reason is that
+the \gls{ci} does not build images, which are maintained by somebody else. Such images do
+not have a tag with the specific version reference of the \gls{vcs}. One example is an
+additional statsd container running as a sidecar in the application Pod.
 
 The other case would be that the Kubernetes resource defintion leaves the tag
 specification open. Then \deployer appends the tag to the container image according to
@@ -761,7 +761,7 @@ reference which the client provided.
 
 The next step is to communicate the modifications to the Kubernetes
 API~\texttt{(6)}. \deployer sends the modified resources to the Kubernetes API. The
-Kubernetes master manages the rollout of the changes. It swaps out one pod by another and
+Kubernetes master manages the rollout of the changes. It swaps out one Pod by another and
 replaces the old version with the new version. The procedure is called rolling update.
 
 \subsection{Errorhandling}
@@ -772,11 +772,11 @@ example is that the Kubernetes API server returns an error. If this happens, \de
 inform the developers. \deployer distinguishes between two different clients.
 
 The first one is a \gls{ci} system, which sent the deploy request. In this case the error
-the error reporting system\footnote{Chapter~\ref{chap:background} mentions bugsnag. The
+the error reporting system\footnote{Chapter~\ref{chap:background} mentions Bugsnag. The
   application of GapFish uses it for error reporting.} comes into play. \deployer sends the
 error to the reporting system ~\texttt{(7)} which collects the errors of multiple
 systems. The error reporting system informs the developers via sending notifications to a
-specified channel. GapFish has for example a slack chat channel, to which the person on
+specified channel. GapFish has for example a Slack chat channel, to which the person on
 call subscribes and receives notifications from.
 
 The other client is a developer sending a deploy request manually. In this case the
@@ -793,11 +793,11 @@ triggers a deploy or a developer manually triggers a deploy.
 \label{test_architecture}
 
 This section explains the testing architecture inside the production cluster. Few canary
-pods in the new version run next to the stable version. These pods are able to receive and
+Pods in the new version run next to the stable version. These Pods are able to receive and
 respond to production traffic.
 
 \begin{figure}[htbp] \centering \includegraphics[width=\textwidth]{deployer_flow}
-  \caption[nprtflow]{Testing Flow Implementation.}
+  \caption{Canary Testing Architecture}
   \label{fig:testing_flow}
 \end{figure}
 
@@ -809,24 +809,24 @@ either a commit hash, a tag or both. When \deployer receives the canary deploy r
 proceeds almost identical to the deploy request. The steps are verification, fetching the
 version, resource modification and application to the Kubernetes API. The difference to
 the deploy lies in the modification step. Instead of deploying a new version, \deployer
-creates a additional new canary deployment resource.
+creates a additional new canary Deployment resource.
 
-In the modification step \deployer does not only change the container image version, but it
-adds another canary deployment. \deployer names the new deployment resource with the name
-of the original deployment resource and a canary suffix. Kubernetes differentiates the
-canary deployment from the original deployment. Kubernetes creates pods for the additional
-canary deployment in the different version, which \deployer specified.
+In the modification step \deployer does not only change the container image version, but
+it adds another canary Deployment. \deployer names the new Deployment resource with the
+name of the original Deployment resource and a canary suffix. Kubernetes differentiates
+the canary Deployment from the original Deployment. Kubernetes creates Pods for the
+additional canary Deployment in the different version, which \deployer specified.
 
-The service though, which does the load balancing, selects both. It selects the pods which
-belong to the original deployment. And it selects the pods, which belong to the canary
-deployment. Hence the service selects its pods in account to the label. The original and
-the canary deployment share a subset of their labels. A shared label would be for instance
+The Service though, which does the load balancing, selects both. It selects the Pods which
+belong to the original Deployment. And it selects the Pods, which belong to the canary
+Deployment. Hence the Service selects its Pods in account to the label. The original and
+the canary Deployment share a subset of their labels. A shared label would be for instance
 'deploy=webserver'. And the two differentiating labels would be 'track=stable' and
 respectively 'track=canary'.
 
-I designed the canary deploy to result in fewer canary pods than stable pods in order to
+I designed the canary deploy to result in fewer canary Pods than stable Pods in order to
 reduce risk as the previous chapter describes. \deployer does this simply by scaling the
-canary deployment to a single replica.
+canary Deployment to a single replica.
 
 \section{Metrics}
 
@@ -837,8 +837,8 @@ production. There exist two separate collection mechanisms. Those are hosts, whi
 metrics, and the application instrumentation, which sends metrics.
 
 Firstly the group of metrics, which the host picks up. The host has information about the
-pods' utilization of CPU and memory. Accordingly, on each Kubernetes host, a monitoring
-agent runs, which watches the '/proc' directory and the docker daemon. The agent picks up
+Pods' utilization of CPU and memory. Accordingly, on each Kubernetes host, a monitoring
+agent runs, which watches the '/proc' directory and the Docker daemon. The agent picks up
 the information frequently and then sends it to the monitoring system.
 
 Secondly, the group of metrics, which the application sends. In order to collect the
@@ -855,7 +855,7 @@ It is important to correctly label the metrics in order to decide whether a cana
 stable version sends the metric. The monitoring system is then able to distinguish between
 the metrics of the stable version and the metrics of the canary version. For the first
 group of metrics collection, the monitoring agent can pick up the label from the labeled
-pod. And for the second group of metrics collection, the instrumentation code of the
+Pod. And for the second group of metrics collection, the instrumentation code of the
 application picks up the label from environment variables, which \deployer has set to
 either stable or canary.
 
@@ -875,7 +875,7 @@ notification.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=1.0 \textwidth]{metric_comparison}
-  \caption[metric_comparison]{Comparing the stable version with the canary version.}
+  \caption{Comparing the Stable Version with the Canary Version}
   \label{fig:metrics_comparison}
 \end{figure}
 
@@ -909,22 +909,22 @@ have a good recall and precision. The following gives insights on the factors, w
 affect those parameters.
 
 The ratio of the stable and canary metrics as well as the throughput affect the size of
-the \emph{aggregation window}. Let's assume the application has a very low throughput of
+the \myemph{aggregation window}. Let's assume the application has a very low throughput of
 only 1 request per minute and a ratio of 2 stable to 1 canary instance. In case the
-aggregation window is 1 minute large, then either the stable pods would have 1 request or
-the canary pod would have 1 request. This would be an improper aggregation window. Instead
+aggregation window is 1 minute large, then either the stable Pods would have 1 request or
+the canary Pod would have 1 request. This would be an improper aggregation window. Instead
 the aggregation window could be rather large with a size of 120 minutes. As result, the
-stable pods would receive 80 requests and the canary pods would receive 40 requests. This
+stable Pods would receive 80 requests and the canary Pods would receive 40 requests. This
 would be a much more appropriate aggregation window. Consequently the lower the throughput
 and the lower the stable canary ratio is, the larger the window should be.
 
 The distribution of throughputs and latencies over the routes of the application affects
 which percentile to use. I make an example: If there would be a single route, which has a
 low throughput and a very high latency compared to other routes. The average would be an
-improper \emph{aggregation}. The outliers of low latencies would affect the
+improper \myemph{aggregation}. The outliers of low latencies would affect the
 average. Instead a percentile or the median would represent the latency much better.
 
-The range of throughputs and latencies also affects the \emph{threshold}. If the
+The range of throughputs and latencies also affects the \myemph{threshold}. If the
 application had a larger range of throughputs and latencies, a proper throughput would
 need to a higher. However we can affect the volatility of the metrics by choosing a larger
 aggregation window. This allows to lower the throughput.
@@ -947,26 +947,26 @@ compares \gls{nprt} with other approaches in production and references similar t
 \section{Experiments}
 
 I had the opportunity to do experiments with two different production applications. The
-first one is an apache web server, which is the middleware in front of a tomcat application
-server. This application serves \gls{din}'s
+first one is an Apache web server, which is the middleware in front of a tomcat
+application server. This application serves \gls{din}'s
 website\footnote{\url{https://www.beuth.de}}. In the case of \gls{din}, I setup a version
 control system, a Kubernetes cluster with \deployer, instrumentation and monitoring
 setup. Software engineers working for \gls{din} helped to setup a container image
-registry. I also migrated the apache web server to be able to run on Kubernetes. The
-Kubernetes resources for the apache web server consisted of a service and a deployment with
-two pods.
+registry. I also migrated the Apache web server to be able to run on Kubernetes. The
+Kubernetes resources for the Apache web server consisted of a Service and a Deployment
+with two Pods.
 
-The second application is a ruby on rails application which employees of GapFish utilize
+The second application is a Ruby on Rails application which employees of GapFish utilize
 as backoffice tools for several panel
 platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
   \url{https://www.spiegel-panel.de}}. As an employee of GapFish I previously migrated the
-ruby on rails application to Kubernetes and utilized codeship as \gls{ci}, docker hub as
-container image registry and integrated datadog as monitoring system. The application
-consists of a service and nine deployments. Eight of the deployments are different
-background workers each with one pod. And one deployment is for the ruby on rails
-application server with two pods.
+Rails application to Kubernetes and utilized Codeship as \gls{ci}, Docker Hub as container
+image registry and integrated Datadog as monitoring system. The application consists of a
+Service and nine Deployments. Eight of the Deployments are different background workers
+each with one Pod. And one Deployment is for the Ruby on Rails application server with two
+Pods.
 
-The experiments for the \gls{din} apache application were conducted on virtual machines
+The experiments for the \gls{din} Apache application were conducted on virtual machines
 rented from Atos. The experiments for the GapFish application were conducted on virtual
 machines hosted at Google. The appendix describes more about the specific details and the
 data used for the plots.
@@ -992,7 +992,7 @@ of Kubernetes starting the canary (9-running).
   \centering
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{deploy_din}
-    \caption[DIN]{\gls{din} Apache Middleware}
+    \caption{\gls{din} Apache Middleware}
     \label{fig:deploy_din}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
@@ -1000,36 +1000,36 @@ of Kubernetes starting the canary (9-running).
     \caption[GapFish]{GapFish Rails Application Server}
     \label{fig:deploy_gapfish}
   \end{subfigure}
-  \caption[Deploy]{Deploy}
+  \caption{Deploy}
 \end{figure}
 
-Figure~\ref{fig:deploy_din} shows that \gls{din}'s apache middleware takes between 9 and 12
+Figure~\ref{fig:deploy_din} shows that \gls{din}'s Apache middleware takes between 9 and 12
 seconds with a median of 10 seconds. \deployer took in the third execution 9 seconds and
 the start of the canary was in every execution at 1 second.
 
-Figure~\ref{fig:deploy_gapfish} shows that GapFish's rails application server takes
+Figure~\ref{fig:deploy_gapfish} shows that GapFish's Rails application server takes
 between 65 and 106 seconds with a median of 93 seconds. The time \deployer took was 18
 seconds in median.
 
 In both experiments the second and third execution are faster than the first one. That is
 because \deployer caches the code from the version control system and does only need to
 download the difference in the consecutive executions. The impact of the cache on \gls{din}'s
-apache web server was not that big, because the repository size is comparably
-small. Whereas the cache could save almost half of the time at the GapFish rails
+Apache web server was not that big, because the repository size is comparably
+small. Whereas the cache could save almost half of the time at the GapFish Rails
 application.
 
-The start of \gls{din}'s apache pods is with 1 second quite fast. This demonstrates the quick
-scheduling of Kubernetes and quick startup of docker containers compared to virtual
+The start of \gls{din}'s Apache Pods is with 1 second quite fast. This demonstrates the quick
+scheduling of Kubernetes and quick startup of Docker containers compared to virtual
 machines. The start of GapFish's application is between 45 and 75 seconds with median of
 70 seconds.
 
-Accordingly \gls{din}'s apache application deploy significantly faster. So \deployer is able to
-handle multiple deployments as in the case of GapFish. The multiple requests to the
+Accordingly \gls{din}'s Apache application deploy significantly faster. So \deployer is able to
+handle multiple Deployments as in the case of GapFish. The multiple requests to the
 Kubernetes API slightly reduce the deploy duration though. An improvement would be a
 batched request. \deployer's cache works well for big repository sizes.
 
 It is important to pay attention with slow application startup durations, when looking for
-fast deployments. In the case of GapFish's rails applicatoin server, this makes the
+fast Deployments. In the case of GapFish's Rails applicatoin server, this makes the
 biggest impact.
 
 The variation of the second and third executions come from the nature of the cloud
@@ -1040,17 +1040,17 @@ registry differ in the duration.
 
 This section shows a deploy in the full context of the \gls{cd} pipeline. The steps start
 with the commit and push of a new version in the version control system, the build of the
-docker image(s), saving the recently built images in the image registry, time spend by
-\deployer and the remaining startup of the canary pods. The testsuite runtime is not
+Docker image(s), saving the recently built images in the image registry, time spend by
+\deployer and the remaining startup of the canary Pods. The testsuite runtime is not
 included in this diagram, so that focus lies on the systems this thesis integrated.
 
 At GapFish I could access all the involved system. This was not the case at \gls{din}. That is
-why the experiment was conducted for the GapFish rails application only.
+why the experiment was conducted for the GapFish Rails application only.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\linewidth]{whole_pipeline}
-  \caption[Metric Comparison]{Whole Pipeline}
+  \caption{Deploy in Pipeline}
   \label{fig:whole pipeline}
 \end{figure}
 
@@ -1060,7 +1060,7 @@ the \gls{ci} system and the image registry partly cache the layers of the images
 only have to build and send the differing parts of the container image.
 
 As a result we see the overall pipeline duration for a typical canary change at round
-about 3 minutes, including a build and deployment. The makes a continuous deployment of
+about 3 minutes, including a build and deploy. The makes a continuous deployment of
 new canaries absolutely feasible.
 
 \subsection{Rollback}
@@ -1068,9 +1068,9 @@ new canaries absolutely feasible.
 In this section we take a the look at the rollback performance of \deployer. The blue part
 of the bar again represents the time \deployer is involved, that is from the rollback
 request including steps (7) and (8) until the Kubernetes API responded. The red bar
-represent the remaining time the pods take to shut down.
+represent the remaining time the Pods take to shut down.
 
-Figure~\ref{fig:rollback_din} shows the rollback duration of a \gls{din} apache canary
+Figure~\ref{fig:rollback_din} shows the rollback duration of a \gls{din} Apache canary
 is between 4 and 5 seconds. The duration send in \deployer is less than in the deploy case.
 That is mostly because it the delete request to the Kubernetes API is faster.
 
@@ -1078,24 +1078,24 @@ That is mostly because it the delete request to the Kubernetes API is faster.
   \centering
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{rollback_din}
-    \caption[DIN]{DIN}
+    \caption{DIN}
     \label{fig:rollback_din}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \includegraphics[width=\linewidth]{rollback_gapfish}
-    \caption[GapFish]{GapFish}
+    \caption{GapFish}
     \label{fig:rollback_gapfish}
   \end{subfigure}
-  \caption[Deploy]{Rollback}
+  \caption{Rollback}
 \end{figure}
 
-In the case of GapFish's rails application, we have longer rollback times. All three
+In the case of GapFish's Rails application, we have longer rollback times. All three
 executions of the rollback were 63 seconds. This is due to slow shutdowns of the worker
-pods. The Kubernetes partly waits for the shutdown process of the pods. That is why
+Pods. The Kubernetes partly waits for the shutdown process of the Pods. That is why
 \deployer spends most of the 48-49 seconds waiting for Kubernetes API responses.
 
-Also for the rollback case, \deployer performs better with \gls{din}'s apache system,
-because of less deployment resources and the fast apache application. Nevertheless the
+Also for the rollback case, \deployer performs better with \gls{din}'s Apache system,
+because of less Deployment resources and the fast Apache application. Nevertheless the
 deploys as well as the rollbacks involve zero downtime\footnote{see glossary:
   \gls{g:zdp}}. So it is acceptable to have slightly longer durations.
 
@@ -1104,7 +1104,7 @@ deploys as well as the rollbacks involve zero downtime\footnote{see glossary:
 
 This last experiment aims at a first evaluation of the feasibility and a first assessment
 of a metric comparison and the time of a broken canary being in production. \gls{din}
-provided one hour of production traffic of their website, which a goreplay process
+provided one hour of production traffic of their website, which a Goreplay process
 recorded on production and replayed with the test setup.
 
 Due to the fact the test setup database state differs to the production database, the
@@ -1130,7 +1130,7 @@ abs(1 - ratio) > 3
 \end{verbatim}
 
 The test compares throughput of successful responses. The canary responses are weighted by
-the factor 2, because there was one canary pod and two stable pods. An aggregation window
+the factor 2, because there was one canary Pod and two stable Pods. An aggregation window
 of 30 seconds and a threshold 3, which means the canary throughput had to differ 3 times
 as much as the one of the canary.
 
@@ -1141,17 +1141,17 @@ production was between 129 and 400 seconds with a median of 185 seconds.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.5\linewidth]{metric_comparison.png}
-  \caption[Metric Comparison]{Metric Comparison}
+  \caption{Metric Comparison}
   \label{fig:metric_comparison}
 \end{figure}
 
 The experiment demonstrates that the automation of a regression test in production is
 feasible and completely automatable.
 
-\section{Lessons learned}
+\section{Lessons Learned}
 
-The GapFish ruby on rails application of the previous experiments as well as two other
-GapFish ruby services utilize the \gls{nprt} approach in production. This section presents
+The GapFish Rails application of the previous experiments as well as two other
+GapFish Ruby services utilize the \gls{nprt} approach in production. This section presents
 qualitative feedback, which comes mainly from use of \gls{nprt} in production.
 
 On the one hand non-functional regression testing was used to test maintenance of own code,
@@ -1164,7 +1164,7 @@ error metrics, which I explain later on in more detail.
 
 Deploys of a round about 1.5 minutes conform the need of developers of sufficiently quick
 deploys. This is good compared to oftentimes long running test suites as it is the case with
-GapFish's rails application, which has a current median duration of 12.5 minutes. The time
+GapFish's Rails application, which has a current median duration of 12.5 minutes. The time
 of a deploy is compared to that much faster and engineers do not get distracted and when
 they deploy manually.
 
@@ -1189,16 +1189,16 @@ have good results for a test metric with production traffic. You could argue tha
 production metrics can be hard to evaluate and in a test environment it is rather easy to
 achieve good results. The problem of overfitting in statistics is well known.
 
-When choosing the wrong metrics for the production regression tests of the ruby
+When choosing the wrong metrics for the production regression tests of the Ruby
 applications of GapFish, it would not have been feasible to deliver as good results as the
 first test showed. The problem lies in the granularity of the metrics. For example a total
 throughput or total error rate of a comprehensive application is misleading. GapFish's
-rails application serves not only humans, but provides also interfaces for other
-services. This leads on the one hand sparse usage\footnote{The users of the rails
+Rails application serves not only humans, but provides also interfaces for other
+services. This leads on the one hand sparse usage\footnote{The users of the Rails
   application are only internal employees.} on routes for users and on the other hand
 machines machines utilized some routes extensively. The overall throughput was a poor fit.
 
-The much better choice for a metric was using the error aggregation of bugsnag. Bugsnag
+The much better choice for a metric was using the error aggregation of Bugsnag. Bugsnag
 aggregates errors, that it shows specifically newly introduced errors. This has been the
 best metric for the regression tests.
 
@@ -1219,9 +1219,10 @@ automated rollbacks. Those are the step stones for more possibilities.
 \gls{nprt} reduced the efforts of maintenance work on own code. The Engineers were able to
 test changes in production quickly and have a small feedback loop.
 
-The engineers working for \gls{din} are still sceptical to have unsupervised deploys. But in the
-example of GapFish, the engineers became confident about the automation of the deployment
-and regression test in production and start to use unsupervised deploys and tests more often.
+The engineers working for \gls{din} are still sceptical to have unsupervised deploys. But
+in the example of GapFish, the engineers became confident about the automation of the
+deploy and regression test in production and start to use unsupervised deploys and tests
+more often.
 
 The possibility of dependency update automation with \gemupdater turned out to save effort
 at low risk as well. The combination of \gemupdater and \gls{nprt} lead to a continuous
@@ -1231,7 +1232,7 @@ tedious maintenance work.
 \section{Related Work}
 
 There are multiple publications, which use methods to test software production in
-production. Tang et. al. demonstrates how Facebook does gradual rollouts with
+production. Tang et~al. demonstrates how Facebook does gradual rollouts with
 gatekeeper~\cite{fb_config_management} and tests with high amounts of traffic. But not
 only canary or A/B tests are done in production. For example Falé proposes synthetic
 monitoring~\cite{synthmonitoring}, which aims at functional tests being made in
@@ -1247,10 +1248,10 @@ deploy applications to cloud environments, with Kubernetes being one of them. Sp
 very recently released a feature to analyse canaries, just like for \gls{nprt} needed. The
 difference to \deployer is that vamp and spinnaker are very complex and exhaustive. They
 also require other databases. Whereas \deployer is a very simple and lightweight tool with
-focus on a single purpose and consists of only one docker image. Nevertheless \deployer can
+focus on a single purpose and consists of only one Docker image. Nevertheless \deployer can
 be integrated to several monitoring solutions by the simple http interface.
 
-Schermann et. al. developed bifrost~\cite{bifrost}, an open source tool similar to the
+Schermann et~al. developed bifrost~\cite{bifrost}, an open source tool similar to the
 previously mentioned gatekeeper at Facebook. It implements canary testing and other
 testing strategies as well. The approach is a complete different, though, to
 \deployer. Bifrost is technically an automatically configurable middleware or
@@ -1258,14 +1259,14 @@ load balancer. It does not provide any automation for the deploy itself. \deploy
 implements the deploy automation. It could be interesting to combine the two tools to have
 more testing strategies available.
 
-I used datadog in the evaluation as monitoring system. However, there also exist other
-monitoring systems, such as the open source monitoring system prometheus, which provides
+I used Datadog in the evaluation as monitoring system. However, there also exist other
+monitoring systems, such as the open source monitoring system Prometheus, which provides
 very similar features. Google has a similar monitoring system in there internal
 infrastructure~\cite{sre_monitoring}.
 
 Lastly, I am going to mention publications, which deal with metric analysis. Zimmerman
 motivates the need for data scientists software teams~\cite{data_science_role2} and
-identifies the multiple roles~\cite{data_science_role}. Farshchi et al. evaluates a
+identifies the multiple roles~\cite{data_science_role}. Farshchi et~al. evaluates a
 regression based approach in order to detect errors during rolling
 upgrades~\cite{anomaly_detection}. They demonstrate how to identify the set of metrics,
 which have the highest chance to detect the errors. Their approach has a high precision
@@ -1298,23 +1299,23 @@ and comparing it to the old version.
 
 % deployer creates canaries and compares. don't know where to put this
 Ok, if you compare the two versions with each other, you will do it as follows. \deployer
-create another deployment resource from the one that already exists. \deployer calls this
-other deployment resource canary deployment. The creation of the canary deployment
-resource has the effect, that not only pods of version I are running in production, but
-there is pods running in version II as well. Similar to the regular deployment, the canary
-deployment defines how many pods in which version are supposed to be running.
+create another Deployment resource from the one that already exists. \deployer calls this
+other Deployment resource canary Deployment. The creation of the canary Deployment
+resource has the effect, that not only Pods of version I are running in production, but
+there is Pods running in version II as well. Similar to the regular Deployment, the canary
+Deployment defines how many Pods in which version are supposed to be running.
 
 % only 25% canaries -> less risk
 We want to test, if there is a regression respectively a degradation between the two
 versions. On account to the fact, that a regression is possible and when introducing
 change, a regression is very likely, we at least want to affect as little users. So what
-do we do for that? In our example there three pods running in version I and only one pod
+do we do for that? In our example there three Pods running in version I and only one Pod
 in version II. This is a ratio of three to one and due to the fact that the load balancer
 uses round robin as the scheduling algorithm, only one in four requests, so 25\% of the
-total traffic is sent to the pods in version II, which is to test.
+total traffic is sent to the Pods in version II, which is to test.
 
 This certainly lowers the risk of failure and that users are affected by a
-regression. Even if the request of specific single user hits the degraded pod, the next
+regression. Even if the request of specific single user hits the degraded Pod, the next
 request of the same user has the probability 75\% to hit the old stable version.
 
 % limitation to non-functional changes
@@ -1347,11 +1348,11 @@ to not include the implementation of the load balancing.
 We want to state that it is suboptimal to run multiple versions in the cluster like also
 mentioned in DevOps TODO. Rolling updates require it to be able to have two versions in
 production, though. And Kubernetes utilizes rolling updates as a technique to provide zero
-downtime deployments. Accordingly our proposed technique does not introduce a worsening to
+downtime deploys. Accordingly our proposed technique does not introduce a worsening to
 that. But as in DevOps mentioned, you should avoid to run more than two versions at the
-same time in production. \deployer ensures that by either updating a deployment, creating a
-canary deployment, or creating a deployment in a new version, just before it deleted the
-canary deployment.
+same time in production. \deployer ensures that by either updating a Deployment, creating a
+canary Deployment, or creating a Deployment in a new version, just before it deleted the
+canary Deployment.
 
 % enhancement to use gemupdater
 Especially to test the latter, security updates, is absolutely appealing, since we can
@@ -1447,9 +1448,9 @@ deployment flow and can apply \gls{nprt} to \deployer.
 \gls{nprt} is good approach to continuously automate the maintenance of a software
 product. Nevertheless there are possible improvements. A automatic approach such as
 \gemupdater works well. More automatic service of such kind are needed. One obvious use
-case is the automation of updating docker base images. A docker base image updater would
+case is the automation of updating Docker base images. A Docker base image updater would
 help to maintain continuously update the operating systems and software, on which the
-applications docker images are based. Furthermore there is a similar need for update
+applications Docker images are based. Furthermore there is a similar need for update
 mechanism for other languages such as java or python, which come with their own dependency
 managers.
 
@@ -1463,7 +1464,7 @@ be utilized outside of the proprietary ecosystem. We should invest more in more 
 grained open source instrumentation for popular application frameworks and web servers.
 
 In order to be able to better maintain the metric comparisons, these would need to go into
-version control as well. With datadog it was not possible to version those tests,
-though. With other tools for instance prometheus this may be possible.
+version control as well. With Datadog it was not possible to version those tests,
+though. With other tools for instance Prometheus this may be possible.
 
 % extend nprt for functional changes by including a load balancer

@@ -65,18 +65,10 @@ vcentering
 % \usepackage{showframe}
 
 % TODO
-% * chapter/headings layout
 % * title page
-% * table of contents (pagenumering in roman? add list of figures? bibliography?)
 % * other special pages such as acknowledgement, dedication, copyright, bibliography etc.
 % * edit formality levels (academic writing 45)
-% * urls and technologies in footnotes no ending slash (/)
-% * bibliography and citations (et~al.)
-% * single terms in capitals (deployment,developers/engineers, slack, kubernetes)
-% * important terms in italics (deployer, nonfunctional production regression testing, gemupdater)
-% * abkürzungen alle groß
-% * capitals for captions of tables and figures (without .)
-% * glossar
+% * glossary
 % * put in some of the old evaluation
 % * abstract + summary
 
@@ -86,7 +78,7 @@ vcentering
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{2}
 
-\usepackage[style=numeric,backend=bibtex8]{biblatex}
+\usepackage[sorting=none,style=numeric,backend=bibtex8]{biblatex}
 \bibliography{./pieces/thesis}
 
 \usepackage[acronym]{glossaries}
@@ -114,10 +106,6 @@ vcentering
 \printglossary[type=\acronymtype,nonumberlist]
 
 \addcontentsline{toc}{chapter}{\numberline{}\bibname}
-% \printbibheading
-% \printbibliography[keyword={background},title={Background},heading=subbibliography]
-% \printbibliography[keyword={technologies},title={Software},heading=subbibliography]
-% \printbibliography[keyword={related},title={Related Work},heading=subbibliography]
 \printbibliography
 
 \end{document}
