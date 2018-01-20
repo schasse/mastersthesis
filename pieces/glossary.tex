@@ -1,119 +1,127 @@
-\newglossaryentry{vcsg}{
+\newcommand{\myterm}[1]{\textit{#1} }
+
+\newcommand{\nprt}{\myterm{Non-Functional Production Regression Testing}}
+\newcommand{\deployer}{\myterm{Deployer}}
+\newcommand{\gemupdater}{\myterm{GemUpdater}}
+\newcommand{\depctl}{\myterm{depctl}}
+
+\newglossaryentry{g:vcs}{
   name=version control,
   description={is a practice, where developers keep track of every change of their
     code. A repository stores every version.
     Examples for version control systems are subversion and git.
     Humble explains what is important in version control~\cite{cd_humble_config}}
 }
-\newglossaryentry{cig}{
+\newglossaryentry{g:ci}{
   name=continuous integration,
   description={is a practice of continuously merging code to a
     repository and automatically test it~\cite{ci_fowler}.
     A continuous integration system is a server, which automates the tests.}
 }
-\newglossaryentry{devops}{
+\newglossaryentry{g:devops}{
   name=devops,
   description={is a made up of developers and operations.
     Devops practices aim for a short time between commit and deploy,
     still ensuring high quality~\cite{devops_definition}}
 }
-\newglossaryentry{cdg}{
+\newglossaryentry{g:cd}{
   name=continuous delivery,
   description={is a practice to continuously deliver changes to production.
     Continuous delivery is related to DevOps~\cite{cd_wolff_devops}}
 }
-\newglossaryentry{cdep}{
+\newglossaryentry{g:cdep}{
   name=continuous deployment,
   description={is an extension to continuous delivery. An automated deployment process,
     which delivers most changes directly to production~\cite{cd_humble_deploy}}
 }
-\newglossaryentry{canary}{
+\newglossaryentry{g:canary}{
   name=canary releasing,
   description={is a releasing practice to reduce risk. A canary serves as test instance
     for a change in production~\cite{cd_humble_deploy}}
 }
-\newglossaryentry{zdp}{
+\newglossaryentry{g:zdp}{
   name=zero downtime deploys,
   description={is a way of deploying changes without
     downtime~\cite{cd_humble_deploy}. Rolling updates is an implementation}
 }
-\newglossaryentry{mon}{
+\newglossaryentry{g:mon}{
   name=monitoring system,
   description={collects information about a software product and monitors it for
     defects. I refer in the thesis to modern monitoring system design as Ewaschuk and Bass
     et.~al describe~\cite{sre_monitoring,devops_monitoring}}
 }
-\newglossaryentry{dynamic}{
+\newglossaryentry{g:dynamic}{
   name=dynamic infrastructure,
   description={is software defined infrastructure~\cite{infra_as_code_platforms,infra_as_code_se_practices}}
 }
-\newglossaryentry{immutable}{
+\newglossaryentry{g:immutable}{
   name=immutable infrastructure,
   description={In such an infrastructure nodes are destroyed and created in order to
     change them}
 }
-\newglossaryentry{kubernetes}{
+\newglossaryentry{g:kubernetes}{
   name=kubernetes,
   description={is a cluster management system, which Google's borg
     heavily influenced~\cite{borg,borg_kubernetes}. Beda gives a good
     overview of the architecture~\cite{kubernetes_architecture2}}
 }
-\newglossaryentry{container}{
+\newglossaryentry{g:container}{
   name=container,
   description={is a running instance of a container image~\cite{docker_orientation,docker_orientation2}}
 }
-\newglossaryentry{image}{
+\newglossaryentry{g:image}{
   name=container image,
   description={is an immutable snapshot of a container state~\cite{docker_orientation,docker_orientation2}}
 }
-\newglossaryentry{pod}{
+\newglossaryentry{g:pod}{
   name=pod,
   description={is a kubernetes resource. It is a unit of multiple containers,
     which are located on the same host to be able to share resources~\cite{pod}}
 }
-\newglossaryentry{service}{
+\newglossaryentry{g:service}{
   name=service,
   description={is a kubernetes resource, which basically acts as a loadbalancer in front
   of pods~\cite{service}}
 }
-\newglossaryentry{deployment}{
+\newglossaryentry{g:deployment}{
   name=deployment,
   description={is a kubernetes resource, which ensures the existence of replicated
     pods. Deployments are an evolution to replicationcontrollers, which have similar
     features~\cite{replicationcontroller}}
 }
-\newglossaryentry{deploy}{
+\newglossaryentry{g:statefulset}{
+  name=statefulset,
+  description={TODO}
+}
+\newglossaryentry{g:deploy}{
   name=deploy,
   description={I use the term deploy in the thesis in order to differentiate the procedure
     from deployment, the kubernetes resource.}
 }
-\newglossaryentry{resource}{
+\newglossaryentry{g:resource}{
   name=resource definitions,
   description={are files, which define kubernetes resources such as service,
     deployment, pod etc..}
 }
-\newglossaryentry{}{
+\newglossaryentry{g:versionref}{
   name=version reference,
   description={is either a commit hash (git), revision (subversion).
     In \gls{nprt} the container image tag includes a version reference.}
 }
-\newglossaryentry{rolling}{
+\newglossaryentry{g:rolling}{
   name=rolling updates,
   description={TODO}
 }
-\newglossaryentry{registry}{
+\newglossaryentry{g:registry}{
   name=container image registry,
   description={TODO}
 }
 
-\newacronym{nprt}{NPRT}{Non-Functional Production Regression Testing}
+\newacronym{nprt}{\myterm{NPRT}}{\nprt}
 \newacronym{cd}{CD}{continuous delivery}
 \newacronym{ci}{CI}{continuous integration}
 \newacronym{vcs}{VCS}{version control system}
 \newacronym{din}{DIN}{Deutsches Institut für Normung}
 \newacronym{sre}{SRE}{site reliability engineering}
 
-\newacronym{api}{API}{} % just capitals
-\newacronym{cpu}{CPU}{} % just capitals
 % slack, ruby on rails etc...
-% StatefulSet
