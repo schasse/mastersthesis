@@ -343,12 +343,13 @@ roll it back. The novelty of this approach is that it creates a feedback loop be
 development and production, which is fully automatable. The following elaborates on the
 term in more detail.
 
-\myemph{Non-functional} refers to the change, which the monitoring system monitors. Usually
-maintenance changes are non-functional changes, for instance performance improvements or
-security updates. \myemph{Production} refers to the environment, in which the versions are
-monitored. The production traffic reaches the new version as well as the stable
-version. The term \myemph{regression} refers to the testing strategy. The monitoring system
-tests the metrics of the stable version and the new version for a regression.
+\myemph{Non-functional} refers to the \myemph{change}, which the monitoring system
+monitors. Usually maintenance changes are non-functional changes, for instance performance
+improvements or security updates. \myemph{Production} refers to the \myemph{environment}, in
+which the versions are monitored. The production traffic reaches the new version as well
+as the stable version. The term \myemph{regression} refers to the \myemph{testing}
+strategy. The monitoring system tests the metrics of the stable version and the new
+version for a regression.
 
 \gls{nprt} provides some further features, which are not included in the term. Indeed the
 testing approach is completely automatable and developers are able to continuously apply
@@ -1070,7 +1071,7 @@ of the bar again represents the time \deployer is involved that is from the roll
 request including steps \texttt{(7)} and \texttt{(8)} until the Kubernetes API responded. The red bars
 represent the remaining time the Pods take to shut down.
 
-Figure~\ref{fig:rollback_din} shows the rollback duration at \gls{din} 
+Figure~\ref{fig:rollback_din} shows the rollback duration at \gls{din}
 is between 4 and 5 seconds. The duration which \deployer takes, is less than in for a deploy.
 That is mostly because a delete request to the Kubernetes API is faster.
 
