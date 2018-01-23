@@ -225,18 +225,18 @@ controlled environment~\cite{antifragile_org}.
 Containerization reduces the risk of updating a service. Morris describes phoenix
 replacement~\cite{infra_as_code_phoenix} in immutable infrastructure\footnote{see
   glossary: \gls{g:immutable}}. Kubernetes\footnote{see glossary: \gls{g:kubernetes}} has
-the approach of rolling updates~\footnote{see glossary: \gls{g:rolling}} which implements
-the same practices. A containerized ecosystem is typically immutable. Rather than changing
-a running container directly, the container image repository\footnote{see glossary:
-  \gls{g:image} and \gls{g:registry}} would receive and store an updated container image
-including the changes to deploy. Then Kubernetes would create a new container based on
-that updated image. After Kubernetes started this new container, it can stop the old
-container. The container image repository still stores every container image
-version. Those saved images allow to easily rollback to a previous version. Automation
-enables developers to deploy more frequently which usually leads to deploys with few
-changes. Few changes per deploy and the ability to rollback makes updates less risky. In
-result, updates in an automated containerized immutable infrastructure are less risky
-compared to a manually operated infrastructure.
+the approach of rolling updates~\footnote{see glossary: \gls{g:rolling} and \gls{g:zdp}}
+which implements the same practices. A containerized ecosystem is typically
+immutable. Rather than changing a running container directly, the container image
+repository\footnote{see glossary: \gls{g:image} and \gls{g:registry}} would receive and
+store an updated container image including the changes to deploy. Then Kubernetes would
+create a new container based on that updated image. After Kubernetes started this new
+container, it can stop the old container. The container image repository still stores
+every container image version. Those saved images allow to easily rollback to a previous
+version. Automation enables developers to deploy more frequently which usually leads to
+deploys with few changes. Few changes per deploy and the ability to rollback makes updates
+less risky. In result, updates in an automated containerized immutable infrastructure are
+less risky compared to a manually operated infrastructure.
 
 Murphy et~al. illustrate the value of automation~\cite{sre_automation}. Software
 reliability engineers automate tasks to firstly save valuable human resources and secondly
