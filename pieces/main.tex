@@ -343,12 +343,13 @@ roll it back. The novelty of this approach is that it creates a feedback loop be
 development and production, which is fully automatable. The following elaborates on the
 term in more detail.
 
-\myemph{Non-functional} refers to the change, which the monitoring system monitors. Usually
-maintenance changes are non-functional changes, for instance performance improvements or
-security updates. \myemph{Production} refers to the environment, in which the versions are
-monitored. The production traffic reaches the new version as well as the stable
-version. The term \myemph{regression} refers to the testing strategy. The monitoring system
-tests the metrics of the stable version and the new version for a regression.
+\myemph{Non-functional} refers to the change, which the monitoring system
+monitors. Usually maintenance changes are non-functional changes, for instance performance
+improvements or security updates. \myemph{Production} refers to the environment, in which
+the versions are monitored. The production traffic reaches the new version as well as the
+stable version. The term \myemph{regression} refers to the \myemph{testing} strategy. The
+monitoring system tests the metrics of the stable version and the new version for a
+regression.
 
 \gls{nprt} provides some further features, which are not included in the term. Indeed the
 testing approach is completely automatable and developers are able to continuously apply
@@ -1279,6 +1280,10 @@ of error analysis models.
 \label{chap:conclusion}
 
 
+Another nice thing to mention about \deployer, is that it deploys itself, which fits to the
+declarative model and recursion. That means we develop \deployer itself with the continuous
+deployment flow and can apply \gls{nprt} to \deployer.
+
 % design decsion: argumentation of historical comparison
 We have different possibilities to compare those version. One possibility is, that we
 compare current and historical data. For instance to compare the metrics of the current
@@ -1406,46 +1411,76 @@ As a result we even lower the risk, because the potentially degraded version doe
 respond to real users. Ergo we do not have any risk of a degradation of our production
 service which we cause by testing the new version.
 
+
+The thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline, support developers
+up until the deploy and furthermore automate tests in production in order to maintain a
+software product. The monitoring system evaluates the test without the supervision of the
+developers at a very low risk. The change goes through the whole pipeline including tests
+in the production environment. If test is successful, developers will be completely free
+of work. Potential changes of bots would be robust enough to be able to act fully
+automated and unsupervised.
+
 \section{Summary}
 
-We illustrated that we are able to automate the whole testing procedure, which is the
-advantage of \gls{nprt}. We can extend the \gls{cd} pipeline in a natural way and support
-developers not only until the deploy, furthermore we automated a part of the developer's
-job during run time. The pipeline is now advanced in a way, that we can change application
-code and test it without the supervision of the developers at a very low risk. The change
-goes through the whole pipeline including tests in a testing environment, an automated
-deploy and tests in the production environment. If the \gls{nprt} and automated deploy is
-successful, developers will be completely free of work. Potential changes of bots would be
-robust enough to be able to act fully automated and unsupervised. However we still test
-the changes they make and can be sure to not have a regression in our production system.
+The thesis proposed \gls{nprt} to support maintenance work. Chapter~\ref{chap:problem}
+examined the problem of maintenance work. It illustrated that maintenance responsibility
+shifts from the operations teams to developers due to DevOps and microservice
+practices. The simplicity of containerization enables and manifests this shift as
+well. The maintenance work which consists of two main aspects: maintenance of the own code
+and maintenance of dependencies. Many flexible microservices and many dependencies result
+in a high amount of maintenance work. To address the issue of maintenance work, the
+chapter suggests the value of automation which is time saving and reliable. It proposed
+\gls{nprt} in order to extend the continuous delivery pipeline and to automate
+non-funtional regression tests in production.
 
-Finally we want to summarize, what we examined so far: The whole process of \gls{nprt} is
-fully automatable, every step is determined and traceable throughout and even reproducible
-until the deploy on the basis of the version reference. We save time not only by
-automization, but also by not having to write load and integration tests with edge cases,
-which occur in production. And ultimately the amount of work and time saved comes at a low
-risk.
+Chapter~\ref{chap:macro} demonstrated a macro view of \gls{nprt} and how it integrates
+with all the involved systems. The chapter went through all the steps of the pipeline
+including the steps: a developer commits a new version to the \gls{vcs}, the \gls{ci}
+system builds and tests the new version, \deployer deploys the new version to production
+in form of a canary, the monitoring system collects and compares the metrics of the side
+by side running versions and in case of a regression \deployer rolls back the canary. It
+is important to tag each step including the metrics with the version reference in order to
+by able to debug a specific version. \gls{nprt} creates with those steps an automated
+feedback loop between development and production.
 
+I implemented \deployer in order to enable \gls{nprt} with Kubernetes and used Datadog for
+the metric comparison. Chapter~\ref{chap:detail} firstly demonstrates the simplicity and
+horizontal scalability of \deployer's architecture. Deployer is implemented in order to
+run in Kubernetes and to deploy itself. The chapter went through \deployer's http
+interface and its endpoints ls, show, tags, deploy, canary and version. Simple http
+clients or depctl can interact with \deployer. Moreover, the chapter explains a deploy of
+a canary. Therefore \deployer first authenticates the client, validates the given version
+references, fetches and modifies the Kubernetes resource definitions and applies them to
+the Kubernetes API. In case of an error, \deployer informs the developers as quick as
+possible by sending an appropriate return message to the client and by sending the error
+to a specified channel. The chapter describes how I designed the architecture of tow
+versions running in Kubernetes and how Kubernetes does the load balancing between
+them. The metrics of the application's instances are collected in two different ways. A
+monitoring agent picks some of the metrics from the host and the application's
+instrumentation sends the other metrics to the monitoring system. Finally,
+chapter~\ref{chap:detail} elaborates on the metric comparison itself and important
+parameters aggregation window, the aggregation and the threshold.
 
-Finally in this chapter, we summarize what we have discussed so far. We went through the
-infrastructure of \deployer, we saw, that \deployer scales horizontally. We have seen that
-\deployer has simple interface, with the two most important commands deploy and canary. We
-went through a canary deploy and saw that \deployer validates the given arguments and how
-it notifies developers if an error occurs. We discussed how and what modificactions
-\deployer does to the Kubernetes resources. We demonstrated the different test metrics and
-how the production system sends those metrics to the test system. We went briefly through
-the \deployer interface and which commands are all provided. We had a look on the
-monitoring system and the tests itself and how we rollback the canary in case the test
-fails.
-
-Another nice thing to mention about \deployer, is that it deploys itself, which fits to the
-declarative model and recursion. That means we develop \deployer itself with the continuous
-deployment flow and can apply \gls{nprt} to \deployer.
-
+Chapter~\ref{chap:eval} evaluated \gls{nprt} in three different aspects: experiments,
+lessons learned and related work. For the experiments I tested \deployer and the metric
+comparison with two different production applications. The first one was an Apache web
+server which \gls{din} uses as a middleware. The second application is a Rails web server
+which serves as backoffice tool for GapFish. The experiments showed that \deployer's
+duration of a deploy varies between 9 and 106 seconds, the duration of a rollback between
+4 and 63 seconds. The long deploy of 106 and the long rollback of 63 seconds were
+determined by the long start and stop times of GapFish's Rails application. In contrast to
+the long start and stop, \deployer's performance was faster. The experiments proved that a
+metric comparison in production is fully automatable. Also the usage of \gls{nprt} at
+GapFish in production, proved that the metrics comparison is feasible because developers
+usually have a good understanding of their software product and are able to write suitable
+tests. Also the deploy durations were efficient to use \deployer in production. The
+chapter also demonstrated that GemUpdater, a tool to automatically update dependencies,
+successfully committed version changes which were then automatically tested in production
+via \gls{nprt}.
 
 \section{Outlook and Future Work}
 
-\gls{nprt} is good approach to continuously automate the maintenance of a software
+\gls{nprt} is a good approach to continuously automate the maintenance of a software
 product. Nevertheless there are possible improvements. A automatic approach such as
 \gemupdater works well. More automatic service of such kind are needed. One obvious use
 case is the automation of updating Docker base images. A Docker base image updater would
