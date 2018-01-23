@@ -937,21 +937,21 @@ better metrics in order to define proper monitoring rules.
 
 This chapter evaluates the \gls{nprt} approach in three different aspects, experiments, a
 lessons learned section and a related work section. Firstly, the experiments aim to
-present an evaluation the approach's performance in the context of a whole delivery
+present an evaluation of the approach's performance in the context of a whole delivery
 pipeline and how a sample metric comparison performs. The second part is a qualitative
 discussion of the lessons learned of the application use cases at \gls{din} and GapFish.
-In the case of GapFish it was a application in production. The third aspect, related work,
+In the case of GapFish it was an application in production. The third aspect, related work,
 compares \gls{nprt} with other approaches in production and references similar tools like
 \deployer.
 
 \section{Experiments}
 
 I had the opportunity to do experiments with two different production applications. The
-first one is an Apache web server, which is the middleware in front of a tomcat
+first one is an Apache web server, which is the middleware in front of a Tomcat
 application server. This application serves \gls{din}'s
-website\footnote{\url{https://www.beuth.de}}. In the case of \gls{din}, I setup a version
-control system, a Kubernetes cluster with \deployer, instrumentation and monitoring
-setup. Software engineers working for \gls{din} helped to setup a container image
+website\footnote{\url{https://www.beuth.de}}. In the case of \gls{din}, I set up a version
+control system, a Kubernetes cluster with \deployer, instrumentation and the monitoring
+service. Developers working for \gls{din} helped to set up a container image
 registry. I also migrated the Apache web server to be able to run on Kubernetes. The
 Kubernetes resources for the Apache web server consisted of a Service and a Deployment
 with two Pods.
@@ -963,7 +963,7 @@ platforms\footnote{p.e. \url{https://www.entscheiderclub.de} and
 Rails application to Kubernetes and utilized Codeship as \gls{ci}, Docker Hub as container
 image registry and integrated Datadog as monitoring system. The application consists of a
 Service and nine Deployments. Eight of the Deployments are different background workers
-each with one Pod. And one Deployment is for the Ruby on Rails application server with two
+each with one Pod. One Deployment is for the Ruby on Rails application server with two
 Pods.
 
 The experiments for the \gls{din} Apache application were conducted on virtual machines
@@ -973,19 +973,19 @@ data used for the plots.
 
 Each of the experiments has three consecutive executions with three different canary
 versions in the deploy and rollback experiments. The measurements had to be manually
-collected from all the different logs of the involved systems, that are a local http
-client, \gls{ci} system, \deployer and Kubernetes.
+collected from all the different logs of the involved systems. Those systems were the local http
+client, the \gls{ci} system, \deployer and Kubernetes.
 
 \subsection{Deploy}
 
-The first experiment examines the performance of a deploy of a canaries. In account to
+The first experiment examines the performance of a deploy of canaries. In account to
 that an http client triggered a deploy as described in previous
 chapters. Figures~\ref{fig:deploy_din} and \ref{fig:deploy_gapfish} show the duration
-between the deploy request (6) and the running canary. The blue part of the bar indicates
+between the deploy request \texttt{(6)} and the running canary. The blue part of the bar indicates
 the time of the \deployer pulling the infrastructure code from the version control system,
-check of the version reference and image availability, modification of the resource
-definitions and application to the Kubernetes cluster (6-8). The red part is the duration
-of Kubernetes starting the canary (9-running).
+the time to check of the version reference and image availability, the time of the resource defintions modification
+and the time of the application to the Kubernetes cluster \texttt{(6-8)}. The red part is the duration
+of Kubernetes starting the canary \texttt{(9-running)}.
 
 \begin{figure}[htbp]
   \label{fig:deploy}
@@ -1004,7 +1004,7 @@ of Kubernetes starting the canary (9-running).
 \end{figure}
 
 Figure~\ref{fig:deploy_din} shows that \gls{din}'s Apache middleware takes between 9 and 12
-seconds with a median of 10 seconds. \deployer took in the third execution 9 seconds and
+seconds with a median of 10 seconds. In the third execution, \deployer took 9 seconds and
 the start of the canary was in every execution at 1 second.
 
 Figure~\ref{fig:deploy_gapfish} shows that GapFish's Rails application server takes
@@ -1014,7 +1014,7 @@ seconds in median.
 In both experiments the second and third execution are faster than the first one. That is
 because \deployer caches the code from the version control system and does only need to
 download the difference in the consecutive executions. The impact of the cache on \gls{din}'s
-Apache web server was not that big, because the repository size is comparably
+Apache web server was not that large, because the repository size is comparably
 small. Whereas the cache could save almost half of the time at the GapFish Rails
 application.
 
@@ -1023,28 +1023,28 @@ scheduling of Kubernetes and quick startup of Docker containers compared to virt
 machines. The start of GapFish's application is between 45 and 75 seconds with median of
 70 seconds.
 
-Accordingly \gls{din}'s Apache application deploy significantly faster. So \deployer is able to
-handle multiple Deployments as in the case of GapFish. The multiple requests to the
-Kubernetes API slightly reduce the deploy duration though. An improvement would be a
-batched request. \deployer's cache works well for big repository sizes.
+Accordingly \gls{din}'s Apache application deploy was significantly faster. \deployer is able to
+handle multiple Deployments as in the case of GapFish. However, the multiple requests to the
+Kubernetes API slightly reduce the deploy duration. An improvement would be a
+batched request. \deployer's cache works well for larger repository sizes.
 
-It is important to pay attention with slow application startup durations, when looking for
-fast Deployments. In the case of GapFish's Rails applicatoin server, this makes the
-biggest impact.
+It is important to pay attention with slow application startup durations when looking for
+fast deploys. In the case of GapFish's Rails application server, this makes the
+greatest impact.
 
 The variation of the second and third executions come from the nature of the cloud
-environment and internet services. In particular the requests to the image container
-registry differ in the duration.
+environment and internet services. In particular the requests to Docker Hub, the image container
+registry, differ in the duration.
 
 \subsection{Deploy in Pipeline}
 
 This section shows a deploy in the full context of the \gls{cd} pipeline. The steps start
-with the commit and push of a new version in the version control system, the build of the
+with the commit and push of a new version to the \gls{vcs}, the build of the
 Docker image(s), saving the recently built images in the image registry, time spend by
 \deployer and the remaining startup of the canary Pods. The testsuite runtime is not
-included in this diagram, so that focus lies on the systems this thesis integrated.
+included in this diagram. The focus lies only on the tools the thesis integrated.
 
-At GapFish I could access all the involved system. This was not the case at \gls{din}. That is
+At GapFish I could access all the involved systems. This was not the case at \gls{din}. That is
 why the experiment was conducted for the GapFish Rails application only.
 
 \begin{figure}[htbp]
@@ -1059,20 +1059,20 @@ The total time of the \gls{cd} pipeline was between 172 and 414 seconds with a m
 the \gls{ci} system and the image registry partly cache the layers of the images. They
 only have to build and send the differing parts of the container image.
 
-As a result we see the overall pipeline duration for a typical canary change at round
-about 3 minutes, including a build and deploy. The makes a continuous deployment of
+As a result, the diagram shows an overall pipeline duration for a typical canary change at around
+3 minutes, including a build and deploy. The makes a continuous deployment of
 new canaries absolutely feasible.
 
 \subsection{Rollback}
 
-In this section we take a the look at the rollback performance of \deployer. The blue part
-of the bar again represents the time \deployer is involved, that is from the rollback
-request including steps (7) and (8) until the Kubernetes API responded. The red bar
+This section takes a look at the rollback performance of \deployer. The blue part
+of the bar again represents the time \deployer is involved that is from the rollback
+request including steps \texttt{(7)} and \texttt{(8)} until the Kubernetes API responded. The red bars
 represent the remaining time the Pods take to shut down.
 
-Figure~\ref{fig:rollback_din} shows the rollback duration of a \gls{din} Apache canary
-is between 4 and 5 seconds. The duration send in \deployer is less than in the deploy case.
-That is mostly because it the delete request to the Kubernetes API is faster.
+Figure~\ref{fig:rollback_din} shows the rollback duration at \gls{din} 
+is between 4 and 5 seconds. The duration which \deployer takes, is less than in for a deploy.
+That is mostly because a delete request to the Kubernetes API is faster.
 
 \begin{figure}[htbp]
   \centering
@@ -1091,33 +1091,32 @@ That is mostly because it the delete request to the Kubernetes API is faster.
 
 In the case of GapFish's Rails application, we have longer rollback times. All three
 executions of the rollback were 63 seconds. This is due to slow shutdowns of the worker
-Pods. The Kubernetes partly waits for the shutdown process of the Pods. That is why
-\deployer spends most of the 48-49 seconds waiting for Kubernetes API responses.
+Pods. Kubernetes partly waits for the shutdown process of the Pods. That is why
+\deployer spends most of the 48-49 seconds waiting for the Kubernetes API to respond.
 
-Also for the rollback case, \deployer performs better with \gls{din}'s Apache system,
-because of less Deployment resources and the fast Apache application. Nevertheless the
-deploys as well as the rollbacks involve zero downtime\footnote{see glossary:
-  \gls{g:zdp}}. So it is acceptable to have slightly longer durations.
+Also for the rollback case, \deployer's performance is better with \gls{din}'s Apache system,
+because of less Deployment resources and the fast Apache application. Nevertheless,
+deploys as well as rollbacks involve zero downtime. On account of zero downtime, it is acceptable to have slightly longer durations.
 
 \subsection{Metric Comparison}
 \label{sec:eval_metrics}
 
-This last experiment aims at a first evaluation of the feasibility and a first assessment
-of a metric comparison and the time of a broken canary being in production. \gls{din}
-provided one hour of production traffic of their website, which a Goreplay process
-recorded on production and replayed with the test setup.
+This last experiment aims at an evaluation of the feasibility
+of a metric comparison and the duration of a broken canary being in production. \gls{din}
+provided one hour of production traffic of their website which a Goreplay process
+recorded in production. During the experiments, this traffic dump was replayed with the test setup.
 
-Due to the fact the test setup database state differs to the production database, the
+Due to the fact the test database state differs to the state of the production database, the
 throughput of the requests with http 200 responses was at the low rate of 25 requests per
-minute. Requests of in production logged in users mostly had http 404 as responses. Those
-successful requests basically consisted of the publicly visible pages of the website.
+minute. Requests of in production logged in users mostly had http 404 as responses. The
+successful 200 responses consisted of the publicly visible pages of the website.
 
-At first I deployed a canary version with no changes compared to the stable version. The
-two version side by side calibrated the metric comparison. The first half of the
+At first I deployed a canary version with no changes in comparison to the stable version. The
+two versions, side by side, calibrated the metric comparison. The first half of the
 production traffic determined the size of the aggregation window as well as the threshold
 of the comparison.
 
-After the calibration was done, the actual experiment starts. The experiment measures the
+After the calibration was done, the actual experiment started. The experiment measures the
 time between a defect canary being started and the canary being rolled back. Each
 of the three executions had its own unique part of the second half hour production traffic.
 
@@ -1129,10 +1128,10 @@ threshold = 3
 abs(1 - ratio) > 3
 \end{verbatim}
 
-The test compares throughput of successful responses. The canary responses are weighted by
-the factor 2, because there was one canary Pod and two stable Pods. An aggregation window
-of 30 seconds and a threshold 3, which means the canary throughput had to differ 3 times
-as much as the one of the canary.
+The test compares the throughput of successful responses. The canary responses are weighted by
+the factor 2, because there were one canary Pod and two stable Pods. An aggregation window
+of 30 seconds and a threshold of 3, which means the canary throughput had to differ 3 times
+as much as the throughput of the stable version.
 
 Figure~\ref{fig:metric_comparison} shows that in each of the three executions, the test
 has successfully detected the broken canary. The duration of the defect canary in
@@ -1151,41 +1150,39 @@ feasible and completely automatable.
 \section{Lessons Learned}
 
 The GapFish Rails application of the previous experiments as well as two other
-GapFish Ruby services utilize the \gls{nprt} approach in production. This section presents
-qualitative feedback, which comes mainly from use of \gls{nprt} in production.
+GapFish Ruby services utilize the \gls{nprt} approach. This section presents
+qualitative feedback which mainly comes from use of \gls{nprt} in production.
 
 On the one hand non-functional regression testing was used to test maintenance of own code,
 such as refactorings and performance improvements. On the other hand \gls{nprt} was also
 used to maintain dependencies. The previously developed \gemupdater regularly and
-automatically opened pull requests with dependency updates. The canary was tested using
-error metrics, which I explain later on in more detail.
+automatically opened pull requests with dependency updates. The canary version was tested against the stable version using
+error metrics which I explain later on in more detail.
 
 \subsection{Quick Debuggable Deploys}
 
-Deploys of a round about 1.5 minutes conform the need of developers of sufficiently quick
+Deploys of around 1.5 minutes conform to the need of developers of sufficiently quick
 deploys. This is good compared to oftentimes long running test suites as it is the case with
-GapFish's Rails application, which has a current median duration of 12.5 minutes. The time
-of a deploy is compared to that much faster and engineers do not get distracted and when
-they deploy manually.
+GapFish's Rails application which has a current median duration of 12.5 minutes.
 
-One benefit is the ability to track the version reference from commit to production the
-test in production throughout the whole pipeline. This makes it easy to debug versions,
+Another benefit is the ability to track the version reference from commit to the production
+test throughout the whole pipeline. This makes it easy to debug versions
 which run or used to be running in production. It is also possible to track the code
-change of stable and a canary version which used to be running side by side.
+change of a stable and a canary version which used to be running side by side.
 
-It has been a good decision to version the Kubernetes resources, which are basically
-infrastructure definitions as well. This made it possible to track also track the
+It has been a good decision to version the Kubernetes resources which are
+infrastructure definitions. This made it also possible to track the
 infrastructure changes.
 
 Due to the nature of containerized infrastructure and its immutability, rollbacks to
 specific versions are simple. The rolling update mechanism provides deploys and rollbacks
 without downtime. This fact lead to a certain confidence of the engineering team to deploy
-and rollback and the amount of deploys increased.
+and rollback. As a result, the amount of deploys increased.
 
 \subsection{Engineers Know the Product}
 
 The experiments already showed that a simple side by side comparison of the throughput can
-have good results for a test metric with production traffic. You could argue that
+have good results for a test metric with production traffic. Critics could argue that
 production metrics can be hard to evaluate and in a test environment it is rather easy to
 achieve good results. The problem of overfitting in statistics is well known.
 
@@ -1193,10 +1190,10 @@ When choosing the wrong metrics for the production regression tests of the Ruby
 applications of GapFish, it would not have been feasible to deliver as good results as the
 first test showed. The problem lies in the granularity of the metrics. For example a total
 throughput or total error rate of a comprehensive application is misleading. GapFish's
-Rails application serves not only humans, but provides also interfaces for other
-services. This leads on the one hand sparse usage\footnote{The users of the Rails
+Rails application serves not only humans, but also provides interfaces for other
+services. This leads on the one hand to sparse usage\footnote{The users of the Rails
   application are only internal employees.} on routes for users and on the other hand
-machines machines utilized some routes extensively. The overall throughput was a poor fit.
+to machines utilizing some routes extensively. The overall throughput was a poor fit.
 
 The much better choice for a metric was using the error aggregation of Bugsnag. Bugsnag
 aggregates errors, that it shows specifically newly introduced errors. This has been the
