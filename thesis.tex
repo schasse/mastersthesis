@@ -66,11 +66,9 @@ vcentering
 
 % TODO
 % * title page
-% * other special pages such as acknowledgement, dedication, copyright, bibliography etc.
 % * edit formality levels (academic writing 45)
 % * glossary
 % * put in some of the old evaluation
-% * abstract + summary
 
 \usepackage{graphicx}
 \graphicspath{{./figures/}}
@@ -88,8 +86,8 @@ vcentering
 \begin{document}
 \pagenumbering{Roman} % Große römische Seitenzahlen
 \include{pieces/title}
-% \include{pieces/copyright}
-% \include{pieces/dedication}
+\include{pieces/copyright}
+\include{pieces/dedication}
 \include{pieces/abstract}
 
 \tableofcontents

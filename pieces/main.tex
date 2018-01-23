@@ -1239,15 +1239,16 @@ describes how Netflix~\cite{antifragile_org} tests their systems with the simian
 which produce random defects in a controlled production environment. This practice lays
 open unknown issues, which can be fixed in order to gain better reliability.
 
-There are also countless open source tools, which help to implement \gls{cd}
-similar. Vamp\footnote{\url{https://vamp.io}} has the ability to deploy applications to
-Kubernetes automatically. Also spinnaker\footnote{\url{https://www.spinnaker.io/}} can
-deploy applications to cloud environments, with Kubernetes being one of them. Spinnaker
-very recently released a feature to analyse canaries, just like for \gls{nprt} needed. The
-difference to \deployer is that vamp and spinnaker are very complex and exhaustive. They
-also require other databases. Whereas \deployer is a very simple and lightweight tool with
-focus on a single purpose and consists of only one Docker image. Nevertheless \deployer can
-be integrated to several monitoring solutions by the simple http interface.
+There are also countless open source tools, which help to implement continuous deployment
+similar to \deployer. Vamp\footnote{\url{https://vamp.io}} has the ability to deploy
+applications to Kubernetes automatically. Also
+spinnaker\footnote{\url{https://www.spinnaker.io/}} can deploy applications to cloud
+environments, with Kubernetes being one of them. Spinnaker very recently released a
+feature to analyse canaries, just like for \gls{nprt} needed. The difference to \deployer
+is that vamp and spinnaker are very complex and exhaustive. They also require other
+databases. Whereas \deployer is a very simple and lightweight tool with focus on a single
+purpose and consists of only one Docker image. Nevertheless \deployer can be integrated to
+several monitoring solutions by the simple http interface.
 
 Schermann et~al. developed bifrost~\cite{bifrost}, an open source tool similar to the
 previously mentioned gatekeeper at Facebook. It implements canary testing and other
