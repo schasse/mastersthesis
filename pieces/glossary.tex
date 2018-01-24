@@ -8,36 +8,38 @@
 
 \newglossaryentry{g:vcs}{
   name=version control,
-  description={is a practice, where developers keep track of every change of their
+  description={is a practice where developers keep track of every change of their
     code. A repository stores every version.
     Examples for version control systems are subversion and git.
     Humble explains what is important in version control~\cite{cd_humble_config}}
 }
 \newglossaryentry{g:ci}{
   name=continuous integration,
-  description={is a practice of continuously merging code to a
-    repository and automatically test it~\cite{ci_fowler}.
+  description={is a practice of continuously merging code into a
+    repository and automatically testing it~\cite{ci_fowler}.
     A continuous integration system is a server which automates the tests}
 }
 \newglossaryentry{g:devops}{
   name=DevOps,
   description={is a made up of developers and operations.
-    Devops practices aim for a short time between commit and deploy,
+    DevOps practices aim for a short time between commit and deploy,
     still ensuring high quality~\cite{devops_definition}}
 }
 \newglossaryentry{g:microservices}{
   name=microservices,
-  description={TODO}
+  description={is a software architecture, in which several small services
+  create a modularized software system, each with a specific function. These
+  services communicate with each other via a network~\cite{microservices_fowler}}
 }
 \newglossaryentry{g:cd}{
   name=continuous delivery,
-  description={is a practice to continuously deliver changes to production.
+  description={is a practice to frequently deliver changes to production.
     Continuous delivery is related to DevOps~\cite{cd_wolff_devops}}
 }
 \newglossaryentry{g:cdep}{
   name=continuous deployment,
-  description={is an extension to continuous delivery. An automated deploy process,
-    which delivers most changes directly to production~\cite{cd_humble_deploy}}
+  description={is an extension to continuous delivery. An automated deploy process
+    delivers the changes directly to production~\cite{cd_humble_deploy}}
 }
 \newglossaryentry{g:canary}{
   name=canary releasing,
@@ -52,17 +54,18 @@
 \newglossaryentry{g:mon}{
   name=monitoring system,
   description={collects information about a software product and monitors it for
-    defects. I refer in the thesis to modern monitoring system design as Ewaschuk and Bass
+    defects. I refer in the thesis to a monitoring system with a modern design as Ewaschuk and Bass
     et.~al describe~\cite{sre_monitoring,devops_monitoring}}
 }
 \newglossaryentry{g:dynamic}{
   name=dynamic infrastructure,
-  description={is software defined infrastructure~\cite{infra_as_code_platforms,infra_as_code_se_practices}}
+  description={is software defined
+  infrastructure~\cite{infra_as_code_platforms,infra_as_code_se_practices}}
 }
 \newglossaryentry{g:immutable}{
   name=immutable infrastructure,
-  description={In such an infrastructure nodes are destroyed and created in order to
-    change them}
+  description={in order to change instances in such an infrastructure,
+  nodes are destroyed and created}
 }
 \newglossaryentry{g:kubernetes}{
   name=Kubernetes,
@@ -80,7 +83,7 @@
 }
 \newglossaryentry{g:pod}{
   name=Pod,
-  description={is a Kubernetes resource. It is a unit of multiple containers,
+  description={is a Kubernetes resource. A Pod consists out of multiple containers
     which are located on the same host to be able to share resources~\cite{pod}}
 }
 \newglossaryentry{g:service}{
@@ -91,12 +94,16 @@
 \newglossaryentry{g:deployment}{
   name=Deployment,
   description={is a Kubernetes resource which ensures the existence of replicated
-    Pods. Deployments are an evolution to ReplicationControllers which have similar
-    features~\cite{replicationcontroller}}
+    Pods. Deployments enable the implementation of stateless instances such as web servers and
+    provide rolling updates. Deployments are an evolution to ReplicationControllers
+    which had similar features~\cite{replicationcontroller}}
 }
 \newglossaryentry{g:statefulset}{
   name=StatefulSet,
-  description={TODO}
+  description={is a Kubernetes resource similar to Deployments. However, the StatefulSet
+  creates Pods with fixed hostnames and eventually binds them to fixed volumes. The
+  StatefulSet enables the realization of distributed, stateful applications such as databases
+  }
 }
 \newglossaryentry{g:deploy}{
   name=deploy,
@@ -110,16 +117,18 @@
 }
 \newglossaryentry{g:versionref}{
   name=version reference,
-  description={is either a commit hash (git), revision (subversion).
+  description={is either a commit hash (git) or revision (subversion).
     In \gls{nprt} the container image tag includes a version reference}
 }
 \newglossaryentry{g:rolling}{
   name=rolling updates,
-  description={TODO}
+  description={is a mechanism to update multiple instances of a system without downtime.
+  One instance will be created in the new version, therefore an instance of the old version
+  will be shut down. The mechanism proceeds until every instance is in the new version}
 }
 \newglossaryentry{g:registry}{
   name=container image registry,
-  description={TODO}
+  description={is a repository which stores container images.}
 }
 
 \newacronym{nprt}{\myterm{NPRT}}{\nprt}

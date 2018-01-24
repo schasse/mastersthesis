@@ -1300,7 +1300,7 @@ The thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline, supports d
 not only until the deploy, but well into the operation of their
 software product. The monitoring system evaluates the test without the supervision of the
 developers at a very low risk. The change goes through the whole pipeline including tests
-in the production environment. If test is successful, developers will be completely free
+in the production environment. If the test is successful, developers will be completely free
 of work. Potential changes of bots would be robust enough to be able to act fully
 automated and unsupervised.
 
@@ -1324,26 +1324,26 @@ system builds and tests the new version, \deployer deploys the new version to pr
 in form of a canary, the monitoring system collects and compares the metrics of the side
 by side running versions and in case of a regression \deployer rolls back the canary. It
 is important to tag each step including the metrics with the version reference in order to
-by able to debug a specific version. \gls{nprt} creates with those steps an automated
+be able to debug a specific version. \gls{nprt} creates with those steps an automated
 feedback loop between development and production.
 
 I implemented \deployer in order to enable \gls{nprt} with Kubernetes and used Datadog for
-the metric comparison. Chapter~\ref{chap:detail} firstly demonstrates the simplicity and
+the metric comparison. Chapter~\ref{chap:detail} initiallyoo demonstrates the simplicity and
 horizontal scalability of \deployer's architecture. Deployer is implemented in order to
 run in Kubernetes and to deploy itself. The chapter went through \deployer's http
 interface and its endpoints ls, show, tags, deploy, canary and version. Simple http
-clients or depctl can interact with \deployer. Moreover, the chapter explains a deploy of
-a canary. Therefore \deployer first authenticates the client, validates the given version
+clients or depctl can interact with \deployer. Moreover, the chapter explainedoo a deploy of
+a canary. Therefore, \deployer first authenticates the client, validates the given version
 references, fetches and modifies the Kubernetes resource definitions and applies them to
-the Kubernetes API. In case of an error, \deployer informs the developers as quick as
+the Kubernetes API. In case of an error, \deployer informs the developers as quickly as
 possible by sending an appropriate return message to the client and by sending the error
-to a specified channel. The chapter describes how I designed the architecture of tow
+to a specified channel. The chapter described how I designed the architecture of two
 versions running in Kubernetes and how Kubernetes does the load balancing between
 them. The metrics of the application's instances are collected in two different ways. A
 monitoring agent picks some of the metrics from the host and the application's
 instrumentation sends the other metrics to the monitoring system. Finally,
 chapter~\ref{chap:detail} elaborates on the metric comparison itself and important
-parameters aggregation window, the aggregation and the threshold.
+parameters: aggregation window, the aggregation and the threshold.
 
 Chapter~\ref{chap:eval} evaluated \gls{nprt} in three different aspects: experiments,
 lessons learned and related work. For the experiments I tested \deployer and the metric
@@ -1353,33 +1353,24 @@ which serves as backoffice tool for GapFish. The experiments showed that \deploy
 duration of a deploy varies between 9 and 106 seconds, the duration of a rollback between
 4 and 63 seconds. The long deploy of 106 and the long rollback of 63 seconds were
 determined by the long start and stop times of GapFish's Rails application. In contrast to
-the long start and stop, \deployer's performance was faster. The experiments proved that a
+the long start and stop, \deployer's performance was quite fast. The experiments proved that a
 metric comparison in production is fully automatable. Also the usage of \gls{nprt} at
 GapFish in production, proved that the metric comparison is feasible because developers
 usually have a good understanding of their software product and are able to write suitable
 tests. Also the deploy durations were efficient to use \deployer in production. The
-chapter also demonstrated that GemUpdater, a tool to automatically update dependencies,
+chapter also demonstrated that \gemupdater, a tool to automatically update dependencies,
 successfully committed version changes which were then automatically tested in production
 via \gls{nprt}.
 
 \section{Outlook and Future Work}
 
 \gls{nprt} is a good approach to continuously automate the maintenance of a software
-product. Nevertheless there are possible improvements. Goreplay has proven to be a good tool for the evaluation. In order to save even more risks,
+product. Nevertheless there are possible improvements. Goreplay has proven to be a good tool for the evaluation. In order to reduce even more risk,
 Goreplay could serve to clone the traffic and send it to the canary. In this case, it would be
 possible to compare 100\% of the production traffic and make the metric comparison much simpler and
-more precise. Furthermore, the responses of the cloned traffic would not receive the users. This
+more precise. Furthermore, the users would not receive the responses of the cloned traffic. This
 would result in a riskless testing approach. But there is one open problem with this approach:
 there must be a mechanism to imitate the interaction with the database.
-
-A more realistic extension to \gls{nprt} are completely unsupervised updates. An automatic approach such as
-\gemupdater works well. A developer resultantly has to do manual work only in case of a regression.
-More automatic services of such kind are needed. One obvious use
-case is the automation of updating Docker base images. A Docker base image updater would
-help to maintain continuously update the operating systems and software, on which the
-applications' Docker images are based. Furthermore there is a similar need for update
-mechanism for other languages such as Java or Python, which come with their own dependency
-managers.
 
 Another aspect is the lack of good open source instrumentation. On the one hand good
 instrumentation exists. On the other hand the instrumentation is proprietary and it cannot
@@ -1389,5 +1380,14 @@ grained open source instrumentation for popular application frameworks and web s
 In order to be able to better maintain the metric comparisons, these would need to go into
 version control as well. With Datadog, however, it was not possible to version those tests.
 With other tools for instance Prometheus this may be possible.
+
+A realistic extension to \gls{nprt} are completely unsupervised updates. An automatic approach such as
+\gemupdater works well. A developer resultantly has to do manual work only in case of a regression.
+More automatic services of such kind are needed. One obvious use
+case is the automation of updating Docker base images. A Docker base image updater would
+help to maintain continuously update the operating systems and software, on which the
+applications' Docker images are based. Furthermore, there is a similar need for update
+mechanism for other languages such as Java or Python, which come with their own dependency
+managers.
 
 % extend nprt for functional changes by including a load balancer
