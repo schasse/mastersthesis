@@ -578,21 +578,21 @@ figure~\ref{fig:deployer_architecture}.
   \label{fig:deployer_architecture}
 \end{figure}
 
-As mentioned earlier, \deployer is a web server which runs in Kubernetes itself and is
-stateless. The production cluster in figure~\ref{fig:deployer_architecture} is the same
-Kubernetes cluster in which the application to test runs in. The yellow box is a
-Kubernetes Service. The Service is, as described in chapter~\ref{chap:background}, a
-load balancer. Clients can reach \deployer via an http interface. The figure shows that
-\deployer consists of multiple Pods. These Pods are replicated and are identical in their
-behaviour. The Pods are basically stateless, yet every Pod has its own caching layer which
-section~\ref{sec:cache} explains in more detail. \deployer uses approximately 50mb memory
-and few CPU, so computing resources are no problem. I designed \deployer to have
-synchronous communication with a client. \deployer waits for the deploy process to complete
-before it responds. This has the advantage of clients receiving feedback about the
-deploy. Furthermore it enables \deployer of being independent of other services such as a
-queuing or worker system. \deployer's statelessness leads to easy horizontal scaling of
-\deployer. It is possible to add more Pods if needed in order to achieve more concurrent
-deploys.
+As mentioned earlier, \deployer is a web server which runs in Kubernetes itself, is
+stateless and can even deploy itself. The production cluster in
+figure~\ref{fig:deployer_architecture} is the same Kubernetes cluster in which the
+application to test runs in. The yellow box is a Kubernetes Service. The Service is, as
+described in chapter~\ref{chap:background}, a load balancer. Clients can reach \deployer
+via an http interface. The figure shows that \deployer consists of multiple Pods. These
+Pods are replicated and are identical in their behaviour. The Pods are basically
+stateless, yet every Pod has its own caching layer which section~\ref{sec:cache} explains
+in more detail. \deployer uses approximately 50mb memory and few CPU, so computing
+resources are no problem. I designed \deployer to have synchronous communication with a
+client. \deployer waits for the deploy process to complete before it responds. This has
+the advantage of clients receiving feedback about the deploy. Furthermore it enables
+\deployer of being independent of other services such as a queuing or worker
+system. \deployer's statelessness leads to easy horizontal scaling of \deployer. It is
+possible to add more Pods if needed in order to achieve more concurrent deploys.
 
 \section{Deployer Interface}
 \label{sec:interface}
