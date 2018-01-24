@@ -498,15 +498,34 @@ the container images in step~\texttt{(10)} from the image repository. The images
 the \gls{ci} system built in step~\texttt{(3)}. The production cluster is aware of the
 specific image identified by the tag.
 
+Running multiple versions in production might not sound optimal. Kubernetes approaches zero downtime
+deploys via rolling updates. Rolling updates require it to be able to run two successive versions
+side by side. Accordingly, the proposed technique optimally fits to the model of rolling updates.
+
 \section{Metric Collection and Comparison}
 
 Figure~\ref{fig:nprt_flow} illustrates the two differing versions with two colors. Most of
 the running instances are in the stable version, red, and only one instance or in practice
-few instances are in the new version, orange. The load balancer sends traffic to both
-versions and both versions respond to clients, on which section~\ref{test_architecture}
-elaborates.
+few instances are in the new version, orange. These few instances are called canaries.
+The load balancer sends traffic to both versions and both versions respond to clients, on
+which section~\ref{test_architecture} elaborates.
 
-The production cluster collects the metrics, which are necessary for the regression tests.
+After a \deployer deployed the canary, a regression might arise. On account to that, 
+the regression should affect the least users as possible. This is why there is only few
+canaries running in the production cluster. This means for an exemplary ratio of three
+instances in the stable versions to one canary in the new version, only 25\% of the 
+traffic would hit the canary with the regression. Even if the request of a specific
+single user hits the degraded instance, the next request of the same user has the
+probability 75\% to hit the stable version. This certainly lowers the risk of failure
+for a single user. 
+
+A limitation to the approach is that the new version needs to be able to run side by
+side with the stable version. This is why the new version should not have any
+functional changes compared to stable version, but only non-functional changes. However, that
+means \gls{nprt} cannot test new feature like in an A/B test. Instead, \gls{nprt} is
+appropriate to test performance improvements, refactoring or dependency updates.
+
+The production cluster collects the metrics which are necessary for the regression tests.
 I adapted those metrics from the four golden metrics of Google's
 \gls{sre}~\cite{sre_monitoring}. The metrics are throughput, latency, error rate and
 utilization.
@@ -548,7 +567,7 @@ resource definitions accordingly and applies the modified resource definitions t
 production cluster. To be precise, it is actually a deploy message with the commit
 hash of the stable version, which the monitoring system is aware of because of the metrics
 it monitors. \deployer modifies the resource definitions similar to step~\texttt{(8)}. The
-deploy is idempotent, so that \deployer it can repeatedly receive the same deploys. This
+deploy is idempotent, so that \deployer can repeatedly receive the same deploys. This
 can happen in the case a developer as well as the monitoring system trigger the
 rollback. The production system itself takes care of deleting the canary instances in the
 new version. Since the instances of the stable version are already running in the
@@ -804,13 +823,13 @@ respond to production traffic.
 
 
 To deploy a canary, the client sends the deploy canary request to a separate http path,
-which section~\ref{sec:interface} previously describes. The client needs to provide the
+which section~\ref{sec:interface} previously described. The client has to provide the
 same arguments as for the deploy request. Namely those arguments are the service and
 either a commit hash, a tag or both. When \deployer receives the canary deploy request, it
 proceeds almost identical to the deploy request. The steps are verification, fetching the
 version, resource modification and application to the Kubernetes API. The difference to
 the deploy lies in the modification step. Instead of deploying a new version, \deployer
-creates a additional new canary Deployment resource.
+creates an additional new canary Deployment resource.
 
 In the modification step \deployer does not only change the container image version, but
 it adds another canary Deployment. \deployer names the new Deployment resource with the
@@ -1277,141 +1296,8 @@ of error analysis models.
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-
-Another nice thing to mention about \deployer, is that it deploys itself, which fits to the
-declarative model and recursion. That means we develop \deployer itself with the continuous
-deployment flow and can apply \gls{nprt} to \deployer.
-
-% design decsion: argumentation of historical comparison
-We have different possibilities to compare those version. One possibility is, that we
-compare current and historical data. For instance to compare the metrics of the current
-production system with the metrics of the production system of the day before or even the
-week before and compare the different versions of those times.
-
-We are following a different approach, because when we are comparing the current
-production system with the production system of last week, we have lots of different
-changes. The current traffic must not be the same traffic as last week, the load of the
-production system must not be the same load and other system with which the application is
-interacting with must not be the same.
-
-That is why we decided to compare two different versions which run in the production
-system concurrently. This brings not only the advantage, that you have the very same
-traffic, but also the advantage, that there is less risk involved. We illustrate the
-advantage of less risk now by demonstrating the process of deploying the second version
-and comparing it to the old version.
-
-% deployer creates canaries and compares. don't know where to put this
-Ok, if you compare the two versions with each other, you will do it as follows. \deployer
-create another Deployment resource from the one that already exists. \deployer calls this
-other Deployment resource canary Deployment. The creation of the canary Deployment
-resource has the effect, that not only Pods of version I are running in production, but
-there is Pods running in version II as well. Similar to the regular Deployment, the canary
-Deployment defines how many Pods in which version are supposed to be running.
-
-% only 25% canaries -> less risk
-We want to test, if there is a regression respectively a degradation between the two
-versions. On account to the fact, that a regression is possible and when introducing
-change, a regression is very likely, we at least want to affect as little users. So what
-do we do for that? In our example there three Pods running in version I and only one Pod
-in version II. This is a ratio of three to one and due to the fact that the load balancer
-uses round robin as the scheduling algorithm, only one in four requests, so 25\% of the
-total traffic is sent to the Pods in version II, which is to test.
-
-This certainly lowers the risk of failure and that users are affected by a
-regression. Even if the request of specific single user hits the degraded Pod, the next
-request of the same user has the probability 75\% to hit the old stable version.
-
-% limitation to non-functional changes
-A limitation to this technique is that the new version II needs to be able to run side by
-side with the old version I. In most cases, that means that the new version needs to be
-semantically almost identical to the old version. So version II should not provide
-functional changes compared to version I, but only non-functional changes. However that
-means we cannot test new feature like in an A/B test. Instead we can test performance
-improvements, refactoring or updates.
-
-% reference to canary deploy
-They call this technique canary releasing. Again, you change would only change a part of
-the production system, the canary instead of the whole. DevOps~\cite{cd_humble_deploy}
-examines this technique in more detail.
-% TODO: difference to canary testing
-
-% limitation to non-functional changes
-Assuming we would want to test features in production, the current implementation of the
-technique is not suitable. If we wanted to do that, we would need to include the
-load balancer. The load balancer would need to remember which user is proxied to which
-version, so that the next request of that user goes to the same version, thus the user
-sees the same set of features as before. The design of the database could potentially be
-affected as well and could be needed to be loadbalanced for the users. The technique we
-just described is usually called an A/B test. The disadvantage of the A/B test is that the
-same user will hit on the same potentially degraded service and it is not that simple to
-automatically provide a stable service to the user. Due to simplification, we did decide
-to not include the implementation of the load balancing.
-
-% two versions in production suboptimal, rolling updates presume it
-We want to state that it is suboptimal to run multiple versions in the cluster like also
-mentioned in DevOps TODO. Rolling updates require it to be able to have two versions in
-production, though. And Kubernetes utilizes rolling updates as a technique to provide zero
-downtime deploys. Accordingly our proposed technique does not introduce a worsening to
-that. But as in DevOps mentioned, you should avoid to run more than two versions at the
-same time in production. \deployer ensures that by either updating a Deployment, creating a
-canary Deployment, or creating a Deployment in a new version, just before it deleted the
-canary Deployment.
-
-% enhancement to use gemupdater
-Especially to test the latter, security updates, is absolutely appealing, since we can
-fully automate the procedure of updating the dependencies of our application in a fully
-automated and in a way, which would have a very low risk. We could have a job, which
-checks frequently for any new version, pushes the updates to the version control system,
-the continous integration system runs the pre deploy tests, \deployer deploys the update
-and even in production we check the update for an regression. We could save a lot of
-developer time, who would usually need to take care of the whole updating procedure.
-
-% low risk because of automatic rollbacks
-And even if there is a degradation in production, a small amount of requests is affected,
-because we send only a reasonable amount of traffic, which arrives at the same time, to
-the potentially degraded version. Further more we limit the time the degraded version is
-in production, because we automate detection of the degradation and the rollback to the
-old stable version.
-
-
-% argument pro microservices
-We let this running for a specified time in production. We need to decide on how long we
-want to compare the versions. That depends on how much traffic is in production, because
-when we would few traffic in production, we wanted to compare for a longer time. We
-suggest to have a well balanced test scenario in terms of load. The time depends on how
-much traffic there is in production and how often a team wants to deploy its
-application. A team which is working with a monolithic application has the disadvantage,
-that every change in every part of the software causes a deploy and deploys are more
-frequent. This limits the time in production for the canary. Instead if we have a
-microservice environment, the deploy affects only a specific service, hence little part of
-the whole application. As a result deploys are less frequent and we have more time for the
-canary in production.
-
-% advantage: no need to create test traffic
-We do not need to generate the test traffic, we do not need to weight traffic and we do
-not need to think about edge cases. These are all advantages, that we get for free from
-the production traffic. We save time and work, because the users generate the test data,
-instead of us.
-
-% advantage: edge cases included
-The users create more requests and with that test data for parts of the application, which
-are more important. Consequently the users reasonably weight the test data. And lastly the
-longer we run the comparison in production, users will produce more of those edge cases,
-which would be hard to make up.
-
-% request cloning to staging
-We could simply clone the requests, send the original request to the stable version and
-send a cloned request to the canary. The load balancer could then differentiate between the
-two responses of the two versions. We would reject the response of the canary. And we
-would forward the response of the stable version.
-
-As a result we even lower the risk, because the potentially degraded version does not even
-respond to real users. Ergo we do not have any risk of a degradation of our production
-service which we cause by testing the new version.
-
-
-The thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline, support developers
-up until the deploy and furthermore automate tests in production in order to maintain a
+The thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline, supports developers
+not only until the deploy, but well into the operation of their
 software product. The monitoring system evaluates the test without the supervision of the
 developers at a very low risk. The change goes through the whole pipeline including tests
 in the production environment. If test is successful, developers will be completely free
@@ -1469,7 +1355,7 @@ duration of a deploy varies between 9 and 106 seconds, the duration of a rollbac
 determined by the long start and stop times of GapFish's Rails application. In contrast to
 the long start and stop, \deployer's performance was faster. The experiments proved that a
 metric comparison in production is fully automatable. Also the usage of \gls{nprt} at
-GapFish in production, proved that the metrics comparison is feasible because developers
+GapFish in production, proved that the metric comparison is feasible because developers
 usually have a good understanding of their software product and are able to write suitable
 tests. Also the deploy durations were efficient to use \deployer in production. The
 chapter also demonstrated that GemUpdater, a tool to automatically update dependencies,
@@ -1479,17 +1365,21 @@ via \gls{nprt}.
 \section{Outlook and Future Work}
 
 \gls{nprt} is a good approach to continuously automate the maintenance of a software
-product. Nevertheless there are possible improvements. A automatic approach such as
-\gemupdater works well. More automatic service of such kind are needed. One obvious use
+product. Nevertheless there are possible improvements. Goreplay has proven to be a good tool for the evaluation. In order to save even more risks,
+Goreplay could serve to clone the traffic and send it to the canary. In this case, it would be
+possible to compare 100\% of the production traffic and make the metric comparison much simpler and
+more precise. Furthermore, the responses of the cloned traffic would not receive the users. This
+would result in a riskless testing approach. But there is one open problem with this approach:
+there must be a mechanism to imitate the interaction with the database.
+
+A more realistic extension to \gls{nprt} are completely unsupervised updates. An automatic approach such as
+\gemupdater works well. A developer resultantly has to do manual work only in case of a regression.
+More automatic services of such kind are needed. One obvious use
 case is the automation of updating Docker base images. A Docker base image updater would
 help to maintain continuously update the operating systems and software, on which the
-applications Docker images are based. Furthermore there is a similar need for update
-mechanism for other languages such as java or python, which come with their own dependency
+applications' Docker images are based. Furthermore there is a similar need for update
+mechanism for other languages such as Java or Python, which come with their own dependency
 managers.
-
-I image a completely unsupervised update mechanism for updates. An engineer would
-resultantly only have to do manual work in case of a regression. Engineers would need to
-have more confidence in unsupervised deploys, though.
 
 Another aspect is the lack of good open source instrumentation. On the one hand good
 instrumentation exists. On the other hand the instrumentation is proprietary and it cannot
@@ -1497,7 +1387,7 @@ be utilized outside of the proprietary ecosystem. We should invest more in more 
 grained open source instrumentation for popular application frameworks and web servers.
 
 In order to be able to better maintain the metric comparisons, these would need to go into
-version control as well. With Datadog it was not possible to version those tests,
-though. With other tools for instance Prometheus this may be possible.
+version control as well. With Datadog, however, it was not possible to version those tests.
+With other tools for instance Prometheus this may be possible.
 
 % extend nprt for functional changes by including a load balancer
