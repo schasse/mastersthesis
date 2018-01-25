@@ -12,6 +12,7 @@ vcentering
 \usepackage{fontspec}
 \usepackage{titlesec}
 \usepackage{subcaption}
+\usepackage{pdfpages}
 
 \clubpenalty = 10000 % schliesst Schusterjungen aus
 \widowpenalty = 10000 % schliesst Hurenkinder aus
@@ -65,7 +66,6 @@ vcentering
 % \usepackage{showframe}
 
 % TODO
-% * title page
 % * edit formality levels (academic writing 45)
 
 \usepackage{graphicx}
@@ -82,9 +82,8 @@ vcentering
 \include{pieces/glossary}
 
 \begin{document}
+\includepdf{figures/title}
 \pagenumbering{Roman} % Große römische Seitenzahlen
-\include{pieces/title}
-\include{pieces/copyright}
 \include{pieces/dedication}
 \include{pieces/abstract}
 
