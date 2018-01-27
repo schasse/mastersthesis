@@ -1,19 +1,19 @@
 \section*{Abstract}
 Many companies successfully use DevOps practices and microservices to eliminate the
-conflicts between developers and the operations team. Initially, the thesis explains one
+conflicts between developers and operations teams. Initially, the thesis explains one
 of the impacts of those practices: a shift of responsibility of maintenance work from
 operations to development. Developers have to maintain their own code as well as many
 dependencies. Containerization technologies consolidate this shift. A problem is that the
-continuous delivery pipeline supports developers only up until the deploy and no
+continuous delivery pipeline supports developers only up until the deploy and not
 further. \gls{nprt} extends the continuous delivery pipeline to the production
-environment. It addresses the issue of maintenance in a continuous and fully automatable
-fashion. In \gls{nprt}, a new version in form of a canary will be automatically deployed
-to production and compared to the stable version. In case of a regression the canary will
+environment. \gls{nprt} addresses the issue of maintenance in a continuous and fully automatable
+fashion. In \gls{nprt}, a new version in the form of a canary will be automatically deployed
+to production and compared to the stable version. In case of a regression, the canary will
 be automatically rolled back. In order to enable \gls{nprt} with Kubernetes, I implemented
-\deployer which connects the continuous integration system with a monitoring system and
+\deployer, which connects the continuous integration system with a monitoring system and
 Kubernetes. An Apache middleware, which is used at \gls{din}, and a Rails application,
 which GapFish develops and runs in production, served in multiple experiments in order to
-evaluate \gls{nprt} for real life use cases.
+evaluate \gls{nprt} for real-life use cases.
 \\\\\\
 Viele Unternehmen setzen DevOps Praktiken und Microservices ein, um Konflikte zwischen den
 Entwlickern und dem Operationsteam zu beseitigen. Zunächst erklärt die Masterarbeit eine

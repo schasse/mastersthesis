@@ -2,65 +2,65 @@
 \label{chap:intro}
 \section{Automation to Support Maintenance Work}
 
-% TODO: microservices case study von klems
 DevOps~\cite{devops_definition} and microservices~\cite{microservices_fowler} are
-practices or even cultures, which break down the silos between the development and
-operation teams and their conflicting goals. For instance Amazon and Facebook successfully
+practices, or even cultures, that break down the silos between the development and
+operations teams and their conflicting goals. For instance, Amazon and Facebook successfully
 use those practices to build and run their software products~\cite{build_run,dev_at_fb}.
 
-However the responsibility of maintaining a software product changed. A single team is
-responsible in two aspects: their own code and the dependencies they are using and relying
-on. The need for maintenance of own code exists, for instance with non-functional changes
-concerning performance, scalability or bug fixes. Code written by others needs to be
-maintained as well via adapting and updating to new versions.
+However, the responsibility for maintaining a software product has changed. A single team is
+responsible for two aspects: their own code and the dependencies they are using and relying
+on. Teams must maintain their own with nonfunctional changes
+concerning performance, scalability or bug fixes. Code written by others also needs to be
+maintained by adapting it and updating to new versions.
 
-DevOps practices interconnect operations including those maintenance necessities with
-development work. Nevertheless there is room for improvement in terms of continuous
+DevOps practices interconnect operations, including those maintenance necessities, with
+development work. Nevertheless, there is room for improvement in terms of continuous
 automatable processes regarding maintenance. The \gls{cd}
-pipeline~\cite{cd_humble_pipeline} is such a continuous automatable practice. But it
-covers the process only up to the deploy, whereas maintenance involves more than just the
-delivery.
+pipeline~\cite{cd_humble_pipeline} is a continuous automatable practice to fill this
+need. But it covers the process only up to the deploy\footnote{I use the term deploy in
+  the thesis in order to differentiate the procedure from Deployment, the Kubernetes
+  resource.}, whereas maintenance involves more than just the delivery.
 
 Instead of employing more engineers, Google combats workforce problems with
-automation~\cite{sre_automation}. They recognized that automation does not only save
-valuable programmer time, it furthermore adds reliability to the process. Google explains
+automation~\cite{sre_automation}. They recognized that automation not only saves
+valuable programmer time but also adds reliability to the process. Google explains
 how valuable automation is and successfully illustrates it with their site reliability
 engineering approach~\cite{sre_intro}.
 
-This thesis proposes with \gls{nprt} a practice which addresses the amount of maintenance
-work. The practice is designed for teams which have the responsibility of developing and
+This thesis proposes a practice that addresses the amount of maintenance
+work with \gls{nprt}. The practice is designed for teams that have the responsibility of developing and
 operating their own code as well as code dependencies. \gls{nprt} extends the \gls{cd}
-pipeline and automates continuous testing of non-functional changes in production. I
-implemented \gls{nprt} at two companies, \gls{din} and GapFish, in order to make an
-evaluation.
+pipeline and automates continuous testing of nonfunctional changes in production. I
+implemented \gls{nprt} at two companies, \gls{din} and GapFish, in order to
+evaluate the process.
 
 \section{Thesis Outline}
 
 \paragraph{\ref{chap:problem} \nameref{chap:problem}}
 Chapter~\ref{chap:problem} elaborates on the problem of the amount of maintenance work and
-demonstrates how the thesis contributes to solve the issue.
+demonstrates how the thesis contributes to solving the issue.
 
 \paragraph{\ref{chap:background} \nameref{chap:background}}
 The glossary explains the practices and techniques required in order to understand the
-problem in depth. In contrast to this, chapter~\ref{chap:background} briefly explains the
-major Kubernetes resources on the example of a 3 tier web app and names the software
+problem in depth. In contrast to this, Chapter~\ref{chap:background} briefly explains the
+major Kubernetes resources on the example of a three-tier web application and names the software
 dependencies.
 
 \paragraph{\ref{chap:macro} \nameref{chap:macro}}
-Chapter~\ref{chap:macro} describes the conceptual macro view of \gls{nprt}. The text goes
-through all the steps of the pipeline and demonstrates the components and how they
+Chapter~\ref{chap:macro} describes the conceptual macro view of \gls{nprt}. The text explains
+ all the steps of the pipeline and demonstrates the components and how they
 communicate with each other.
 
 \paragraph{\ref{chap:detail} \nameref{chap:detail}}
-Chapter~\ref{chap:detail} goes more into detail of the thesis contributions. It
+Chapter~\ref{chap:detail} further examines the thesis contributions. It
 demonstrates the design of \deployer, the software I wrote in order to enable \gls{nprt}
 in practice. The chapter also elaborates on the collection and comparison of the metrics.
 
 \paragraph{\ref{chap:eval} \nameref{chap:eval}}
-Chapter~\ref{chap:eval} evaluates \gls{nprt} in three aspects. Firstly, it discusses the
-performance with the help of experiments. Secondly, it provides a qualitative evaluation
-of \gls{nprt} based on the experiences at \gls{din} and GapFish. And lastly, it relates
-\gls{nprt} to other practices, tools and sophisticated metric analysis.
+Chapter~\ref{chap:eval} evaluates \gls{nprt} in three aspects. First, it discusses the
+performance with the help of experiments. Second, it provides a qualitative evaluation
+of \gls{nprt} based on the experiences at \gls{din} and GapFish. And last, it relates
+\gls{nprt} to other practices, tools and sophisticated metric analyses.
 
 \paragraph{\ref{chap:conclusion} \nameref{chap:conclusion}}
 Chapter~\ref{chap:conclusion} summarizes the thesis and suggests more automation
@@ -74,42 +74,42 @@ opportunities and extensions to the implementation.
 % devops/microservices aproach successful development and operation
 The DevOps\footnote{see glossary: \gls{g:devops}} approach and the
 microservices\footnote{see glossary: \gls{g:microservices}} culture create practices to
-solve the issues of the conflicting tension~\cite{sre_intro} between a development and
-operation team. On the one hand the aim is to change the software product quickly and on
-the other hand to provide a stable and reliable software product of high quality. Vogels,
-the chief technology officer of amazon, once said in an interview ”You build it, you run
-it”~\cite{build_run}. This quote represents the awareness of teams to not only be
-responsible for the development and deliver features. Moreover the team is also
-responsible of operating their product in production, because operation is an essential
-part of a successful software product. One team is consequently responsible of the
+solve the issues of the conflicting tension~\cite{sre_intro} between the development and
+operations teams. The aim is to change the software product quickly while
+providing a stable and reliable software product of high quality. Vogels,
+the chief technology officer at Amazon, once said in an interview “You build it, you run
+it”~\cite{build_run}. This quote represents the awareness of teams to be
+responsible not only for the development and deliver features but also
+for operating their product in production, because operation is an essential
+part of a successful software product. One team is consequently responsible for the
 development, operation and maintenance of their own code.
 
 % responsibility of deps shifts from ops to dev
-Furthermore the responsibility of software dependencies shifts. In the past, development
+Furthermore, the responsibility of software dependencies is shifting. In the past, development
 teams delivered code and depended on the previously installed software
-dependencies. Operation teams were responsible of maintaining those installed
+dependencies. Operation teams were responsible for maintaining those installed
 dependencies. Virtualization changed this. Teams operating virtual infrastructure operate
-and maintain the hardware and software of this infrastructure. They do not maintain the
+and maintain the hardware and software for this infrastructure. They do not maintain the
 specific dependencies of the code, which the development team develops. The development
-team can choose which dependencies they want to use. Accordingly there is a clear
+team can choose which dependencies they want to use. Accordingly, there is a clear
 isolation between the dependencies of the virtual machine infrastructure and the
 development team.
 
 % contra arg vms operated by ops team
-You could argue that virtual machines still have the same functionality as bare metal
-servers and need to be maintained in the same way by the same operation
-teams. Nevertheless it becomes easier to maintain dynamic virtual
+One could argue that virtual machines still have the same functionality as bare metal
+servers and need to be maintained in the same way by the same operations
+teams. Nevertheless, it is becoming easier to maintain dynamic virtual
 infrastructure\footnote{see glossary: \gls{g:dynamic}} in comparison to bare metal
 infrastructure. And the easier it becomes, the more it enables developers to operate their
 software product themselves.
 
 Containerization\footnote{see glossary: \gls{g:container}} manifests the responsibility
-shift. It is a further step of isolation. The operating system is able to isolate CPU and
-memory for every process. Yet with containerization the operating system can also isolate
+shift. It is a further step of isolation. The operating system is able to isolate \gls{cpu} and
+memory for every process. Yet, with containerization, the operating system can also isolate
 the disk between processes, which means it can isolate the installed dependencies for
 every process. Containerization techniques even potentiate the ease of managing
 dependencies. So the responsibility of the software dependencies shifts resultantly
-towards the team, which builds and runs the software product.
+toward the team that builds and runs the software product.
 
 
 \section{Lack of Focus on Maintenance}
@@ -281,7 +281,7 @@ software product.
 
 I'll explain the typical implementation of a 3 tier web app in Kubernetes as it helps a
 lot to understand the next chapters. The application tier is usually implemented with a
-\myemph{Deployment}\footnote{see glossary: \gls{g:deployment} and \gls{g:deploy}} which
+\myemph{Deployment}\footnote{see glossary: \gls{g:deployment}} which
 monitors the presence of a specified number of stateless \myemph{Pods}\footnote{see
   glossary: \gls{g:pod}}. A \myemph{Service}\footnote{see glossary: \gls{g:service}} acts as
 a load balancer and selects the Pods and forwards the request. The data tier is
@@ -339,9 +339,9 @@ served to make experiments with production traffic.
 In \gls{nprt} the pipeline deploys a non-functional change in form of a canary to the
 production environment. The new version is compared with the stable version side by side
 in production. In case the new version shows a regression, the pipeline will automatically
-roll it back. The novelty of this approach is that it creates a feedback loop between
-development and production, which is fully automatable. The following elaborates on the
-term in more detail.
+roll it back. The novelty of this approach is that it creates a feedback loop between the
+development team and production environment, which is fully automatable. The following
+elaborates on the term in more detail.
 
 \myemph{Non-functional} refers to the change, which the monitoring system
 monitors. Usually maintenance changes are non-functional changes, for instance performance
@@ -510,14 +510,14 @@ few instances are in the new version, orange. These few instances are called can
 The load balancer sends traffic to both versions and both versions respond to clients, on
 which section~\ref{test_architecture} elaborates.
 
-After a \deployer deployed the canary, a regression might arise. On account to that, 
+After a \deployer deployed the canary, a regression might arise. On account to that,
 the regression should affect the least users as possible. This is why there is only few
 canaries running in the production cluster. This means for an exemplary ratio of three
-instances in the stable versions to one canary in the new version, only 25\% of the 
+instances in the stable versions to one canary in the new version, only 25\% of the
 traffic would hit the canary with the regression. Even if the request of a specific
 single user hits the degraded instance, the next request of the same user has the
 probability 75\% to hit the stable version. This certainly lowers the risk of failure
-for a single user. 
+for a single user.
 
 A limitation to the approach is that the new version needs to be able to run side by
 side with the stable version. This is why the new version should not have any
@@ -1296,13 +1296,13 @@ of error analysis models.
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-The thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline, supports developers
-not only until the deploy, but well into the operation of their
-software product. The monitoring system evaluates the test without the supervision of the
-developers at a very low risk. The change goes through the whole pipeline including tests
-in the production environment. If the test is successful, developers will be completely free
-of work. Potential changes of bots would be robust enough to be able to act fully
-automated and unsupervised.
+This thesis illustrated that \gls{nprt} extends the \gls{cd} pipeline and supports
+developers not only until the deploy but well into the operation of their software
+product. The monitoring system evaluates the test without the supervision of the
+developers at a very low risk. The change goes through the whole pipeline, including tests
+in the production environment. If the test is successful, developers will have no further
+work to perform. Potential changes, implemented by bots, would be robust enough to be able
+to act fully automated and unsupervised.
 
 \section{Summary}
 
@@ -1310,84 +1310,84 @@ The thesis proposed \gls{nprt} to support maintenance work. Chapter~\ref{chap:pr
 examined the problem of maintenance work. It illustrated that maintenance responsibility
 shifts from the operations teams to developers due to DevOps and microservice
 practices. The simplicity of containerization enables and manifests this shift as
-well. The maintenance work consists of two main aspects: maintenance of the own code and
-maintenance of dependencies. Many flexible microservices and many dependencies result in a
-high amount of maintenance work. To address the issue of maintenance work, the chapter
-suggests the value of automation which is time saving and reliable. It proposed \gls{nprt}
-in order to extend the continuous delivery pipeline and to automate non-funtional
-regression tests in production.
+well. The maintenance work consists of two main aspects: maintenance of the development
+team’s own code and maintenance of dependencies. Many flexible microservices and many
+dependencies result in a high amount of maintenance work. To address the issue of
+maintenance work, the chapter suggests the value of automation, which is time saving and
+reliable. The chapter proposed \gls{nprt} in order to extend the continuous delivery
+pipeline and to automate nonfunctional regression tests in production.
 
 Chapter~\ref{chap:macro} demonstrated a macro view of \gls{nprt} and how it integrates
-with all the involved systems. The chapter went through all the steps of the pipeline
-including the steps: a developer commits a new version to the \gls{vcs}, the \gls{ci}
-system builds and tests the new version, \deployer deploys the new version to production
-in form of a canary, the monitoring system collects and compares the metrics of the side
-by side running versions and in case of a regression \deployer rolls back the canary. It
-is important to tag each step including the metrics with the version reference in order to
-be able to debug a specific version. \gls{nprt} creates with those steps an automated
-feedback loop between development and production.
+with all the involved systems. The chapter explained all the steps of the pipeline: First,
+a developer commits a new version to the \gls{vcs}. Second, the \gls{ci} system builds and
+tests the new version. Third, \deployer deploys the new version to production in the form
+of a canary. Fourth, the monitoring system collects and compares the metrics of the
+side-by-side running versions and in case of a regression. Last, \deployer rolls back the
+canary. It is important to tag each step including the metrics with the version reference
+in order to be able to debug a specific version. With those steps, \gls{nprt} creates an
+automated feedback loop between development team and production environment.
 
 I implemented \deployer in order to enable \gls{nprt} with Kubernetes and used Datadog for
-the metric comparison. Chapter~\ref{chap:detail} initiallyoo demonstrates the simplicity and
-horizontal scalability of \deployer's architecture. Deployer is implemented in order to
-run in Kubernetes and to deploy itself. The chapter went through \deployer's http
+the metric comparison. Chapter~\ref{chap:detail} demonstrated the simplicity and
+horizontal scalability of \deployer's architecture. \deployer is implemented in order to
+run in Kubernetes and to deploy itself. The chapter explained \deployer's http
 interface and its endpoints ls, show, tags, deploy, canary and version. Simple http
-clients or depctl can interact with \deployer. Moreover, the chapter explainedoo a deploy of
-a canary. Therefore, \deployer first authenticates the client, validates the given version
+clients or depctl can interact with \deployer. Moreover, the chapter explained a deploy of
+a canary. \deployer authenticates the client, validates the given version
 references, fetches and modifies the Kubernetes resource definitions and applies them to
 the Kubernetes API. In case of an error, \deployer informs the developers as quickly as
 possible by sending an appropriate return message to the client and by sending the error
 to a specified channel. The chapter described how I designed the architecture of two
 versions running in Kubernetes and how Kubernetes does the load balancing between
 them. The metrics of the application's instances are collected in two different ways. A
-monitoring agent picks some of the metrics from the host and the application's
+monitoring agent picks some of the metrics from the host, and the application's
 instrumentation sends the other metrics to the monitoring system. Finally,
-chapter~\ref{chap:detail} elaborates on the metric comparison itself and important
+Chapter~\ref{chap:detail} elaborates on the metric comparison itself and important
 parameters: aggregation window, the aggregation and the threshold.
 
 Chapter~\ref{chap:eval} evaluated \gls{nprt} in three different aspects: experiments,
-lessons learned and related work. For the experiments I tested \deployer and the metric
+lessons learned and related work. For the experiments, I tested \deployer and the metric
 comparison with two different production applications. The first one was an Apache web
-server which \gls{din} uses as a middleware. The second application is a Rails web server
-which serves as backoffice tool for GapFish. The experiments showed that \deployer's
-duration of a deploy varies between 9 and 106 seconds, the duration of a rollback between
+server that \gls{din} uses as a middleware. The second application is a Rails web server
+that serves as the back-office tool for GapFish. The experiments showed that \deployer's
+duration of a deploy varies between 9 and 106 seconds, and the duration of a rollback was between
 4 and 63 seconds. The long deploy of 106 and the long rollback of 63 seconds were
 determined by the long start and stop times of GapFish's Rails application. In contrast to
 the long start and stop, \deployer's performance was quite fast. The experiments proved that a
-metric comparison in production is fully automatable. Also the usage of \gls{nprt} at
-GapFish in production, proved that the metric comparison is feasible because developers
+metric comparison in production is fully automatable. Also, the usage of \gls{nprt} at
+GapFish in production proved that the metric comparison is feasible because developers
 usually have a good understanding of their software product and are able to write suitable
-tests. Also the deploy durations were efficient to use \deployer in production. The
+tests. The deploy durations were efficient to use \deployer in production as well. The
 chapter also demonstrated that \gemupdater, a tool to automatically update dependencies,
 successfully committed version changes which were then automatically tested in production
 via \gls{nprt}.
 
 \section{Outlook and Future Work}
 
-\gls{nprt} is a good approach to continuously automate the maintenance of a software
-product. Nevertheless there are possible improvements. Goreplay has proven to be a good tool for the evaluation. In order to reduce even more risk,
-Goreplay could serve to clone the traffic and send it to the canary. In this case, it would be
-possible to compare 100\% of the production traffic and make the metric comparison much simpler and
-more precise. Furthermore, the users would not receive the responses of the cloned traffic. This
-would result in a riskless testing approach. But there is one open problem with this approach:
-there must be a mechanism to imitate the interaction with the database.
+\gls{nprt} is a good approach to continuously automating the maintenance of a software
+product. Nevertheless, there are possible improvements. Goreplay has proven to be a good
+tool for the evaluation. In order to reduce even more risk, Goreplay could serve to clone
+the traffic and send it to the canary. In this case, it would be possible to compare 100\%
+of the production traffic and make the metric comparison much simpler and more
+precise. Furthermore, the users would not receive the responses of the cloned
+traffic. This would result in a riskless testing approach. But there is one open problem
+with this approach: there must be a mechanism to imitate the interaction with the
+database.
 
-Another aspect is the lack of good open source instrumentation. On the one hand good
-instrumentation exists. On the other hand the instrumentation is proprietary and it cannot
-be utilized outside of the proprietary ecosystem. We should invest more in more fine
-grained open source instrumentation for popular application frameworks and web servers.
+Another aspect to consider for improvement is the lack of good open source
+instrumentation. Though good instrumentation exists, it is proprietary and cannot be
+utilized outside of the proprietary ecosystem. We should invest in more fine-grained open
+source instrumentation for popular application frameworks and web servers.
 
 In order to be able to better maintain the metric comparisons, these would need to go into
 version control as well. With Datadog, however, it was not possible to version those tests.
-With other tools for instance Prometheus this may be possible.
+With other tools, like Prometheus, this may be possible.
 
-A realistic extension to \gls{nprt} are completely unsupervised updates. An automatic approach such as
-\gemupdater works well. A developer resultantly has to do manual work only in case of a regression.
-More automatic services of such kind are needed. One obvious use
-case is the automation of updating Docker base images. A Docker base image updater would
-help to maintain continuously update the operating systems and software, on which the
+A realistic extension to \gls{nprt} would be completely unsupervised updates. An automatic
+approach such as \gemupdater works well. As a result, developers only have to do manual
+work in case of a regression.  More automatic services of this kind are needed. One
+obvious use case is the automation of updating Docker base images. A Docker base image
+updater would help to continuously update the operating systems and software on which the
 applications' Docker images are based. Furthermore, there is a similar need for update
-mechanism for other languages such as Java or Python, which come with their own dependency
-managers.
-
-% extend nprt for functional changes by including a load balancer
+mechanisms for other languages, such as Java or Python, which come with their own
+dependency managers.
