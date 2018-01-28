@@ -567,9 +567,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.2209615"
-     inkscape:cx="417.30773"
-     inkscape:cy="329.98341"
+     inkscape:zoom="2.046498"
+     inkscape:cx="516.27451"
+     inkscape:cy="185.93662"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -921,6 +921,6 @@
          y="783.22998"
          x="592.49255"
          id="tspan4962"
-         sodipodi:role="line">Statefulset</tspan></text>
+         sodipodi:role="line">StatefulSet</tspan></text>
   </g>
 </svg>
